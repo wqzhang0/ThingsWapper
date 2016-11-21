@@ -36,7 +36,7 @@ public class MainActivity extends Activity {
 
         DecorationTest decorationTest = new DecorationTest(this);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.addItemDecoration(decorationTest);
+//        recyclerView.addItemDecoration(decorationTest);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(recyclerAdapterTest);
     }
