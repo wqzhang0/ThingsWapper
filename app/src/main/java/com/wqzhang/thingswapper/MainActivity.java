@@ -7,11 +7,22 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.AdapterView;
 
 import com.wqzhang.thingswapper.UI.DecorationTest;
 import com.wqzhang.thingswapper.UI.RecyclerAdapterTest;
+import com.wqzhang.thingswapper.UI.SlideContentView;
+
+import static android.support.v7.widget.StaggeredGridLayoutManager.TAG;
+import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
 
 public class MainActivity extends Activity {
+
+    private static RecyclerView recyclerView;
+    private String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +46,10 @@ public class MainActivity extends Activity {
 
 
         DecorationTest decorationTest = new DecorationTest(this);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 //        recyclerView.addItemDecoration(decorationTest);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(recyclerAdapterTest);
+
     }
 }

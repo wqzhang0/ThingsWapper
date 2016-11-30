@@ -48,7 +48,7 @@ public class DecorationTest extends RecyclerView.ItemDecoration {
             int top = child.getBottom() + layoutParams.bottomMargin;
             int bottom = top + mDrawable.getIntrinsicHeight();
             //marginleft 10    margin right 10
-            mDrawable.setBounds(left + 10, top, right - 10, bottom + 2);
+            mDrawable.setBounds(left - 10, top - 1, right - 10, bottom +1);
 
             mDrawable.draw(c);
         }
@@ -63,7 +63,7 @@ public class DecorationTest extends RecyclerView.ItemDecoration {
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         Log.d(TAG, "getItemOffsets");
-        outRect.set(0, 0, 0, 2);
+        outRect.set(0, 0, 0, 1);
 //        super.getItemOffsets(outRect, view, parent, state);
     }
 }
