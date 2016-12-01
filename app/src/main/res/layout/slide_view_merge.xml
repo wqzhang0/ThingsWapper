@@ -5,7 +5,8 @@
 
     <FrameLayout
         android:id="@+id/slide_content_view"
-        android:layout_width="400dp"
+        android:layout_width="600dp"
+        android:layout_weight="1"
         android:layout_height="match_parent">
 
 
