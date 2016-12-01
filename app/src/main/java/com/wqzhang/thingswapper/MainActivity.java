@@ -1,25 +1,18 @@
 package com.wqzhang.thingswapper;
 
 import android.app.Activity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 
 import com.wqzhang.thingswapper.UI.DecorationTest;
-import com.wqzhang.thingswapper.UI.RecyclerAdapterTest;
-import com.wqzhang.thingswapper.UI.SlideContentView;
+import com.wqzhang.thingswapper.UI.RecyclerAdapter;
 
-import static android.support.v7.widget.StaggeredGridLayoutManager.TAG;
-import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements AdapterView.OnItemClickListener {
 
     private static RecyclerView recyclerView;
     private String TAG = "MainActivity";
@@ -28,7 +21,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.to_do_list_view);
-        RecyclerAdapterTest recyclerAdapterTest = new RecyclerAdapterTest(this);
+        RecyclerAdapter recyclerAdapter = new RecyclerAdapter(this);
 //        线性布局
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -49,7 +42,15 @@ public class MainActivity extends Activity {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 //        recyclerView.addItemDecoration(decorationTest);
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setAdapter(recyclerAdapterTest);
-
+        recyclerView.setAdapter(recyclerAdapter);
     }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        Log.d(TAG, "onItemClick");
+    }
+
+
+
 }

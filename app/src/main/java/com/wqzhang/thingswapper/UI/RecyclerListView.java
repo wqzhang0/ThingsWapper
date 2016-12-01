@@ -29,17 +29,20 @@ public class RecyclerListView extends android.support.v7.widget.RecyclerView {
     public RecyclerListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
-
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent e) {
-        return true;
-    }
+//
+//    @Override
+//    public boolean onInterceptTouchEvent(MotionEvent e) {
+//        if(e.getAction() == MotionEvent.ACTION_DOWN){
+//            return true;
+//        }
+//        return super.onInterceptTouchEvent(e);
+//    }
 
     int position = -1;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Log.d(TAG, "Touch ");
+        Log.d(TAG, "Touch " + event.getAction());
         int X = 0, Y = 0;
 
 
@@ -52,36 +55,35 @@ public class RecyclerListView extends android.support.v7.widget.RecyclerView {
 
                 //先重置上一次的操作
                 if (position != INVALID_POSITION) {
-                    RecyclerAdapterTest.ViewHolder viewHolder = (RecyclerAdapterTest.ViewHolder) this.findViewHolderForAdapterPosition(position);
-                    slideContentView = (SlideContentView) viewHolder.contentView;
-                    slideContentView.shrink();
+                    RecyclerAdapter.ViewHolder viewHolder = (RecyclerAdapter.ViewHolder) this.findViewHolderForAdapterPosition(position);
+                    if (viewHolder != null) {
+                        slideContentView = viewHolder.slide_content_view;
+                        slideContentView.shrink();
 
+                    }
                 }
-
 
                 position = this.getChildAdapterPosition(targetItemView);
                 Log.d(TAG, "position=" + position);
                 if (position != INVALID_POSITION) {
-                    RecyclerAdapterTest.ViewHolder viewHolder = (RecyclerAdapterTest.ViewHolder) this.findViewHolderForAdapterPosition(position);
-                    slideContentView = (SlideContentView) viewHolder.contentView;
+                    RecyclerAdapter.ViewHolder viewHolder = (RecyclerAdapter.ViewHolder) this.findViewHolderForAdapterPosition(position);
+                    slideContentView = viewHolder.slide_content_view;
+
                 }
                 break;
             default:
                 break;
         }
 
-        if (slideContentView != null)
-
-        {
-            slideContentView.onRequeirTouchEvent(event);
-        } else
-
-        {
+        if (slideContentView != null) {
+            boolean isScroll = slideContentView.onRequeirTouchEvent(event);
+            if (isScroll) {
+                return true;
+            }
+        } else {
             Log.d(TAG, "slideContentView == null");
         }
 
-        return super.
-
-                onTouchEvent(event);
+        return super.onTouchEvent(event);
     }
 }
