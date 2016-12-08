@@ -8,17 +8,19 @@ import android.os.Bundle;
 
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.ToDoFragment;
+import com.wqzhang.thingswapper.db.DatebaseHelper;
 
 
 public class MainActivity extends Activity {
 
     private String TAG = "MainActivity";
+    private DatebaseHelper datebaseHelper = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.to_do_main);
-
+        datebaseHelper = new DatebaseHelper(this);
         setDefaultFragment();
 
     }
@@ -31,4 +33,10 @@ public class MainActivity extends Activity {
         fragmentTransaction.commit();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        datebaseHelper.readUserInfo();
+
+    }
 }
