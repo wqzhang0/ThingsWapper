@@ -3,7 +3,6 @@ package com.wqzhang.thingswapper.UI;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -14,9 +13,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
-import android.widget.Toast;
 
-import com.wqzhang.thingswapper.MainActivity;
 import com.wqzhang.thingswapper.R;
 
 /**
