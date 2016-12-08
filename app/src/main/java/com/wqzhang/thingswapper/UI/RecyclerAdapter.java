@@ -1,22 +1,15 @@
 package com.wqzhang.thingswapper.UI;
 
 import android.content.Context;
-import android.icu.util.Freezable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wqzhang.thingswapper.R;
-
-import org.w3c.dom.Text;
 
 /**
  * Created by wqzhang on 16-10-21.
