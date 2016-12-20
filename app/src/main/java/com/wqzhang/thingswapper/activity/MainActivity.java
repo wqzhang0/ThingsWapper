@@ -23,7 +23,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.to_do_main);
-        datebaseHelper = new DatebaseHelper(this);
+        datebaseHelper =   DatebaseHelper(this);
         setDefaultFragment();
 
     }

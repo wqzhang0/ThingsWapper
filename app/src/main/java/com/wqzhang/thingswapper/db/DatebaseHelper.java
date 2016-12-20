@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.wqzhang.thingswapper.MainApplication;
+import com.wqzhang.thingswapper.model.ToDoThingModel;
 import com.wqzhang.thingswapper.model.UserModel;
 
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ public class DatebaseHelper extends SQLiteOpenHelper implements dbOperationImpl 
     private static final String TABLE_NAME_USER_INFO = "user_info";
     private static final String TABLE_NAME_PERSONALIZED_SETTING = "personalized_setting";
     private static Context mContext;
+    private static DatebaseHelper datebaseHelper;
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
@@ -61,6 +64,14 @@ public class DatebaseHelper extends SQLiteOpenHelper implements dbOperationImpl 
 //        new DatebaseHelper(mContext);
     }
 
+    public static DatebaseHelper getInstance(){
+        if (datebaseHelper == null                ) {
+            datebaseHelper = new DatebaseHelper(MainApplication.getGlobleContext());
+
+        }
+        return datebaseHelper;
+    }
+
     @Override
     public void addUser(UserModel userModel) {
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
@@ -94,6 +105,11 @@ public class DatebaseHelper extends SQLiteOpenHelper implements dbOperationImpl 
         }
         cursor.close();
         return userModels.get(0);
+    }
+
+    @Override
+    public boolean addToDoThing(ToDoThingModel toDoThingModel) {
+        return false;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.wqzhang.thingswapper.db;
 
+import com.wqzhang.thingswapper.model.ToDoThingModel;
 import com.wqzhang.thingswapper.model.UserModel;
 
 /**
@@ -7,7 +8,8 @@ import com.wqzhang.thingswapper.model.UserModel;
  */
 
 public interface dbOperationImpl {
-        public void addUser(UserModel userModel);
-        public UserModel readUserInfo();
+        void addUser(UserModel userModel);
+        UserModel readUserInfo();
+        boolean addToDoThing(ToDoThingModel toDoThingModel);
 
 }
