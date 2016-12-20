@@ -16,7 +16,7 @@ public class MainApplication extends Application {
         mContext = this.getApplicationContext();
     }
 
-    public static Context getGlobleContext(){
+    public static Context getGlobleContext() {
         return mContext;
     }
 }

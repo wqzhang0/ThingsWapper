@@ -11,7 +11,7 @@ import android.view.ViewGroup;
  * Created by wqzhang on 16-12-2.
  */
 
-public class StatisticsFragment extends Fragment{
+public class StatisticsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

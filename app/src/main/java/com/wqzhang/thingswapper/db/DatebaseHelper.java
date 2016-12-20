@@ -64,8 +64,8 @@ public class DatebaseHelper extends SQLiteOpenHelper implements dbOperationImpl 
 //        new DatebaseHelper(mContext);
     }
 
-    public static DatebaseHelper getInstance(){
-        if (datebaseHelper == null                ) {
+    public static DatebaseHelper getInstance() {
+        if (datebaseHelper == null) {
             datebaseHelper = new DatebaseHelper(MainApplication.getGlobleContext());
 
         }

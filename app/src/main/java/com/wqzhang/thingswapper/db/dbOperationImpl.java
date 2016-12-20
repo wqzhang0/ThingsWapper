@@ -8,8 +8,10 @@ import com.wqzhang.thingswapper.model.UserModel;
  */
 
 public interface dbOperationImpl {
-        void addUser(UserModel userModel);
-        UserModel readUserInfo();
-        boolean addToDoThing(ToDoThingModel toDoThingModel);
+    void addUser(UserModel userModel);
+
+    UserModel readUserInfo();
+
+    boolean addToDoThing(ToDoThingModel toDoThingModel);
 
 }
