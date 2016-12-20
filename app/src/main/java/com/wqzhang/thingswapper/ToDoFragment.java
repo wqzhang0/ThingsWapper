@@ -9,8 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.wqzhang.thingswapper.UI.DecorationTest;
-import com.wqzhang.thingswapper.UI.RecyclerAdapter;
+import com.wqzhang.thingswapper.ui.DecorationTest;
+import com.wqzhang.thingswapper.ui.RecyclerAdapter;
 
 /**
  * Created by wqzhang on 16-12-1.
