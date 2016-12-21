@@ -1,4 +1,4 @@
-package com.wqzhang.thingswapper;
+package com.wqzhang.thingswapper.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;

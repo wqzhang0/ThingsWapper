@@ -100,7 +100,7 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
     boolean isScollerContentView = false;
 
     public boolean onRequeirTouchEvent(MotionEvent event) {
-        Log.d(TAG, "onRequeirTouchEvent");
+//        Log.d(TAG, "onRequeirTouchEvent");
         boolean result = false;
 
         switch (event.getAction()) {

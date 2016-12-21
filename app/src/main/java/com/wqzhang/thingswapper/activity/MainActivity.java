@@ -7,11 +7,8 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 
 import com.wqzhang.thingswapper.R;
-import com.wqzhang.thingswapper.ToDoFragment;
+import com.wqzhang.thingswapper.fragment.ToDoFragment;
 import com.wqzhang.thingswapper.db.DatebaseHelper;
-import com.wqzhang.thingswapper.model.UserModel;
-
-import java.util.Date;
 
 
 public class MainActivity extends Activity {

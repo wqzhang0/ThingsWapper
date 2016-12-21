@@ -34,11 +34,11 @@ public class AddToDoThingActivity extends Activity {
                 String remindContent = content.getText().toString();
                 ToDoThingModel toDoThingModel = new ToDoThingModel();
                 toDoThingModel.setReminderContext(remindContent);
-                ArrayList<ToDoThingModel> a = DatebaseHelper.getInstance().readToBeDoneThings();
+//                ArrayList<ToDoThingModel> a = DatebaseHelper.getInstance().readToBeDoneThings();
+                DatebaseHelper.getInstance().addToDoThing(toDoThingModel);
 
                 Intent intent = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
                 startActivity(intent);
-//                DatebaseHelper.getInstance().addToDoThing(toDoThingModel);
 //                a.get(0);
 
             }

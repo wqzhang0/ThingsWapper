@@ -2,6 +2,8 @@ package com.wqzhang.thingswapper.ui;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -17,6 +19,8 @@ public class RecyclerListView extends android.support.v7.widget.RecyclerView {
     private String TAG = "RecyclerListView";
 
     SlideContentView slideContentView = null;
+    static boolean isBootom = false;
+
 
     public RecyclerListView(Context context) {
         super(context);
@@ -42,10 +46,8 @@ public class RecyclerListView extends android.support.v7.widget.RecyclerView {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Log.d(TAG, "Touch " + event.getAction());
+//        Log.d(TAG, "Touch " + event.getAction());
         int X = 0, Y = 0;
-
-
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 X = (int) event.getX();
@@ -55,35 +57,79 @@ public class RecyclerListView extends android.support.v7.widget.RecyclerView {
 
                 //先重置上一次的操作
                 if (position != INVALID_POSITION) {
-                    RecyclerAdapter.ViewHolder viewHolder = (RecyclerAdapter.ViewHolder) this.findViewHolderForAdapterPosition(position);
+                    ViewHolder viewHolder = this.findViewHolderForAdapterPosition(position);
                     if (viewHolder != null) {
-                        slideContentView = viewHolder.slide_content_view;
-                        slideContentView.shrink();
-
+                        if (viewHolder instanceof RecyclerAdapter.ViewHolder) {
+                            slideContentView = ((RecyclerAdapter.ViewHolder) viewHolder).slide_content_view;
+                            slideContentView.shrink();
+                        }
                     }
                 }
-
                 position = this.getChildAdapterPosition(targetItemView);
                 Log.d(TAG, "position=" + position);
                 if (position != INVALID_POSITION) {
-                    RecyclerAdapter.ViewHolder viewHolder = (RecyclerAdapter.ViewHolder) this.findViewHolderForAdapterPosition(position);
-                    slideContentView = viewHolder.slide_content_view;
-
+                    ViewHolder viewHolder = this.findViewHolderForAdapterPosition(position);
+                    if (viewHolder != null) {
+                        if (viewHolder instanceof RecyclerAdapter.ViewHolder) {
+//                                viewHolder = (RecyclerAdapter.ViewHolder) this.findViewHolderForAdapterPosition(position);
+                            slideContentView = ((RecyclerAdapter.ViewHolder) viewHolder).slide_content_view;
+                        }
+                    }
                 }
+                break;
+            case MotionEvent.ACTION_MOVE:
+                Log.d(TAG, "ActionMove");
+//                if (isBootom) {
+//                    this.setTranslationY(0 - 110);
+//                }
                 break;
             default:
                 break;
         }
 
-        if (slideContentView != null) {
-            boolean isScroll = slideContentView.onRequeirTouchEvent(event);
-            if (isScroll) {
-                return true;
-            }
-        } else {
-            Log.d(TAG, "slideContentView == null");
-        }
+//        if (slideContentView != null) {
+//            boolean isScroll = slideContentView.onRequeirTouchEvent(event);
+//            if (isScroll) {
+//                return true;
+//            }
+//        } else {
+//            Log.d(TAG, "slideContentView == null");
+//        }
 
         return super.onTouchEvent(event);
+    }
+
+    @Override
+    public void onScrolled(int dx, int dy) {
+        if (isBootom) {
+            dy = dy / 8;
+        }
+        super.onScrolled(dx, dy);
+
+        Log.d("onScrolled", "dy" + dy);
+
+        RecyclerAdapter recyclerAdapter = (RecyclerAdapter) getAdapter();
+        if (!canScrollVertically(-1)) {
+            Log.d("onScrolled", "滑动至顶部");
+//            recyclerAdapter.hiddenFooterView();
+//            recyclerAdapter.showHeaderView();
+
+//            recyclerAdapter.notifyDataSetChanged();
+//                    onScrolledToTop();
+        } else if (!canScrollVertically(1)) {
+            Log.d("onScrolled", "滑动至底部");
+//            recyclerAdapter.showFooterView();
+//            recyclerAdapter.hiddenHeaderView();
+//            recyclerAdapter.notifyDataSetChanged();
+//                    onScrolledToBottom();
+        } else if (dy < 0) {
+            Log.d("onScrolled", "下滑");
+//                    onScrolledUp();
+        } else if (dy > 0) {
+            Log.d("onScrolled", "上滑");
+
+            if (isBootom) ;
+//                    onScrolledDown();
+        }
     }
 }

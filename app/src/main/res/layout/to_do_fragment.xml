@@ -10,12 +10,15 @@
         android:gravity="center"
         android:text="代做事项" />
 
+
     <com.wqzhang.thingswapper.ui.RecyclerListView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_weight="8"
-        android:orientation="vertical"></com.wqzhang.thingswapper.ui.RecyclerListView>
+        android:orientation="vertical">
+
+    </com.wqzhang.thingswapper.ui.RecyclerListView>
 
 
 </LinearLayout>
