@@ -1,17 +1,16 @@
 package com.wqzhang.thingswapper.db;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.wqzhang.thingswapper.MainApplication;
 import com.wqzhang.thingswapper.model.ToDoThingModel;
 import com.wqzhang.thingswapper.model.UserModel;
+import com.wqzhang.thingswapper.tools.Common;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,6 +25,7 @@ public class DatebaseHelper extends SQLiteOpenHelper implements dbOperationImpl 
     private static final String DATABASE_NAME = "ThingsWapper";
     private static final String TABLE_NAME_USER_INFO = "user_info";
     private static final String TABLE_NAME_PERSONALIZED_SETTING = "personalized_setting";
+    private static final String TABLE_NAME_ToDoThings = "todothings";
     private static Context mContext;
     private static DatebaseHelper datebaseHelper;
 
@@ -50,6 +50,18 @@ public class DatebaseHelper extends SQLiteOpenHelper implements dbOperationImpl 
                 "isSynchronize boolean ," +
                 "isDefault boolean" +
                 ")");
+
+        sqLiteDatabase.execSQL("create table " + TABLE_NAME_ToDoThings + " (" +
+                "id integer primary key autoincrement, " +
+                "userId integer , " +
+                "reminderType integer ," +
+                "reminderTime integer ," +
+                "reminderContext boolean ," +
+                "Status integer," +
+                "isChange boolean " +
+                ")");
+
+
     }
 
     public DatebaseHelper(Context context) {
@@ -89,8 +101,9 @@ public class DatebaseHelper extends SQLiteOpenHelper implements dbOperationImpl 
 
     @Override
     public UserModel readUserInfo() {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         ArrayList<UserModel> userModels = new ArrayList<>();
-        Cursor cursor = getReadableDatabase().rawQuery("select * from user_info", new String[]{});
+        Cursor cursor = sqLiteDatabase.rawQuery("select * from user_info", new String[]{});
         while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndex("id"));
             String name = cursor.getString(cursor.getColumnIndex("name"));
@@ -109,7 +122,45 @@ public class DatebaseHelper extends SQLiteOpenHelper implements dbOperationImpl 
 
     @Override
     public boolean addToDoThing(ToDoThingModel toDoThingModel) {
-        return false;
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        try {
+            sqLiteDatabase.execSQL("insert into " + TABLE_NAME_ToDoThings +
+                            "(reminderContext,reminderTime,reminderType,Status,isChange,userId) " +
+                            "values " +
+                            "(?,?,?,?,?,?)",
+                    new Object[]{toDoThingModel.getReminderContext(), toDoThingModel.getReminderTime(), toDoThingModel.getReminderType(),
+                            toDoThingModel.getStatus(), toDoThingModel.isChange(), toDoThingModel.getUserId()});
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
+
+    @Override
+    public ArrayList<ToDoThingModel> readToBeDoneThings() {
+        ArrayList<ToDoThingModel> toBeDoneThings = new ArrayList<>();
+        Cursor cursor = getReadableDatabase().rawQuery("select * from todothings where status = " + Common.STATUS_TO_BE_DONE + "", new String[]{});
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndex("id"));
+            int userId = cursor.getInt(cursor.getColumnIndex("userId"));
+            int reminderType = cursor.getInt(cursor.getColumnIndex("reminderType"));
+            Date reminderTime = new Date(cursor.getLong(cursor.getColumnIndex("reminderTime")));
+            String reminderContext = cursor.getString(cursor.getColumnIndex("reminderContext"));
+            int Status = cursor.getInt(cursor.getColumnIndex("Status"));
+            boolean isChange = cursor.getInt(cursor.getColumnIndex("isChange")) > 0 ? true : false;
+            ToDoThingModel toDoThingModel = new ToDoThingModel(reminderContext, reminderTime, reminderType, Status);
+            toBeDoneThings.add(toDoThingModel);
+        }
+        cursor.close();
+        return toBeDoneThings;
+    }
+
+    @Override
+    public ArrayList<ToDoThingModel> readFinshThings() {
+        return null;
+    }
+
 
 }

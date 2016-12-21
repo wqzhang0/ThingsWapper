@@ -39,9 +39,14 @@ public class MainActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        UserModel userModel = new UserModel(1, "wqzhang", "bate1217", "Ag958868", "@163.com", new Date());
-        datebaseHelper.addUser(userModel);
-        datebaseHelper.readUserInfo();
 
+//        datebaseHelper.readUserInfo();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        datebaseHelper.readUserInfo();
     }
 }
