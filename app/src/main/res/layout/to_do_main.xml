@@ -36,6 +36,7 @@
             android:text="汇总" />
 
         <TextView
+            android:id="@+id/setting"
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

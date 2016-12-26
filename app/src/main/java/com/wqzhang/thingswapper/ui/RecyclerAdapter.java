@@ -76,7 +76,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
             ViewHolder viewHolder = (ViewHolder) holder;
             SlideContentView slideContentView = viewHolder.slide_content_view;
             TextView textView = (TextView) slideContentView.findViewById(R.id.tittle);
-            textView.setText(toDoThings.get(position ).getReminderContext());
+            textView.setText(toDoThings.get(position).getReminderContext());
+//            textView.setText(toDoThings.get(position - 1).getReminderContext());
             slideContentView.getmFinshImgBtn().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -96,12 +97,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
 
-        if (position == 0 && mHeaderView != null) {
-            return TYPE_HEADER;
-        }
-        if (position == getItemCount() - 1 && mFooterView != null) {
-            return TYPE_FOOTER;
-        }
+//        if (position == 0 && mHeaderView != null) {
+//            return TYPE_HEADER;
+//        }
+//        if (position == getItemCount() - 1 && mFooterView != null) {
+//            return TYPE_FOOTER;
+//        }
 
         return TYPE_NORMAL;
     }

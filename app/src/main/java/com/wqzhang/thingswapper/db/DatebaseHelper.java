@@ -140,9 +140,10 @@ public class DatebaseHelper extends SQLiteOpenHelper implements dbOperationImpl 
 
     @Override
     public ArrayList<ToDoThingModel> readToBeDoneThings() {
+        int i = 0;
         ArrayList<ToDoThingModel> toBeDoneThings = new ArrayList<>();
         Cursor cursor = getReadableDatabase().rawQuery("select * from todothings where status = " + Common.STATUS_TO_BE_DONE + "", new String[]{});
-        while (cursor.moveToNext()) {
+        while (cursor.moveToNext() && i < 5) {
             int id = cursor.getInt(cursor.getColumnIndex("id"));
             int userId = cursor.getInt(cursor.getColumnIndex("userId"));
             int reminderType = cursor.getInt(cursor.getColumnIndex("reminderType"));
@@ -152,6 +153,7 @@ public class DatebaseHelper extends SQLiteOpenHelper implements dbOperationImpl 
             boolean isChange = cursor.getInt(cursor.getColumnIndex("isChange")) > 0 ? true : false;
             ToDoThingModel toDoThingModel = new ToDoThingModel(reminderContext, reminderTime, reminderType, Status);
             toBeDoneThings.add(toDoThingModel);
+            i++;
         }
         cursor.close();
         return toBeDoneThings;

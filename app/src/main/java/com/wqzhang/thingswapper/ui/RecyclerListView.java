@@ -78,6 +78,10 @@ public class RecyclerListView extends android.support.v7.widget.RecyclerView {
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
+
+                RecyclerAdapter recyclerAdapter = (RecyclerAdapter) getAdapter();
+                recyclerAdapter.showFooterView();
+                recyclerAdapter.showHeaderView();
                 Log.d(TAG, "ActionMove");
 //                if (isBootom) {
 //                    this.setTranslationY(0 - 110);
@@ -87,6 +91,9 @@ public class RecyclerListView extends android.support.v7.widget.RecyclerView {
                 break;
         }
 
+        if (isBootom) {
+            event.setLocation(event.getX(), event.getY() / 2);
+        }
 //        if (slideContentView != null) {
 //            boolean isScroll = slideContentView.onRequeirTouchEvent(event);
 //            if (isScroll) {
@@ -100,11 +107,24 @@ public class RecyclerListView extends android.support.v7.widget.RecyclerView {
     }
 
     @Override
+    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+        Log.d("onScrolled", l + "|" + t + "|" + oldl + "|" + oldt);
+        super.onScrollChanged(l, t, oldl, oldt);
+    }
+
+    @Override
+    public void onScrollStateChanged(int state) {
+        Log.d("onScrolled", "state" + state);
+        super.onScrollStateChanged(state);
+    }
+
+    @Override
     public void onScrolled(int dx, int dy) {
         if (isBootom) {
             dy = dy / 8;
         }
-        super.onScrolled(dx, dy);
+//        super.onScrolled(0, 0);
+
 
         Log.d("onScrolled", "dy" + dy);
 
