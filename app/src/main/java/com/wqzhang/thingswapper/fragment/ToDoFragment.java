@@ -76,6 +76,8 @@ public class ToDoFragment extends Fragment {
         recyclerView.setAdapter(recyclerAdapter);
         recyclerView.scrollToPosition(1);
 
+//        view.setTranslationY(100);
+
 
 //        return super.onCreateView(inflater, container, savedInstanceState);
 //        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -87,5 +89,7 @@ public class ToDoFragment extends Fragment {
 
         return view;
     }
+
+
 
 }

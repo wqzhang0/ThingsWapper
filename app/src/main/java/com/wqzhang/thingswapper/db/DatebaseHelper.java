@@ -143,7 +143,7 @@ public class DatebaseHelper extends SQLiteOpenHelper implements dbOperationImpl 
         int i = 0;
         ArrayList<ToDoThingModel> toBeDoneThings = new ArrayList<>();
         Cursor cursor = getReadableDatabase().rawQuery("select * from todothings where status = " + Common.STATUS_TO_BE_DONE + "", new String[]{});
-        while (cursor.moveToNext() && i < 5) {
+        while (cursor.moveToNext() ) {
             int id = cursor.getInt(cursor.getColumnIndex("id"));
             int userId = cursor.getInt(cursor.getColumnIndex("userId"));
             int reminderType = cursor.getInt(cursor.getColumnIndex("reminderType"));

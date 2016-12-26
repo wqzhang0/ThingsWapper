@@ -2,12 +2,11 @@ package com.wqzhang.thingswapper.ui;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Scroller;
 
 import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
 
@@ -18,12 +17,20 @@ import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
 public class RecyclerListView extends android.support.v7.widget.RecyclerView {
     private String TAG = "RecyclerListView";
 
+    private Context mContext;
+    Scroller mScroller;
+
     SlideContentView slideContentView = null;
     static boolean isBootom = false;
+    static int slidePosition = -1;
+    private int HEAD = 0;
+    private int FOOT = 1;
 
 
     public RecyclerListView(Context context) {
         super(context);
+        mContext = context;
+        mScroller = new Scroller(context);
     }
 
     public RecyclerListView(Context context, @Nullable AttributeSet attrs) {
@@ -43,6 +50,7 @@ public class RecyclerListView extends android.support.v7.widget.RecyclerView {
 //    }
 
     int position = -1;
+    int lastY = 0;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -50,6 +58,7 @@ public class RecyclerListView extends android.support.v7.widget.RecyclerView {
         int X = 0, Y = 0;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                slidePosition = -1;
                 X = (int) event.getX();
                 Y = (int) event.getY();
                 Log.d(TAG, "X " + X + "Y" + Y);
@@ -86,7 +95,21 @@ public class RecyclerListView extends android.support.v7.widget.RecyclerView {
 //                if (isBootom) {
 //                    this.setTranslationY(0 - 110);
 //                }
+                if (slidePosition == FOOT) {
+                    Log.d("onScroll", String.valueOf(lastY - event.getRawY()));
+                    Log.d("onScroll", "getY" + String.valueOf(event.getRawY()));
+                    Log.d("onScroll", "getTranslationY" + String.valueOf(getTranslationY()));
+
+                    this.setTranslationY(-10 + getTranslationY());
+//                    this.setTranslationY(event.getRawY() - lastY + getTranslationY());
+//                    lastY = (int) event.getRawY();
+
+                    return true;
+                }
                 break;
+            case MotionEvent.ACTION_UP:
+                this.setTranslationY(0);
+
             default:
                 break;
         }
@@ -103,12 +126,13 @@ public class RecyclerListView extends android.support.v7.widget.RecyclerView {
 //            Log.d(TAG, "slideContentView == null");
 //        }
 
+
         return super.onTouchEvent(event);
     }
 
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
-        Log.d("onScrolled", l + "|" + t + "|" + oldl + "|" + oldt);
+//        Log.d("onScrolled", l + "|" + t + "|" + oldl + "|" + oldt);
         super.onScrollChanged(l, t, oldl, oldt);
     }
 
@@ -126,11 +150,12 @@ public class RecyclerListView extends android.support.v7.widget.RecyclerView {
 //        super.onScrolled(0, 0);
 
 
-        Log.d("onScrolled", "dy" + dy);
+//        Log.d("onScrolled", "dy" + dy);
 
         RecyclerAdapter recyclerAdapter = (RecyclerAdapter) getAdapter();
         if (!canScrollVertically(-1)) {
             Log.d("onScrolled", "滑动至顶部");
+            slidePosition = HEAD;
 //            recyclerAdapter.hiddenFooterView();
 //            recyclerAdapter.showHeaderView();
 
@@ -138,15 +163,16 @@ public class RecyclerListView extends android.support.v7.widget.RecyclerView {
 //                    onScrolledToTop();
         } else if (!canScrollVertically(1)) {
             Log.d("onScrolled", "滑动至底部");
+            slidePosition = FOOT;
 //            recyclerAdapter.showFooterView();
 //            recyclerAdapter.hiddenHeaderView();
 //            recyclerAdapter.notifyDataSetChanged();
 //                    onScrolledToBottom();
         } else if (dy < 0) {
-            Log.d("onScrolled", "下滑");
+//            Log.d("onScrolled", "下滑");
 //                    onScrolledUp();
         } else if (dy > 0) {
-            Log.d("onScrolled", "上滑");
+//            Log.d("onScrolled", "上滑");
 
             if (isBootom) ;
 //                    onScrolledDown();
