@@ -1,11 +1,13 @@
 package com.wqzhang.thingswapper.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Scroller;
 
 import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
@@ -18,27 +20,30 @@ public class RecyclerListView extends android.support.v7.widget.RecyclerView {
     private String TAG = "RecyclerListView";
 
     private Context mContext;
-    Scroller mScroller;
-
     SlideContentView slideContentView = null;
     static boolean isBootom = false;
     static int slidePosition = -1;
     private int HEAD = 0;
-    private int FOOT = 1;
+    private int HEADTHRESHOLD = 1;
+    private int FOOT = 2;
+    private int FOOTTHRESHOLD = 3;
+    private ImageView bottomImageView;
+    private ImageView topImageView;
 
 
     public RecyclerListView(Context context) {
         super(context);
-        mContext = context;
-        mScroller = new Scroller(context);
+        this.mContext = context;
     }
 
     public RecyclerListView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        this.mContext = context;
     }
 
     public RecyclerListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        this.mContext = context;
     }
 //
 //    @Override
@@ -96,20 +101,44 @@ public class RecyclerListView extends android.support.v7.widget.RecyclerView {
 //                    this.setTranslationY(0 - 110);
 //                }
                 if (slidePosition == FOOT) {
-                    Log.d("onScroll", String.valueOf(lastY - event.getRawY()));
-                    Log.d("onScroll", "getY" + String.valueOf(event.getRawY()));
-                    Log.d("onScroll", "getTranslationY" + String.valueOf(getTranslationY()));
-
-                    this.setTranslationY(-10 + getTranslationY());
-//                    this.setTranslationY(event.getRawY() - lastY + getTranslationY());
-//                    lastY = (int) event.getRawY();
-
+//                    Log.d("onScroll", String.valueOf(lastY - event.getRawY()));
+//                    Log.d("onScroll", "getY" + String.valueOf(event.getRawY()));
+//                    Log.d("onScroll", "thisTranslationY" + String.valueOf(event.getRawY() - lastY));
+                    bottomImageView.setVisibility(VISIBLE);
+                    if ((event.getRawY() - lastY) < 0) {
+                        if (getTranslationY() > -300 || (event.getRawY() - lastY) > -300 * 4) {
+                            this.setTranslationY((event.getRawY() - lastY) / 4);
+                        }
+                    } else {
+                        this.setTranslationY(0);
+                    }
+                    return true;
+                } else if (slidePosition == HEAD || slidePosition == HEADTHRESHOLD) {
+                    topImageView.setVisibility(VISIBLE);
+                    if ((event.getRawY() - lastY) > 0) {
+                        if (getTranslationY() < 300 || (event.getRawY() - lastY) < 300 * 4) {
+                            this.setTranslationY((event.getRawY() - lastY) / 4);
+                        }
+                    } else {
+                        this.setTranslationY(0);
+                    }
+                    if (getTranslationY() > 80) {
+                        slidePosition = HEADTHRESHOLD;
+                    } else {
+                        slidePosition = HEAD;
+                    }
                     return true;
                 }
+                lastY = (int) event.getRawY();
                 break;
             case MotionEvent.ACTION_UP:
                 this.setTranslationY(0);
-
+                bottomImageView.setVisibility(GONE);
+                topImageView.setVisibility(GONE);
+                if (slidePosition == HEADTHRESHOLD) {
+                    Intent intent = new Intent("com.wqzhang.thingswapper.activity.AddToDoThingActivity");
+                    mContext.startActivity(intent);
+                }
             default:
                 break;
         }
@@ -177,5 +206,13 @@ public class RecyclerListView extends android.support.v7.widget.RecyclerView {
             if (isBootom) ;
 //                    onScrolledDown();
         }
+    }
+
+    public void setBottomImageView(ImageView bottomImageView) {
+        this.bottomImageView = bottomImageView;
+    }
+
+    public void setTopImageView(ImageView topImageView) {
+        this.topImageView = topImageView;
     }
 }

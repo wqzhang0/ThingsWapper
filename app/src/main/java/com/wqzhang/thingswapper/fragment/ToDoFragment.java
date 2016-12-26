@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wqzhang.thingswapper.R;
@@ -18,6 +19,7 @@ import com.wqzhang.thingswapper.db.DatebaseHelper;
 import com.wqzhang.thingswapper.model.ToDoThingModel;
 import com.wqzhang.thingswapper.ui.DecorationTest;
 import com.wqzhang.thingswapper.ui.RecyclerAdapter;
+import com.wqzhang.thingswapper.ui.RecyclerListView;
 
 import java.util.ArrayList;
 
@@ -27,8 +29,11 @@ import java.util.ArrayList;
 
 public class ToDoFragment extends Fragment {
     private String TAG = "ToDoFragment";
-    private static RecyclerView recyclerView;
+    private static RecyclerListView recyclerView;
     private LinearLayoutManager mLayoutManager;
+
+    private ImageView bottomImageView ;
+    private ImageView topImageView ;
 //    private static SwipeRefreshLayout swipeRefresh;
 
 
@@ -70,7 +75,11 @@ public class ToDoFragment extends Fragment {
 
 //        swipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        recyclerView = (RecyclerListView) view.findViewById(R.id.recyclerView);
+        bottomImageView = (ImageView) view.findViewById(R.id.bottomImageView);
+        recyclerView.setBottomImageView(bottomImageView);
+        topImageView = (ImageView) view.findViewById(R.id.topImageView);
+        recyclerView.setTopImageView(topImageView);
 //        recyclerView.addItemDecoration(decorationTest);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(recyclerAdapter);

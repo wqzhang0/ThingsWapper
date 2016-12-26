@@ -3,10 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
     <ImageView
+        android:layout_marginTop="20dp"
+        android:id="@+id/topImageView"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:visibility="gone"
+        android:src="@drawable/add"/>
+    <ImageView
+        android:id="@+id/bottomImageView"
         android:layout_gravity="bottom"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:layout_height="100dp"
         android:src="@drawable/bottom"/>
 
