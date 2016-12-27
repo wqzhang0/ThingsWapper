@@ -1,116 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E0FFFF"
     android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/content"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#EAEAEA"
-        android:gravity="top|left"
-        android:inputType="textMultiLine"
-        android:minLines="5"
-        android:textSize="20dp" />
+        android:layout_height="match_parent"
+        android:background="#E0FFFF"
+        android:orientation="vertical">
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="提醒方式:" />
+            android:background="#E0FFce"
+            android:gravity="top|left"
+            android:inputType="textMultiLine"
+            android:minLines="5"
+            android:textSize="20dp" />
 
 
-        <FrameLayout
-            android:layout_width="1dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="4"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
-
-            <CheckBox
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left|center_vertical"
-                android:button="@drawable/check_alarm_style" />
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="提醒方式:" />
 
 
-            <CheckBox
+            <FrameLayout
+                android:layout_width="1dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="4"
+                android:orientation="horizontal">
+
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left|center_vertical"
+                    android:button="@drawable/check_alarm_style" />
+
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:button="@drawable/check_vibrant_style" />
+
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical"
+                    android:button="@drawable/check_email_style" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:button="@drawable/check_vibrant_style" />
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="提醒时间:" />
 
+            <TextView
+                android:id="@+id/reminder_date"
+                android:layout_width="1dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:gravity="center"
+                android:text="AM  11:32" />
 
-            <CheckBox
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right|center_vertical"
-                android:button="@drawable/check_email_style" />
-        </FrameLayout>
-    </LinearLayout>
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="提醒次数:" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+            <TextView
+                android:id="@+id/reminder_cal"
+                android:layout_width="1dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:gravity="center"
+                android:text="每天" />
+        </LinearLayout>
 
-        <TextView
+        <Button
+            android:id="@+id/submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="提醒时间:" />
-
-        <TextView
-            android:layout_width="1dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:gravity="center"
-            android:text="AM  11:32" />
+            android:text="add" />
 
     </LinearLayout>
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/reminder_cal_tottal_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_height="match_parent" >
 
-        <TextView
-            android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/reminde_cal_tottal_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.4"
+            android:background="#000000" />
+
+        <ListView
+            android:id="@+id/reminder_cal_choices"
+            android:layout_width="350dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="提醒次数:" />
+            android:background="@drawable/white_bg"
+            android:divider="@drawable/poi_list_divider_line"
+            android:layout_gravity="bottom|center_horizontal">
 
-        <TextView
-            android:layout_width="1dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:gravity="center"
-            android:text="每天" />
+        </ListView>
+    </FrameLayout>
 
-    </LinearLayout>
 
-    <Button
-        android:id="@+id/submit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="add" />
-
-</LinearLayout>
+</FrameLayout>

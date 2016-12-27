@@ -1,13 +1,9 @@
 package com.wqzhang.thingswapper.fragment;
 
 import android.app.Fragment;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +14,7 @@ import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.db.DatebaseHelper;
 import com.wqzhang.thingswapper.model.ToDoThingModel;
 import com.wqzhang.thingswapper.ui.DecorationTest;
-import com.wqzhang.thingswapper.ui.RecyclerAdapter;
+import com.wqzhang.thingswapper.adapter.RecyclerAdapter;
 import com.wqzhang.thingswapper.ui.RecyclerListView;
 
 import java.util.ArrayList;

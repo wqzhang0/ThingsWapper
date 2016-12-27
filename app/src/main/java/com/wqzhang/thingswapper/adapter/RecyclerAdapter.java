@@ -1,4 +1,4 @@
-package com.wqzhang.thingswapper.ui;
+package com.wqzhang.thingswapper.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.model.ToDoThingModel;
+import com.wqzhang.thingswapper.ui.RecyclerListView;
+import com.wqzhang.thingswapper.ui.SlideContentView;
 
 import java.util.ArrayList;
 

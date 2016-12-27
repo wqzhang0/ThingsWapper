@@ -8,7 +8,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Scroller;
+
+import com.wqzhang.thingswapper.adapter.RecyclerAdapter;
 
 import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
 
@@ -21,7 +22,7 @@ public class RecyclerListView extends android.support.v7.widget.RecyclerView {
 
     private Context mContext;
     SlideContentView slideContentView = null;
-    static boolean isBootom = false;
+    public static boolean isBootom = false;
     static int slidePosition = -1;
     private int HEAD = 0;
     private int HEADTHRESHOLD = 1;
