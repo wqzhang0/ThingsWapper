@@ -2,15 +2,13 @@ package com.wqzhang.thingswapper.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.wqzhang.thingswapper.R;
-import com.wqzhang.thingswapper.model.ToDoThingModel;
+import com.wqzhang.thingswapper.model.ToDoThing;
 import com.wqzhang.thingswapper.ui.RecyclerListView;
 import com.wqzhang.thingswapper.ui.SlideContentView;
 
@@ -30,7 +28,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
 
     private LayoutInflater inflater = null;
     private Context mContext = null;
-    private ArrayList<ToDoThingModel> toDoThings;
+    private ArrayList<ToDoThing> toDoThings;
 
     private View mHeaderView;
     private View mFooterView;
@@ -40,7 +38,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
         inflater = LayoutInflater.from(context);
     }
 
-    public void setData(ArrayList<ToDoThingModel> toDoThings) {
+    public void setData(ArrayList<ToDoThing> toDoThings) {
         this.toDoThings = toDoThings;
     }
 

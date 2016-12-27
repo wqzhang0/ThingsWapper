@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.db.DatebaseHelper;
-import com.wqzhang.thingswapper.model.ToDoThingModel;
+import com.wqzhang.thingswapper.model.ToDoThing;
 import com.wqzhang.thingswapper.ui.DecorationTest;
 import com.wqzhang.thingswapper.adapter.RecyclerAdapter;
 import com.wqzhang.thingswapper.ui.RecyclerListView;
@@ -38,7 +38,7 @@ public class ToDoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.to_do_fragment, container, false);
         RecyclerAdapter recyclerAdapter = new RecyclerAdapter(getActivity());
-        ArrayList<ToDoThingModel> toDoThings = DatebaseHelper.getInstance().readToBeDoneThings();
+        ArrayList<ToDoThing> toDoThings = DatebaseHelper.getInstance().readToBeDoneThings();
         recyclerAdapter.setData(toDoThings);
 //        线性布局
         mLayoutManager = new LinearLayoutManager(getActivity());

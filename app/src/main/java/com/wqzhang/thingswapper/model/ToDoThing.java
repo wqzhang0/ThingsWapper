@@ -1,7 +1,5 @@
 package com.wqzhang.thingswapper.model;
 
-import android.widget.Toast;
-
 import com.wqzhang.thingswapper.db.DatebaseHelper;
 import com.wqzhang.thingswapper.tools.Common;
 
@@ -9,39 +7,37 @@ import java.util.Date;
 
 /**
  * Created by wqzhang on 16-12-19.
+ * id      用户id	内容	            提醒方式	        创建时间	    状态	    是否同步
+ * id      userId	reminderContext	reminderType	createDate	Status	isSynchronize
  */
 
-public class ToDoThingModel {
+public class ToDoThing {
 
     private int id;
-    private String reminderContext;
-    private Date reminderTime;
-    private int reminderType;
-    private int Status = Common.STATUS_TO_BE_DONE;
-    private boolean isChange = true;
-
     private int userId;
+    private String reminderContext;
+    private int reminderType;
+    private Date createDate;
+    private int Status = Common.STATUS_TO_BE_DONE;
+    private boolean isSynchronize = true;
 
-    public ToDoThingModel() {
+
+    public ToDoThing() {
         UserModel userModel = DatebaseHelper.getInstance().readUserInfo();
         if (userModel == null) {
             userModel = new UserModel();
         }
         this.userId = userModel.getId();
+        this.createDate = new Date(System.currentTimeMillis());
     }
 
-    public ToDoThingModel(String reminderContext, Date reminderTime, int reminderType,int Status) {
-        UserModel userModel = DatebaseHelper.getInstance().readUserInfo();
-        if (userModel == null) {
-            userModel = new UserModel();
-        }
-        this.userId = userModel.getId();
+    public ToDoThing(String reminderContext, Date reminderTime, int reminderType, int Status) {
+        new ToDoThing();
 
         this.reminderContext = reminderContext;
         if (reminderContext == null) {
 //            reminderTime = userModel.getPersonalizedSetting().getReminderTime();
         }
-        this.reminderTime = reminderTime;
         if (reminderType == 0) {
 //            reminderType = userModel.getPersonalizedSetting().getReminderType();
         }
@@ -65,14 +61,6 @@ public class ToDoThingModel {
         this.reminderContext = reminderContext;
     }
 
-    public Date getReminderTime() {
-        return reminderTime;
-    }
-
-    public void setReminderTime(Date reminderTime) {
-        this.reminderTime = reminderTime;
-    }
-
     public int getReminderType() {
         return reminderType;
     }
@@ -90,11 +78,11 @@ public class ToDoThingModel {
     }
 
     public boolean isChange() {
-        return isChange;
+        return isSynchronize;
     }
 
     public void setChange(boolean change) {
-        isChange = change;
+        isSynchronize = change;
     }
 
     public int getUserId() {

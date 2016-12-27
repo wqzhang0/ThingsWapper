@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * Created by wqzhang on 16-12-27.
  */
 
-public class RemindCalAdapter implements ListAdapter {
+public class RemindCountAdapter implements ListAdapter {
 
     private Context mContext;
     private ArrayList<String> choicesData = new ArrayList<>();
@@ -31,7 +31,7 @@ public class RemindCalAdapter implements ListAdapter {
         this.choicesData = data;
     }
 
-    public RemindCalAdapter(Context context) {
+    public RemindCountAdapter(Context context) {
         this.mContext = context;
         inflater = LayoutInflater.from(context);
     }

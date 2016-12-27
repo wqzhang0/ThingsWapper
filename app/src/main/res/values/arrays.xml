@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="reminder_cal_choices">
+    <string-array name="reminder_count_choices">
         <item>今天</item>
         <item>明天</item>
         <item>每天</item>

@@ -6,6 +6,8 @@ import android.content.Context;
 import com.wqzhang.thingswapper.db.DatebaseHelper;
 import com.wqzhang.thingswapper.model.UserModel;
 
+import org.greenrobot.greendao.database.Database;
+
 import java.util.Date;
 
 /**
@@ -15,6 +17,8 @@ import java.util.Date;
 public class MainApplication extends Application {
     private static Context mContext;
 
+    public static final boolean ENCRYPTED = true;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -23,6 +27,11 @@ public class MainApplication extends Application {
 
         UserModel userModel = new UserModel(1, "wqzhang", "bate1217", "Ag958868", "@163.com", new Date());
         DatebaseHelper.getInstance().addUser(userModel);
+
+//        DevOpenHelper helper = new DevOpenHelper(this, ENCRYPTED ? "notes-db-encrypted" : "notes-db");
+//        Database db = ENCRYPTED ? helper.getEncryptedWritableDb("super-secret") : helper.getWritableDb();
+//        daoSession = new DaoMaster(db).newSession();
+
     }
 
     public static Context getGlobleContext() {

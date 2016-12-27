@@ -1,6 +1,6 @@
 package com.wqzhang.thingswapper.db;
 
-import com.wqzhang.thingswapper.model.ToDoThingModel;
+import com.wqzhang.thingswapper.model.ToDoThing;
 import com.wqzhang.thingswapper.model.UserModel;
 
 import java.util.ArrayList;
@@ -14,10 +14,10 @@ public interface dbOperationImpl {
 
     UserModel readUserInfo();
 
-    boolean addToDoThing(ToDoThingModel toDoThingModel);
+    boolean addToDoThing(ToDoThing toDoThing);
 
-    ArrayList<ToDoThingModel> readToBeDoneThings();
+    ArrayList<ToDoThing> readToBeDoneThings();
 
-    ArrayList<ToDoThingModel> readFinshThings();
+    ArrayList<ToDoThing> readFinshThings();
 
 }

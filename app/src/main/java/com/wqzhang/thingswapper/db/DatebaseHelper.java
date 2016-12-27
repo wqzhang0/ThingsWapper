@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.wqzhang.thingswapper.MainApplication;
-import com.wqzhang.thingswapper.model.ToDoThingModel;
+import com.wqzhang.thingswapper.model.ToDoThing;
 import com.wqzhang.thingswapper.model.UserModel;
 import com.wqzhang.thingswapper.tools.Common;
 
@@ -121,15 +121,15 @@ public class DatebaseHelper extends SQLiteOpenHelper implements dbOperationImpl 
     }
 
     @Override
-    public boolean addToDoThing(ToDoThingModel toDoThingModel) {
+    public boolean addToDoThing(ToDoThing toDoThing) {
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         try {
             sqLiteDatabase.execSQL("insert into " + TABLE_NAME_ToDoThings +
-                            "(reminderContext,reminderTime,reminderType,Status,isChange,userId) " +
+                            "(reminderContext,reminderType,Status,isChange,userId) " +
                             "values " +
-                            "(?,?,?,?,?,?)",
-                    new Object[]{toDoThingModel.getReminderContext(), toDoThingModel.getReminderTime(), toDoThingModel.getReminderType(),
-                            toDoThingModel.getStatus(), toDoThingModel.isChange(), toDoThingModel.getUserId()});
+                            "(?,?,?,?,?)",
+                    new Object[]{toDoThing.getReminderContext(),toDoThing.getReminderType(),
+                            toDoThing.getStatus(), toDoThing.isChange(), toDoThing.getUserId()});
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -139,9 +139,9 @@ public class DatebaseHelper extends SQLiteOpenHelper implements dbOperationImpl 
     }
 
     @Override
-    public ArrayList<ToDoThingModel> readToBeDoneThings() {
+    public ArrayList<ToDoThing> readToBeDoneThings() {
         int i = 0;
-        ArrayList<ToDoThingModel> toBeDoneThings = new ArrayList<>();
+        ArrayList<ToDoThing> toBeDoneThings = new ArrayList<>();
         Cursor cursor = getReadableDatabase().rawQuery("select * from todothings where status = " + Common.STATUS_TO_BE_DONE + "", new String[]{});
         while (cursor.moveToNext() ) {
             int id = cursor.getInt(cursor.getColumnIndex("id"));
@@ -151,8 +151,8 @@ public class DatebaseHelper extends SQLiteOpenHelper implements dbOperationImpl 
             String reminderContext = cursor.getString(cursor.getColumnIndex("reminderContext"));
             int Status = cursor.getInt(cursor.getColumnIndex("Status"));
             boolean isChange = cursor.getInt(cursor.getColumnIndex("isChange")) > 0 ? true : false;
-            ToDoThingModel toDoThingModel = new ToDoThingModel(reminderContext, reminderTime, reminderType, Status);
-            toBeDoneThings.add(toDoThingModel);
+            ToDoThing toDoThing = new ToDoThing(reminderContext, reminderTime, reminderType, Status);
+            toBeDoneThings.add(toDoThing);
             i++;
         }
         cursor.close();
@@ -160,7 +160,7 @@ public class DatebaseHelper extends SQLiteOpenHelper implements dbOperationImpl 
     }
 
     @Override
-    public ArrayList<ToDoThingModel> readFinshThings() {
+    public ArrayList<ToDoThing> readFinshThings() {
         return null;
     }
 
