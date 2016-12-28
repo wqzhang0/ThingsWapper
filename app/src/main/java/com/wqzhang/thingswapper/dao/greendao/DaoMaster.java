@@ -1,4 +1,4 @@
-package greendao;
+package com.wqzhang.thingswapper.dao.greendao;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

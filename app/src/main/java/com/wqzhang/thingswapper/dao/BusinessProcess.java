@@ -1,11 +1,6 @@
 package com.wqzhang.thingswapper.dao;
 
-import com.wqzhang.greendao.DaoSession;
-import com.wqzhang.greendao.NotificationDao;
-import com.wqzhang.greendao.ToDoThing;
-import com.wqzhang.greendao.ToDoThingDao;
-import com.wqzhang.greendao.User;
-import com.wqzhang.greendao.UserDao;
+import com.wqzhang.thingswapper.dao.greendao.*;
 
 import java.util.ArrayList;
 
@@ -39,18 +34,19 @@ public class BusinessProcess implements BusinessProcessImpl {
 
     }
 
+
     @Override
     public User readOrAddUserInfo() {
         return null;
     }
 
     @Override
-    public ArrayList<ToDoThing> readAllThings(User user) {
-        return null;
+    public void addToDoThing(ToDoThing toDoThing) {
+
     }
 
     @Override
-    public void addToDoThing(ToDoThing toDoThing) {
-
+    public ArrayList<ToDoThing> readAllThings(User user) {
+        return null;
     }
 }

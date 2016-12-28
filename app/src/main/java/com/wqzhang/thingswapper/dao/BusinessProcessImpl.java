@@ -1,7 +1,8 @@
 package com.wqzhang.thingswapper.dao;
 
-import com.wqzhang.greendao.ToDoThing;
-import com.wqzhang.greendao.User;
+
+import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
+import com.wqzhang.thingswapper.dao.greendao.User;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package greendao;
+package com.wqzhang.thingswapper.dao.greendao;
 
 import java.util.List;
 import java.util.ArrayList;
