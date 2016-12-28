@@ -2,6 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
+    android:background="#74b465"
     android:orientation="vertical">
     <ImageView
         android:layout_marginTop="20dp"
@@ -24,6 +26,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="20dp"
+        android:animationCache="false"
+        android:overScrollMode="never"
         android:orientation="vertical">
 
     </com.wqzhang.thingswapper.ui.RecyclerListView>

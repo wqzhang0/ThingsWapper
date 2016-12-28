@@ -3,11 +3,9 @@ package com.wqzhang.thingswapper;
 import android.app.Application;
 import android.content.Context;
 
-import com.wqzhang.greendao.DaoMaster;
-import com.wqzhang.greendao.DaoSession;
 import com.wqzhang.thingswapper.dao.BusinessProcess;
-import com.wqzhang.thingswapper.db.DatebaseHelper;
-import com.wqzhang.thingswapper.model.User_model;
+import com.wqzhang.thingswapper.dao.greendao.DaoMaster;
+import com.wqzhang.thingswapper.dao.greendao.DaoSession;
 
 
 import org.greenrobot.greendao.database.Database;
@@ -20,7 +18,7 @@ import java.util.Date;
 
 public class MainApplication extends Application {
     private static Context mContext;
-    private  static DaoSession daoSession;
+    private static DaoSession daoSession;
 
 
     @Override

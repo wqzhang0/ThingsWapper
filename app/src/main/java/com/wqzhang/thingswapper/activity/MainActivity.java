@@ -10,12 +10,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.wqzhang.greendao.User;
-import com.wqzhang.greendao.UserDao;
 import com.wqzhang.thingswapper.MainApplication;
 import com.wqzhang.thingswapper.R;
-import com.wqzhang.thingswapper.fragment.ToDoFragment;
+import com.wqzhang.thingswapper.dao.BusinessProcess;
+import com.wqzhang.thingswapper.dao.greendao.User;
+import com.wqzhang.thingswapper.dao.greendao.UserDao;
 import com.wqzhang.thingswapper.db.DatebaseHelper;
+import com.wqzhang.thingswapper.fragment.ToDoFragment;
 
 import org.greenrobot.greendao.query.Query;
 
@@ -38,8 +39,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         settingTextView.setOnClickListener(this);
 
         setDefaultFragment();
-
-        readOrAddUserInfo();
+        BusinessProcess.getInstance().readOrAddUserInfo();
 
     }
 
@@ -49,26 +49,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         Fragment f = new ToDoFragment();
         fragmentTransaction.replace(R.id.main_content, f);
         fragmentTransaction.commit();
-    }
-
-    private User readOrAddUserInfo() {
-        UserDao userDao = MainApplication.getDaoSession().getUserDao();
-
-        Query<User> userQuery = userDao.queryBuilder().build();
-
-        ArrayList<User> userArrayList = (ArrayList<User>) userQuery.list();
-
-        User user;
-        if (userArrayList.size() == 0) {
-            user = new User();
-            user.setCreateDate(new Date(System.currentTimeMillis()));
-            userDao.insert(user);
-        } else {
-            user = userArrayList.get(0);
-            Log.e("User_Info", user.toString());
-        }
-
-        return user;
     }
 
     @Override
