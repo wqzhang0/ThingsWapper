@@ -11,7 +11,7 @@ import java.util.Date;
  * id      userId	reminderContext	reminderType	createDate	Status	isSynchronize
  */
 
-public class ToDoThing {
+public class ToDoThing_model {
 
     private int id;
     private int userId;
@@ -22,17 +22,17 @@ public class ToDoThing {
     private boolean isSynchronize = true;
 
 
-    public ToDoThing() {
-        UserModel userModel = DatebaseHelper.getInstance().readUserInfo();
-        if (userModel == null) {
-            userModel = new UserModel();
+    public ToDoThing_model() {
+        User_model user = DatebaseHelper.getInstance().readUserInfo();
+        if (user == null) {
+            user = new User_model();
         }
-        this.userId = userModel.getId();
+        this.userId = user.getId();
         this.createDate = new Date(System.currentTimeMillis());
     }
 
-    public ToDoThing(String reminderContext, Date reminderTime, int reminderType, int Status) {
-        new ToDoThing();
+    public ToDoThing_model(String reminderContext, Date reminderTime, int reminderType, int Status) {
+        new ToDoThing_model();
 
         this.reminderContext = reminderContext;
         if (reminderContext == null) {

@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.adapter.RemindCountAdapter;
 import com.wqzhang.thingswapper.db.DatebaseHelper;
-import com.wqzhang.thingswapper.model.ToDoThing;
+import com.wqzhang.thingswapper.model.ToDoThing_model;
 import com.wqzhang.thingswapper.tools.Common;
 import com.wqzhang.thingswapper.ui.wheelView.LoopView;
 import com.wqzhang.thingswapper.ui.wheelView.OnItemSelectedListener;
@@ -104,7 +104,7 @@ public class AddToDoThingActivity extends Activity implements View.OnClickListen
                         reminderType += Common.REMINDER_TYPE_EMAIL;
                     }
 
-                    ToDoThing toDoThing = new ToDoThing();
+                    ToDoThing_model toDoThing = new ToDoThing_model();
                     toDoThing.setReminderContext(remindContent);
                     toDoThing.setReminderType(reminderType);
                     DatebaseHelper.getInstance().addToDoThing(toDoThing);

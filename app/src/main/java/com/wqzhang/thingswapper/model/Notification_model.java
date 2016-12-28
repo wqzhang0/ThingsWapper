@@ -9,7 +9,7 @@ import java.util.Date;
 
  */
 
-public class Notification {
+public class Notification_model {
     //id
     private int id;
     //用户id
@@ -30,5 +30,5 @@ public class Notification {
     //是否同步
     private boolean isSynchronize;
 
-    public Notification(){}
+    public Notification_model(){}
 }

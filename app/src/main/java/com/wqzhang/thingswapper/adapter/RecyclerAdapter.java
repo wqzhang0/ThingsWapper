@@ -7,8 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.wqzhang.greendao.ToDoThing;
 import com.wqzhang.thingswapper.R;
-import com.wqzhang.thingswapper.model.ToDoThing;
+import com.wqzhang.thingswapper.model.ToDoThing_model;
 import com.wqzhang.thingswapper.ui.RecyclerListView;
 import com.wqzhang.thingswapper.ui.SlideContentView;
 

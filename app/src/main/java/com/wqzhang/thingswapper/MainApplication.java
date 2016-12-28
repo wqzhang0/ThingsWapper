@@ -3,10 +3,13 @@ package com.wqzhang.thingswapper;
 import android.app.Application;
 import android.content.Context;
 
+import com.wqzhang.greendao.DaoMaster;
+import com.wqzhang.greendao.DaoSession;
 import com.wqzhang.thingswapper.db.DatebaseHelper;
-import com.wqzhang.thingswapper.model.UserModel;
+import com.wqzhang.thingswapper.model.User_model;
 
 
+import org.greenrobot.greendao.database.Database;
 
 import java.util.Date;
 
@@ -16,8 +19,8 @@ import java.util.Date;
 
 public class MainApplication extends Application {
     private static Context mContext;
+    private  static DaoSession daoSession;
 
-    public static final boolean ENCRYPTED = true;
 
     @Override
     public void onCreate() {
@@ -25,20 +28,25 @@ public class MainApplication extends Application {
         mContext = this.getApplicationContext();
         DatebaseHelper.getInstance();
 
-        UserModel userModel = new UserModel(1, "wqzhang", "bate1217", "Ag958868", "@163.com", new Date());
+        User_model user = new User_model(1, "wqzhang", "bate1217", "Ag958868", "@163.com", new Date());
 
 
-        DatebaseHelper.getInstance().addUser(userModel);
-
+        DatebaseHelper.getInstance().addUser(user);
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "ThingsWapper-db");
+        Database db = helper.getWritableDb();
+        daoSession = new DaoMaster(db).newSession();
 //        DevOpenHelper helper = new DevOpenHelper(this, "notes-db");
 //        Database db = helper.getWritableDb();
 //        daoSession = new DaoMaster(db).newSession();
-////        DevOpenHelper helper = new DevOpenHelper(this, ENCRYPTED ? "notes-db-encrypted" : "notes-db");
+//        DevOpenHelper helper = new DevOpenHelper(this, ENCRYPTED ? "notes-db-encrypted" : "notes-db");
 //        Database db = ENCRYPTED ? helper.getEncryptedWritableDb("super-secret") : helper.getWritableDb();
 //        daoSession = new DaoMaster(db).newSession();
 
 
+    }
 
+    public static DaoSession getDaoSession() {
+        return daoSession;
     }
 
     public static Context getGlobleContext() {

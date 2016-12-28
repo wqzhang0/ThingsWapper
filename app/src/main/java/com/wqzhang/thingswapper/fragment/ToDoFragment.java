@@ -10,12 +10,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.wqzhang.greendao.DaoSession;
+import com.wqzhang.greendao.ToDoThing;
+import com.wqzhang.greendao.ToDoThingDao;
+import com.wqzhang.thingswapper.MainApplication;
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.db.DatebaseHelper;
-import com.wqzhang.thingswapper.model.ToDoThing;
+import com.wqzhang.thingswapper.model.ToDoThing_model;
 import com.wqzhang.thingswapper.ui.DecorationTest;
 import com.wqzhang.thingswapper.adapter.RecyclerAdapter;
 import com.wqzhang.thingswapper.ui.RecyclerListView;
+
+import org.greenrobot.greendao.query.Query;
 
 import java.util.ArrayList;
 
@@ -28,8 +34,10 @@ public class ToDoFragment extends Fragment {
     private static RecyclerListView recyclerView;
     private LinearLayoutManager mLayoutManager;
 
-    private ImageView bottomImageView ;
-    private ImageView topImageView ;
+    private ImageView bottomImageView;
+    private ImageView topImageView;
+
+    private DaoSession daoSession;
 //    private static SwipeRefreshLayout swipeRefresh;
 
 
@@ -37,8 +45,12 @@ public class ToDoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.to_do_fragment, container, false);
+        daoSession = MainApplication.getDaoSession();
+
+        ToDoThingDao toDoThingDao = daoSession.getToDoThingDao();
+        Query<ToDoThing> todoThingQueue = (Query<ToDoThing>) toDoThingDao.queryBuilder().build();
+        ArrayList<ToDoThing> toDoThings = (ArrayList<ToDoThing>) todoThingQueue.list();
         RecyclerAdapter recyclerAdapter = new RecyclerAdapter(getActivity());
-        ArrayList<ToDoThing> toDoThings = DatebaseHelper.getInstance().readToBeDoneThings();
         recyclerAdapter.setData(toDoThings);
 //        线性布局
         mLayoutManager = new LinearLayoutManager(getActivity());
@@ -94,7 +106,6 @@ public class ToDoFragment extends Fragment {
 
         return view;
     }
-
 
 
 }

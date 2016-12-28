@@ -7,7 +7,7 @@ import java.util.Date;
  * 用户个性化设置
  */
 
-public class PersonalizedSetting {
+public class PersonalizedSetting_model {
     //震动1
     public final int REMINDER_TYPE_SHOCK = 1;
     //铃声2
