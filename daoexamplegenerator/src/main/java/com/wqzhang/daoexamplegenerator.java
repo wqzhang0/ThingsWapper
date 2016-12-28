@@ -10,7 +10,8 @@ import java.util.Date;
 
 public class daoexamplegenerator {
     public static void main(String[] args) throws Exception {
-        Schema schema = new Schema(1, "com.wqzhang.greendao");
+        Schema schema = new Schema(3, "com.wqzhang.greendao");
+        schema.enableKeepSectionsByDefault();
         initDatabase(schema);
         new DaoGenerator().generateAll(schema, "/home/wqzhang/GraduationProjectCode/ThingsWapper/app/src/main/java");
     }
@@ -40,7 +41,6 @@ public class daoexamplegenerator {
         toDoThing.addToOne(user, toDoThingPropertyUserId);
 
 
-
         Entity notification = schema.addEntity("Notification");
         Property notificatinoPropertyToDoThingId = notification.addLongProperty("toDoThingId").getProperty();
         Property notificatinoPropertyUserId = notification.addLongProperty("userId").getProperty();
@@ -59,12 +59,16 @@ public class daoexamplegenerator {
         Property notificationId = notification.addLongProperty("notificationId").notNull().getProperty();
 //        Property todoThingPropertyNotificationId = toDoThing.addLongProperty("notificationId").getProperty();
         //一对多
-        ToMany toDoThingToNotifition =toDoThing.addToMany(notification,notificationId);
+        ToMany toDoThingToNotifition = toDoThing.addToMany(notification, notificationId);
         toDoThingToNotifition.setName("norifications");
         //根据 notification 的ID 升序排列
         toDoThingToNotifition.orderAsc(notificationId);
 
 
+        //创建User对象 和 ToDoThing 的关系  1:N
+        ToMany userToToDoThing = user.addToMany(toDoThing, toDoThingPropertyUserId);
+
+        userToToDoThing.setName("toDoThings");
     }
 
 

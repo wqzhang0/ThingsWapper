@@ -31,6 +31,8 @@ public class UserDao extends AbstractDao<User, Long> {
         public final static Property IsSynchronize = new Property(6, Boolean.class, "isSynchronize", false, "IS_SYNCHRONIZE");
     }
 
+    private DaoSession daoSession;
+
 
     public UserDao(DaoConfig config) {
         super(config);
@@ -38,6 +40,7 @@ public class UserDao extends AbstractDao<User, Long> {
     
     public UserDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -137,6 +140,12 @@ public class UserDao extends AbstractDao<User, Long> {
         if (isSynchronize != null) {
             stmt.bindLong(7, isSynchronize ? 1L: 0L);
         }
+    }
+
+    @Override
+    protected final void attachEntity(User entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
     }
 
     @Override
