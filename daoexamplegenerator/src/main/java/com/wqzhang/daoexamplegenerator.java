@@ -6,14 +6,12 @@ import org.greenrobot.greendao.generator.Property;
 import org.greenrobot.greendao.generator.Schema;
 import org.greenrobot.greendao.generator.ToMany;
 
-import java.util.Date;
-
 public class daoexamplegenerator {
     public static void main(String[] args) throws Exception {
-        Schema schema = new Schema(4, "com.wqzhang.greendao");
+        Schema schema = new Schema(4, "greendao");
         schema.enableKeepSectionsByDefault();
         initDatabase(schema);
-        new DaoGenerator().generateAll(schema, "/home/wqzhang/GraduationProjectCode/ThingsWapper/app/src/main/java");
+        new DaoGenerator().generateAll(schema, "/home/wqzhang/GraduationProjectCode/ThingsWapper/app/src/main/java/com/wqzhang/thingswapper/dao");
     }
 
     private static void initDatabase(Schema schema) {

@@ -1,4 +1,4 @@
-package com.wqzhang.greendao;
+package greendao;
 
 import java.util.List;
 import java.util.ArrayList;

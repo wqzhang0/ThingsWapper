@@ -1,4 +1,4 @@
-package com.wqzhang.greendao;
+package greendao;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

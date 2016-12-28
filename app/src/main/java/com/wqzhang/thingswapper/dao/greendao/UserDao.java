@@ -1,4 +1,4 @@
-package com.wqzhang.greendao;
+package greendao;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
