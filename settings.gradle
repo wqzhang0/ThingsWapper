@@ -1,1 +1,1 @@
-include ':app', ':wheelView'
+include ':app', ':daoexamplegenerator'
