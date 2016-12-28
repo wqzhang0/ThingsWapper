@@ -57,15 +57,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
         Query<User> userQuery = userDao.queryBuilder().build();
 
         ArrayList<User> userArrayList = (ArrayList<User>) userQuery.list();
+
+        User user;
         if (userArrayList.size() == 0) {
-            User user = new User();
+            user = new User();
             user.setCreateDate(new Date(System.currentTimeMillis()));
             userDao.insert(user);
-        }else{
-            Log.e("User_Info",userArrayList.get(0).toString());
+        } else {
+            user = userArrayList.get(0);
+            Log.e("User_Info", user.toString());
         }
 
-        return userArrayList.get(0);
+        return user;
     }
 
     @Override

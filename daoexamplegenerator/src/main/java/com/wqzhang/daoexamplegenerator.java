@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class daoexamplegenerator {
     public static void main(String[] args) throws Exception {
-        Schema schema = new Schema(3, "com.wqzhang.greendao");
+        Schema schema = new Schema(4, "com.wqzhang.greendao");
         schema.enableKeepSectionsByDefault();
         initDatabase(schema);
         new DaoGenerator().generateAll(schema, "/home/wqzhang/GraduationProjectCode/ThingsWapper/app/src/main/java");
@@ -27,7 +27,6 @@ public class daoexamplegenerator {
         user.addStringProperty("email");
         user.addDateProperty("createDate");
         user.addBooleanProperty("isSynchronize");
-
         user.setJavaDoc("user Model ,保存用户基本信息");
 
         Entity toDoThing = schema.addEntity("ToDoThing");
@@ -37,17 +36,10 @@ public class daoexamplegenerator {
         toDoThing.addDateProperty("createDate");
         toDoThing.addIntProperty("Status");
         toDoThing.addBooleanProperty("isSynchronize");
-        Property toDoThingPropertyUserId = toDoThing.addLongProperty("userId").getProperty();
-        toDoThing.addToOne(user, toDoThingPropertyUserId);
-
 
         Entity notification = schema.addEntity("Notification");
-        Property notificatinoPropertyToDoThingId = notification.addLongProperty("toDoThingId").getProperty();
-        Property notificatinoPropertyUserId = notification.addLongProperty("userId").getProperty();
 
         notification.addIdProperty();
-        notification.addToOne(user, notificatinoPropertyUserId);
-        notification.addToOne(toDoThing, notificatinoPropertyToDoThingId);
         notification.addBooleanProperty("isNotify");
         notification.addDateProperty("reminderDate");
         notification.addIntProperty("remindFrequency");
@@ -56,20 +48,44 @@ public class daoexamplegenerator {
         notification.addDateProperty("endDate");
         notification.addBooleanProperty("isSynchronize");
 
-        Property notificationId = notification.addLongProperty("notificationId").notNull().getProperty();
-//        Property todoThingPropertyNotificationId = toDoThing.addLongProperty("notificationId").getProperty();
-        //一对多
-        ToMany toDoThingToNotifition = toDoThing.addToMany(notification, notificationId);
-        toDoThingToNotifition.setName("norifications");
-        //根据 notification 的ID 升序排列
-        toDoThingToNotifition.orderAsc(notificationId);
+        Entity connection_T_N = schema.addEntity("Connection_T_N");
+        connection_T_N.addIdProperty();
 
 
-        //创建User对象 和 ToDoThing 的关系  1:N
+        Property toDoThingPropertyUserId = toDoThing.addLongProperty("userId").getProperty();
+
+        //创建 User 和 ToDoThing 的 一对多关系  addToMany
         ToMany userToToDoThing = user.addToMany(toDoThing, toDoThingPropertyUserId);
-
         userToToDoThing.setName("toDoThings");
+        //创建 ToDoThing 和 User 的 多对一关系  addToOne
+        toDoThing.addToOne(user, toDoThingPropertyUserId);
+
+        /**
+         * 创建 ToDoThing 和 Notification 的 多对多关系
+         * 1 建立中间表 Connection_T_N
+         * 2 建立 ToDoThing 和 Connection_T_N 的 一对多关系
+         * 3 建立 Connection_T_N 和 ToDoThing 的 多对一关系
+         * 4 建立 Notification 和 Connection_T_N 的 一对多关系
+         * 5 建立 Connection_T_N 和 Notification 的 多对一关系
+         */
+
+
+        Property connection_T_Id = connection_T_N.addLongProperty("toDoThingId").getProperty();
+        Property connection_N_Id = connection_T_N.addLongProperty("notificationId").getProperty();
+
+        //2 建立 ToDoThing 和 Connection_T_N 的 一对多关系
+        ToMany toDoThingToCnn = toDoThing.addToMany(connection_T_N, connection_T_Id);
+        toDoThingToCnn.setName("notificationIds");
+
+        //3 建立 Connection_T_N 和 ToDoThing 的 多对一关系
+        connection_T_N.addToOne(toDoThing, connection_T_Id);
+
+        //4 建立 Notification 和 Connection_T_N 的 一对多关系
+        ToMany notificationToConn = notification.addToMany(connection_T_N, connection_N_Id);
+        notificationToConn.setName("toDoThingIds");
+
+        //5 建立 Connection_T_N 和 Notification 的 多对一关系
+        connection_T_N.addToOne(notification, connection_N_Id);
+
     }
-
-
 }

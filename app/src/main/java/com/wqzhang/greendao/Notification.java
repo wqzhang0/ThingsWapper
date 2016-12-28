@@ -2,6 +2,7 @@ package com.wqzhang.greendao;
 
 import org.greenrobot.greendao.annotation.*;
 
+import java.util.List;
 import com.wqzhang.greendao.DaoSession;
 import org.greenrobot.greendao.DaoException;
 
@@ -15,8 +16,6 @@ import org.greenrobot.greendao.DaoException;
  */
 @Entity(active = true)
 public class Notification {
-    private Long toDoThingId;
-    private Long userId;
 
     @Id
     private Long id;
@@ -27,7 +26,6 @@ public class Notification {
     private Integer remindCount;
     private java.util.Date endDate;
     private Boolean isSynchronize;
-    private long notificationId;
 
     /** Used to resolve relations */
     @Generated
@@ -37,17 +35,10 @@ public class Notification {
     @Generated
     private transient NotificationDao myDao;
 
-    @ToOne(joinProperty = "userId")
-    private User user;
-
-    @Generated
-    private transient Long user__resolvedKey;
-
-    @ToOne(joinProperty = "toDoThingId")
-    private ToDoThing toDoThing;
-
-    @Generated
-    private transient Long toDoThing__resolvedKey;
+    @ToMany(joinProperties = {
+        @JoinProperty(name = "id", referencedName = "notificationId")
+    })
+    private List<Connection_T_N> toDoThingIds;
 
     // KEEP FIELDS - put your custom fields here
     // KEEP FIELDS END
@@ -61,9 +52,7 @@ public class Notification {
     }
 
     @Generated
-    public Notification(Long toDoThingId, Long userId, Long id, Boolean isNotify, java.util.Date reminderDate, Integer remindFrequency, Integer remindFrequencyInterval, Integer remindCount, java.util.Date endDate, Boolean isSynchronize, long notificationId) {
-        this.toDoThingId = toDoThingId;
-        this.userId = userId;
+    public Notification(Long id, Boolean isNotify, java.util.Date reminderDate, Integer remindFrequency, Integer remindFrequencyInterval, Integer remindCount, java.util.Date endDate, Boolean isSynchronize) {
         this.id = id;
         this.isNotify = isNotify;
         this.reminderDate = reminderDate;
@@ -72,7 +61,6 @@ public class Notification {
         this.remindCount = remindCount;
         this.endDate = endDate;
         this.isSynchronize = isSynchronize;
-        this.notificationId = notificationId;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -80,22 +68,6 @@ public class Notification {
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getNotificationDao() : null;
-    }
-
-    public Long getToDoThingId() {
-        return toDoThingId;
-    }
-
-    public void setToDoThingId(Long toDoThingId) {
-        this.toDoThingId = toDoThingId;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 
     public Long getId() {
@@ -162,62 +134,26 @@ public class Notification {
         this.isSynchronize = isSynchronize;
     }
 
-    public long getNotificationId() {
-        return notificationId;
-    }
-
-    public void setNotificationId(long notificationId) {
-        this.notificationId = notificationId;
-    }
-
-    /** To-one relationship, resolved on first access. */
+    /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
     @Generated
-    public User getUser() {
-        Long __key = this.userId;
-        if (user__resolvedKey == null || !user__resolvedKey.equals(__key)) {
+    public List<Connection_T_N> getToDoThingIds() {
+        if (toDoThingIds == null) {
             __throwIfDetached();
-            UserDao targetDao = daoSession.getUserDao();
-            User userNew = targetDao.load(__key);
+            Connection_T_NDao targetDao = daoSession.getConnection_T_NDao();
+            List<Connection_T_N> toDoThingIdsNew = targetDao._queryNotification_ToDoThingIds(id);
             synchronized (this) {
-                user = userNew;
-            	user__resolvedKey = __key;
+                if(toDoThingIds == null) {
+                    toDoThingIds = toDoThingIdsNew;
+                }
             }
         }
-        return user;
+        return toDoThingIds;
     }
 
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
     @Generated
-    public void setUser(User user) {
-        synchronized (this) {
-            this.user = user;
-            userId = user == null ? null : user.getId();
-            user__resolvedKey = userId;
-        }
-    }
-
-    /** To-one relationship, resolved on first access. */
-    @Generated
-    public ToDoThing getToDoThing() {
-        Long __key = this.toDoThingId;
-        if (toDoThing__resolvedKey == null || !toDoThing__resolvedKey.equals(__key)) {
-            __throwIfDetached();
-            ToDoThingDao targetDao = daoSession.getToDoThingDao();
-            ToDoThing toDoThingNew = targetDao.load(__key);
-            synchronized (this) {
-                toDoThing = toDoThingNew;
-            	toDoThing__resolvedKey = __key;
-            }
-        }
-        return toDoThing;
-    }
-
-    @Generated
-    public void setToDoThing(ToDoThing toDoThing) {
-        synchronized (this) {
-            this.toDoThing = toDoThing;
-            toDoThingId = toDoThing == null ? null : toDoThing.getId();
-            toDoThing__resolvedKey = toDoThingId;
-        }
+    public synchronized void resetToDoThingIds() {
+        toDoThingIds = null;
     }
 
     /**

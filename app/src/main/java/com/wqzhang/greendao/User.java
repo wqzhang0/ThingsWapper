@@ -195,8 +195,12 @@ public class User {
                 ", email='" + email + '\'' +
                 ", createDate=" + createDate +
                 ", isSynchronize=" + isSynchronize +
+                ", daoSession=" + daoSession +
+                ", myDao=" + myDao +
+                ", toDoThings=" + toDoThings +
                 '}';
     }
+
     // KEEP METHODS END
 
 }

@@ -41,10 +41,9 @@ public class ToDoThing {
     private transient Long user__resolvedKey;
 
     @ToMany(joinProperties = {
-        @JoinProperty(name = "id", referencedName = "notificationId")
+        @JoinProperty(name = "id", referencedName = "toDoThingId")
     })
-    @OrderBy("notificationId ASC")
-    private List<Notification> norifications;
+    private List<Connection_T_N> notificationIds;
 
     // KEEP FIELDS - put your custom fields here
     // KEEP FIELDS END
@@ -158,24 +157,24 @@ public class ToDoThing {
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
     @Generated
-    public List<Notification> getNorifications() {
-        if (norifications == null) {
+    public List<Connection_T_N> getNotificationIds() {
+        if (notificationIds == null) {
             __throwIfDetached();
-            NotificationDao targetDao = daoSession.getNotificationDao();
-            List<Notification> norificationsNew = targetDao._queryToDoThing_Norifications(id);
+            Connection_T_NDao targetDao = daoSession.getConnection_T_NDao();
+            List<Connection_T_N> notificationIdsNew = targetDao._queryToDoThing_NotificationIds(id);
             synchronized (this) {
-                if(norifications == null) {
-                    norifications = norificationsNew;
+                if(notificationIds == null) {
+                    notificationIds = notificationIdsNew;
                 }
             }
         }
-        return norifications;
+        return notificationIds;
     }
 
     /** Resets a to-many relationship, making the next get call to query for a fresh result. */
     @Generated
-    public synchronized void resetNorifications() {
-        norifications = null;
+    public synchronized void resetNotificationIds() {
+        notificationIds = null;
     }
 
     /**
@@ -216,11 +215,6 @@ public class ToDoThing {
     }
 
     // KEEP METHODS - put your custom methods here
-
-    @Override
-    public String toString() {
-        return super.toString();
-    }
     // KEEP METHODS END
 
 }

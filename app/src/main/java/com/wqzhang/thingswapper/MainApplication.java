@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.wqzhang.greendao.DaoMaster;
 import com.wqzhang.greendao.DaoSession;
+import com.wqzhang.thingswapper.dao.BusinessProcess;
 import com.wqzhang.thingswapper.db.DatebaseHelper;
 import com.wqzhang.thingswapper.model.User_model;
 
@@ -26,15 +27,12 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = this.getApplicationContext();
-        DatebaseHelper.getInstance();
 
-        User_model user = new User_model(1, "wqzhang", "bate1217", "Ag958868", "@163.com", new Date());
-
-
-        DatebaseHelper.getInstance().addUser(user);
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "ThingsWapper-db");
         Database db = helper.getWritableDb();
         daoSession = new DaoMaster(db).newSession();
+
+        BusinessProcess.init(daoSession);
 //        DevOpenHelper helper = new DevOpenHelper(this, "notes-db");
 //        Database db = helper.getWritableDb();
 //        daoSession = new DaoMaster(db).newSession();
