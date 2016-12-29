@@ -124,7 +124,7 @@ public class User {
         this.isSynchronize = isSynchronize;
     }
 
-    /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
+    /** To-many relationship, resolved on first access (and after onScrolledReset). Changes to to-many relations are not persisted, make changes to the target entity. */
     @Generated
     public List<ToDoThing> getToDoThings() {
         if (toDoThings == null) {

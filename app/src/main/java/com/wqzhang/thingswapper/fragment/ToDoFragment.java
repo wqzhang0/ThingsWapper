@@ -1,9 +1,13 @@
 package com.wqzhang.thingswapper.fragment;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +20,7 @@ import com.wqzhang.thingswapper.dao.BusinessProcess;
 import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
 import com.wqzhang.thingswapper.listener.BottomLayoutOnScrolledListener;
 import com.wqzhang.thingswapper.listener.TopLayoutOnScrolledListener;
+import com.wqzhang.thingswapper.listener.impl.OnScrollingListenerImpl;
 import com.wqzhang.thingswapper.ui.SlidePullLinearLayout;
 import com.wqzhang.thingswapper.ui.TodoThingsRecyclerListView;
 
@@ -25,16 +30,20 @@ import java.util.ArrayList;
  * Created by wqzhang on 16-12-1.
  */
 
-public class ToDoFragment extends Fragment {
+public class ToDoFragment extends Fragment implements OnScrollingListenerImpl {
     private String TAG = "ToDoFragment";
     private static TodoThingsRecyclerListView recyclerView;
     private LinearLayoutManager mLayoutManager;
+    Scroller mScroller;
+    View view;
 
+
+    Handler handler;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.to_do_fragment, container, false);
+        view = inflater.inflate(R.layout.to_do_fragment, container, false);
 
         ArrayList<ToDoThing> toDoThings = BusinessProcess.getInstance().readAllThings();
         ToDoThingsRecyclerAdapter toDoThingsRecyclerAdapter = new ToDoThingsRecyclerAdapter(getActivity());
@@ -81,14 +90,13 @@ public class ToDoFragment extends Fragment {
         recyclerView.setAdapter(toDoThingsRecyclerAdapter);
 //        recyclerView.scrollToPosition(1);
 
-        toDoThingsRecyclerAdapter.setSetAllowPullStateListener(recyclerView);
+        toDoThingsRecyclerAdapter.setAllowPullStateListenerImpl(recyclerView);
 
 //        int touchSlop= ViewConfiguration.get(getActivity()).getScaledTouchSlop();
 
 
-        Scroller mScroller = new Scroller(view.getContext());
-        ((SlidePullLinearLayout)view).setScroller(mScroller);
-        mScroller.startScroll(0,0,0,-300,3000);
+        mScroller = new Scroller(view.getContext());
+        ((SlidePullLinearLayout) view).setScroller(mScroller);
 //        recyclerView.postInvalidate();
 
 //        view.setTranslationY(100);
@@ -112,17 +120,49 @@ public class ToDoFragment extends Fragment {
         BottomLayoutOnScrolledListener bottomLayoutOnScrolledListener = new BottomLayoutOnScrolledListener(bottomLinearLayout);
 
 
-
         recyclerView.addOnScrolledListener(topLayoutOnScrolledListener);
         recyclerView.addOnScrolledListener(bottomLayoutOnScrolledListener);
+
+        recyclerView.setOnScrollingListener(this);
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                switch (msg.what) {
+                    default:
+                        mScroller.startScroll(0, 0, 0, 500, 3000);
+                        view.postInvalidate();
+                }
+            }
+        };
         return view;
     }
 
-    private void binderOnScrolledListeners(){
 
+    @Override
+    public void scrollTo(int x, int y) {
+        view.scrollTo(x, y);
+    }
+
+    @Override
+    public void startScroll(int startX, int startY, int dx, int dy) {
 
     }
 
+    @Override
+    public void startScroll(int startX, int startY, int dx, int dy, int duration) {
+//        mScroller.startScroll(0,-600,0,600,800);
+//        view.setAlpha((float) 0.4);
+//        mScroller.startScroll(0,-1400,0,1400,800);
+//        view.scrollBy(0,1000);
+        mScroller.startScroll(startX, view.getScrollY(), dx, 0 - view.getScrollY(), 800);
+        view.postInvalidate();
+    }
 
-
+    @Override
+    public void onAttach(Activity activity) {
+        //当Fragment与Activity发生关联时调用
+        Log.d(TAG, "onAttach   activity");
+        super.onAttach(activity);
+    }
 }

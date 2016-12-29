@@ -10,7 +10,8 @@ import android.view.View;
 
 import com.wqzhang.thingswapper.adapter.ToDoThingsRecyclerAdapter;
 import com.wqzhang.thingswapper.listener.abs.OnScrolledListener;
-import com.wqzhang.thingswapper.listener.abs.SetAllowPullStateListener;
+import com.wqzhang.thingswapper.listener.impl.AllowPullStateListenerImpl;
+import com.wqzhang.thingswapper.listener.impl.OnScrollingListenerImpl;
 
 import java.util.ArrayList;
 
@@ -20,21 +21,25 @@ import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
  * Created by wqzhang on 16-11-30.
  */
 
-public class TodoThingsRecyclerListView extends android.support.v7.widget.RecyclerView implements SetAllowPullStateListener {
+public class TodoThingsRecyclerListView extends android.support.v7.widget.RecyclerView implements AllowPullStateListenerImpl {
     private String TAG = "RecyclerListView";
 
     private Context mContext;
     SlideContentView slideContentView = null;
 
+    private OnScrollingListenerImpl onScrollingListener;
+
     private static int scrolledState = -1;
-    public final static int PULL_UP = 0;
-    public final static int PULL_UP_COMPLETE = 1;
-    public final static int PULL_DOWN = 2;
-    public final static int PULL_DOWN_COMPLETE = 3;
+    public final static int PULL_UP = Integer.parseInt("000001", 2);
+    public final static int PULL_UP_COMPLETE = Integer.parseInt("000010", 2);
+    public final static int PULL_DOWN = Integer.parseInt("000100", 2);
+    public final static int PULL_DOWN_COMPLETE = Integer.parseInt("001000", 2);
+    public final static int RESET = Integer.parseInt("010000", 2);
+    public final static int DO_NOTHING = Integer.parseInt("100000", 2);
 
     private static boolean allowPull;
 
-    ArrayList<OnScrolledListener> onScrolledListeners;
+    ArrayList<OnScrolledListener> onScrolledListeners = new ArrayList<>();
 
     public TodoThingsRecyclerListView(Context context) {
         super(context);
@@ -88,67 +93,76 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                         }
                     }
                 }
+
+
+                lastY = (int) event.getRawY();
                 break;
             case MotionEvent.ACTION_MOVE:
 
-                ToDoThingsRecyclerAdapter toDoThingsRecyclerAdapter = (ToDoThingsRecyclerAdapter) getAdapter();
-
-                Log.d(TAG, "ActionMove");
-//                if (allowPull) {
-//                    this.setTranslationY(0 - 110);
-//                }
-                if (scrolledState == PULL_DOWN) {
-//                    Log.d("onScroll", String.valueOf(lastY - event.getRawY()));
-//                    Log.d("onScroll", "getY" + String.valueOf(event.getRawY()));
-//                    Log.d("onScroll", "thisTranslationY" + String.valueOf(event.getRawY() - lastY));
-
-                    if ((event.getRawY() - lastY) < 0) {
-                        if (getTranslationY() > -300 || (event.getRawY() - lastY) > -300 * 4) {
-                            this.setTranslationY((event.getRawY() - lastY) / 4);
-                        }
-                    } else {
-                        this.setTranslationY(0);
-                    }
-                    return true;
-                } else if (scrolledState == PULL_UP || scrolledState == PULL_UP_COMPLETE) {
-                    if ((event.getRawY() - lastY) > 0) {
-                        if (getTranslationY() < 300 || (event.getRawY() - lastY) < 300 * 4) {
-                            this.setTranslationY((event.getRawY() - lastY) / 4);
-                        }
-                    } else {
-                        this.setTranslationY(0);
-                    }
-                    if (getTranslationY() > 80) {
-                        scrolledState = PULL_UP_COMPLETE;
-                    } else {
+                if (allowPull) {
+                    int scrollValue = (int) (event.getRawY() - lastY);
+                    if (scrollValue < 0) {
                         scrolledState = PULL_UP;
+                    } else if (scrollValue > 0) {
+                        scrolledState = PULL_DOWN;
+                    } else {
+                        scrolledState = DO_NOTHING;
                     }
-                    return true;
+
+                    if (scrolledState == PULL_DOWN) {
+                        //可以下滑
+                        if (scrollValue <= 200) {
+                            onScrollingListener.scrollTo(0, -scrollValue);
+                        } else {
+                            onScrollingListener.scrollTo(0, -200);
+                        }
+                        if (scrollValue > 180) {
+                            OnScrolledToDownComplete();
+                            scrolledState = PULL_DOWN_COMPLETE;
+                        } else {
+                            OnScrolledToDown();
+                        }
+                        return true;
+                    } else if (scrolledState == PULL_UP) {
+                        //可以上滑
+                        if (scrollValue >= -200) {
+                            onScrollingListener.scrollTo(0, -scrollValue);
+                        } else {
+                            onScrollingListener.scrollTo(0, 200);
+                        }
+                        if (scrollValue > -180) {
+                            OnScrolledToUp();
+                        } else {
+                            OnScrolledToUpComplete();
+                            scrolledState = PULL_UP_COMPLETE;
+                        }
+                        return true;
+                    } else if (scrolledState == RESET) {
+
+                    } else if (scrolledState == DO_NOTHING) {
+
+                    }
+
                 }
                 lastY = (int) event.getRawY();
                 break;
             case MotionEvent.ACTION_UP:
-                this.setTranslationY(0);
+//                scrolledState = RESET;
                 if (scrolledState == PULL_UP_COMPLETE) {
+                    Log.d(TAG, "切换至下一页");
+
+
+                } else if (scrolledState == PULL_DOWN_COMPLETE) {
+
                     Intent intent = new Intent("com.wqzhang.thingswapper.activity.AddToDoThingActivity");
                     mContext.startActivity(intent);
                 }
+                onScrollingListener.startScroll(0, 0, 0, 0, 1000);
+                OnScrolledReset();
+
             default:
                 break;
         }
-
-        if (allowPull) {
-            event.setLocation(event.getX(), event.getY() / 2);
-        }
-//        if (slideContentView != null) {
-//            boolean isScroll = slideContentView.onRequeirTouchEvent(event);
-//            if (isScroll) {
-//                return true;
-//            }
-//        } else {
-//            Log.d(TAG, "slideContentView == null");
-//        }
-
 
         return super.onTouchEvent(event);
     }
@@ -168,39 +182,39 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
 
     @Override
     public void onScrolled(int dx, int dy) {
-        if (allowPull) {
-            dy = dy / 8;
-        }
-//        super.onScrolled(0, 0);
-
-
-//        Log.d("onScrolled", "dy" + dy);
-
-        ToDoThingsRecyclerAdapter toDoThingsRecyclerAdapter = (ToDoThingsRecyclerAdapter) getAdapter();
-        if (!canScrollVertically(-1)) {
-            Log.d("onScrolled", "滑动至顶部");
-            scrolledState = PULL_UP;
-//            recyclerAdapter.hiddenFooterView();
-//            recyclerAdapter.showHeaderView();
-
-//            recyclerAdapter.notifyDataSetChanged();
-//                    onScrolledToTop();
-        } else if (!canScrollVertically(1)) {
-            Log.d("onScrolled", "滑动至底部");
-            scrolledState = PULL_DOWN;
-//            recyclerAdapter.showFooterView();
-//            recyclerAdapter.hiddenHeaderView();
-//            recyclerAdapter.notifyDataSetChanged();
-//                    onScrolledToBottom();
-        } else if (dy < 0) {
-//            Log.d("onScrolled", "下滑");
-//                    onScrolledUp();
-        } else if (dy > 0) {
-//            Log.d("onScrolled", "上滑");
-
-            if (allowPull) ;
-//                    onScrolledDown();
-        }
+//        if (allowPull) {
+//            dy = dy / 8;
+//        }
+////        super.onScrolled(0, 0);
+//
+//
+////        Log.d("onScrolled", "dy" + dy);
+//
+//        ToDoThingsRecyclerAdapter toDoThingsRecyclerAdapter = (ToDoThingsRecyclerAdapter) getAdapter();
+//        if (!canScrollVertically(-1)) {
+//            Log.d("onScrolled", "滑动至顶部");
+//            scrolledState = PULL_UP;
+////            recyclerAdapter.hiddenFooterView();
+////            recyclerAdapter.showHeaderView();
+//
+////            recyclerAdapter.notifyDataSetChanged();
+////                    onScrolledToTop();
+//        } else if (!canScrollVertically(1)) {
+//            Log.d("onScrolled", "滑动至底部");
+//            scrolledState = PULL_DOWN;
+////            recyclerAdapter.showFooterView();
+////            recyclerAdapter.hiddenHeaderView();
+////            recyclerAdapter.notifyDataSetChanged();
+////                    onScrolledToBottom();
+//        } else if (dy < 0) {
+////            Log.d("onScrolled", "下滑");
+////                    onScrolledUp();
+//        } else if (dy > 0) {
+////            Log.d("onScrolled", "上滑");
+//
+//            if (allowPull) ;
+////                    onScrolledDown();
+//        }
     }
 
     public void addOnScrolledListener(OnScrolledListener onScrolledListener) {
@@ -216,9 +230,42 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
     }
 
 
-
     @Override
     public void setAllowPull(boolean allowPull) {
         this.allowPull = allowPull;
+    }
+
+    public void setOnScrollingListener(OnScrollingListenerImpl onScrollingListener) {
+        this.onScrollingListener = onScrollingListener;
+    }
+
+    private void OnScrolledToDown() {
+        for (OnScrolledListener onScrollListener : onScrolledListeners) {
+            onScrollListener.onScrolledToDown();
+        }
+    }
+
+    private void OnScrolledToUpComplete() {
+        for (OnScrolledListener onScrollListener : onScrolledListeners) {
+            onScrollListener.onScrolledToUpComplete();
+        }
+    }
+
+    private void OnScrolledToUp() {
+        for (OnScrolledListener onScrollListener : onScrolledListeners) {
+            onScrollListener.onScrolledToUp();
+        }
+    }
+
+    private void OnScrolledToDownComplete() {
+        for (OnScrolledListener onScrollListener : onScrolledListeners) {
+            onScrollListener.onScrolledToDownComplete();
+        }
+    }
+
+    private void OnScrolledReset() {
+        for (OnScrolledListener onScrollListener : onScrolledListeners) {
+            onScrollListener.onScrolledReset();
+        }
     }
 }

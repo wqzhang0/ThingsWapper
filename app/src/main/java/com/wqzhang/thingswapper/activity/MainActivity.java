@@ -6,6 +6,9 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -25,12 +28,18 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends FragmentActivity implements View.OnClickListener {
 
     private String TAG = "MainActivity";
     private DatebaseHelper datebaseHelper = null;
-    private TextView settingTextView,poolTextView;
+    private TextView settingTextView, poolTextView;
 
+    public Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,9 +58,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void setDefaultFragment() {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        Fragment f = new ToDoFragment();
-        fragmentTransaction.replace(R.id.main_content, f);
+        Fragment toDoFragment = new ToDoFragment();
+        fragmentTransaction.replace(R.id.main_content, toDoFragment);
         fragmentTransaction.commit();
+
     }
 
     @Override
@@ -84,4 +94,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 break;
         }
     }
+
+
 }

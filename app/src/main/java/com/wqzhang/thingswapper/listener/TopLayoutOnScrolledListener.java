@@ -1,7 +1,12 @@
 package com.wqzhang.thingswapper.listener;
 
+import android.media.Image;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.listener.abs.OnScrolledListener;
 
 /**
@@ -10,33 +15,46 @@ import com.wqzhang.thingswapper.listener.abs.OnScrolledListener;
 
 public class TopLayoutOnScrolledListener extends OnScrolledListener {
     LinearLayout layout;
+    TextView topTextView;
+    ImageView topImageView;
+
+    private final String text1 = "继续拖动将新增事件";
+    private final String text2 = "松开新增事件";
 
     public TopLayoutOnScrolledListener(LinearLayout layout) {
         this.layout = layout;
+        topTextView = (TextView) layout.findViewById(R.id.TopTextView);
+        topImageView = (ImageView) layout.findViewById(R.id.TopImageView);
     }
 
     @Override
-    public void onSrolledToUp() {
-        super.onSrolledToUp();
+    public void onScrolledToUp() {
+//        super.onScrolledToUp();
     }
 
     @Override
-    public void onSrolledToUpComplete() {
-        super.onSrolledToUpComplete();
+    public void onScrolledToUpComplete() {
+//        super.onScrolledToUpComplete();
     }
 
     @Override
-    public void onSrolledToDown() {
-        super.onSrolledToDown();
+    public void onScrolledToDown() {
+
+        layout.setVisibility(View.VISIBLE);
+        topTextView.setText(text1);
+//        super.onScrolledToDown();
     }
 
     @Override
-    public void onSrolledToDownComplete() {
-        super.onSrolledToDownComplete();
+    public void onScrolledToDownComplete() {
+//        super.onScrolledToDownComplete();
+        topTextView.setText(text2);
+
     }
 
     @Override
-    public void reset() {
-        super.reset();
+    public void onScrolledReset() {
+        layout.setVisibility(View.INVISIBLE);
+//        super.onScrolledReset();
     }
 }

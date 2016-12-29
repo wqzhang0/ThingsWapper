@@ -155,7 +155,7 @@ public class ToDoThing {
         }
     }
 
-    /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
+    /** To-many relationship, resolved on first access (and after onScrolledReset). Changes to to-many relations are not persisted, make changes to the target entity. */
     @Generated
     public List<Connection_T_N> getNotificationIds() {
         if (notificationIds == null) {

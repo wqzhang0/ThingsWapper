@@ -9,9 +9,8 @@ import android.widget.TextView;
 
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
-import com.wqzhang.thingswapper.listener.abs.SetAllowPullStateListener;
+import com.wqzhang.thingswapper.listener.impl.AllowPullStateListenerImpl;
 import com.wqzhang.thingswapper.ui.SlideContentView;
-import com.wqzhang.thingswapper.ui.TodoThingsRecyclerListView;
 
 import java.util.ArrayList;
 
@@ -30,15 +29,15 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
     private Context mContext = null;
     private ArrayList<ToDoThing> toDoThings;
 
-    SetAllowPullStateListener setAllowPullStateListener;
+    AllowPullStateListenerImpl allowPullStateListenerImpl;
 
     public ToDoThingsRecyclerAdapter(Context context) {
         mContext = context;
         inflater = LayoutInflater.from(context);
     }
 
-    public void setSetAllowPullStateListener(SetAllowPullStateListener changeScrolledState) {
-        this.setAllowPullStateListener = changeScrolledState;
+    public void setAllowPullStateListenerImpl(AllowPullStateListenerImpl changeScrolledState) {
+        this.allowPullStateListenerImpl = changeScrolledState;
     }
 
     public void setData(ArrayList<ToDoThing> toDoThings) {
@@ -85,7 +84,7 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        setAllowPullStateListener.setAllowPull(true);
+        allowPullStateListenerImpl.setAllowPull(true);
         return (toDoThings == null || toDoThings.size() == 0) ? 1 : toDoThings.size();
     }
 

@@ -13,19 +13,14 @@ package com.wqzhang.thingswapper.listener.abs;
 
 public abstract class OnScrolledListener {
 
-    public void onSrolledToUp() {
-    }
+    public abstract void onScrolledToUp();
 
-    public void onSrolledToUpComplete() {
-    }
+    public abstract void onScrolledToUpComplete();
 
-    public void onSrolledToDown() {
-    }
+    public abstract void onScrolledToDown();
 
-    public void onSrolledToDownComplete() {
-    }
+    public abstract void onScrolledToDownComplete();
 
-    public void reset() {
-    }
+    public abstract void onScrolledReset();
 }
 
