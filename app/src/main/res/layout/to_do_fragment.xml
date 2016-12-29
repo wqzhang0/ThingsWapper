@@ -1,42 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<com.wqzhang.thingswapper.ui.SlidePullLinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    android:background="#74b465"
-    android:orientation="vertical">
-    <ImageView
-        android:layout_marginTop="20dp"
-        android:id="@+id/topImageView"
-        android:layout_gravity="top|center_horizontal"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:visibility="gone"
-        android:src="@drawable/add"/>
-    <ImageView
-        android:id="@+id/bottomImageView"
-        android:layout_gravity="bottom"
+    <LinearLayout
+        android:id="@+id/topLinearLayout"
         android:layout_width="match_parent"
-        android:visibility="gone"
         android:layout_height="100dp"
-        android:src="@drawable/bottom"/>
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:visibility="gone">
 
-    <com.wqzhang.thingswapper.ui.RecyclerListView
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            android:src="@drawable/add" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="继续下拉增加事项" />
+    </LinearLayout>
+
+
+    <com.wqzhang.thingswapper.ui.TodoThingsRecyclerListView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="20dp"
-        android:animationCache="false"
-        android:overScrollMode="never"
-        android:orientation="vertical">
+        android:background="#74b465"
+        android:orientation="vertical"
+        android:overScrollMode="never">
 
-    </com.wqzhang.thingswapper.ui.RecyclerListView>
+    </com.wqzhang.thingswapper.ui.TodoThingsRecyclerListView>
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/bottomLinearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="代做事项" />
+        android:layout_height="100dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/bottomImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/horizontal_line" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="代做事项" />
+    </LinearLayout>
 
 
-</FrameLayout>
+</com.wqzhang.thingswapper.ui.SlidePullLinearLayout>

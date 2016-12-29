@@ -16,6 +16,7 @@ import com.wqzhang.thingswapper.dao.BusinessProcess;
 import com.wqzhang.thingswapper.dao.greendao.User;
 import com.wqzhang.thingswapper.dao.greendao.UserDao;
 import com.wqzhang.thingswapper.db.DatebaseHelper;
+import com.wqzhang.thingswapper.fragment.PoolFragment;
 import com.wqzhang.thingswapper.fragment.ToDoFragment;
 
 import org.greenrobot.greendao.query.Query;
@@ -28,7 +29,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private String TAG = "MainActivity";
     private DatebaseHelper datebaseHelper = null;
-    private TextView settingTextView;
+    private TextView settingTextView,poolTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.to_do_main);
 //        datebaseHelper = DatebaseHelper.getInstance();
         settingTextView = (TextView) findViewById(R.id.setting);
+        poolTextView = (TextView) findViewById(R.id.pool);
         settingTextView.setOnClickListener(this);
+        poolTextView.setOnClickListener(this);
 
         setDefaultFragment();
         BusinessProcess.getInstance().readOrAddUserInfo();
@@ -71,6 +74,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 Intent intent = new Intent("com.wqzhang.thingswapper.activity.AddToDoThingActivity");
                 startActivity(intent);
                 break;
+            case R.id.pool:
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                Fragment f = new PoolFragment();
+                fragmentTransaction.replace(R.id.main_content, f);
+                fragmentTransaction.commit();
             default:
                 break;
         }
