@@ -11,6 +11,7 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.wqzhang.thingswapper.R;
+import com.wqzhang.thingswapper.listener.impl.ShowMoreSet;
 
 import java.util.ArrayList;
 
@@ -25,6 +26,10 @@ public class RemindCountAdapter implements ListAdapter {
     private LayoutInflater inflater;
 
     private ChoicesHolder choicesHolder;
+
+    private AddToDoThingRecyclerAdapter addToDoThingRecyclerAdapter;
+
+    private ShowMoreSet showMoreSet;
 
 
     public void setChoicesData(ArrayList<String> data) {
@@ -77,7 +82,7 @@ public class RemindCountAdapter implements ListAdapter {
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
+    public View getView(final int i, View view, ViewGroup viewGroup) {
         if (view == null || choicesHolder == null) {
             choicesHolder = new ChoicesHolder();
             view = inflater.inflate(R.layout.reminder_cal_list_item, null);
@@ -87,6 +92,17 @@ public class RemindCountAdapter implements ListAdapter {
             choicesHolder = (ChoicesHolder) view.getTag();
         }
         choicesHolder.textView.setText(choicesData.get(i));
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (addToDoThingRecyclerAdapter != null) {
+                    addToDoThingRecyclerAdapter.saveOperationData(true, choicesData.get(i));
+                }
+                if(showMoreSet!=null){
+                    showMoreSet.showMoreSetFrameLayout(ShowMoreSet.ShowType.HIDE);
+                }
+            }
+        });
 
         return view;
     }
@@ -108,5 +124,13 @@ public class RemindCountAdapter implements ListAdapter {
 
     class ChoicesHolder {
         TextView textView;
+    }
+
+    public void setAddToDoThingRecyclerAdapter(AddToDoThingRecyclerAdapter addToDoThingRecyclerAdapter) {
+        this.addToDoThingRecyclerAdapter = addToDoThingRecyclerAdapter;
+    }
+
+    public void setShowMoreSet(ShowMoreSet showMoreSet) {
+        this.showMoreSet = showMoreSet;
     }
 }

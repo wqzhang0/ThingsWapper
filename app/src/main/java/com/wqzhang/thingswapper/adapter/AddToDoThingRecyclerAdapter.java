@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.listener.impl.ShowMoreSet;
@@ -70,8 +71,7 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                 return new DateChoiceHolder(view);
             case TYPE_NOTIFY_COUNT:
                 view = inflater.inflate(R.layout.add_to_do_thing_notify_count_choice_item, parent, false);
-
-                break;
+                return new NotifyCountHolder(view);
         }
         return new DefaultHolder(view);
     }
@@ -86,18 +86,19 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                 break;
             case TYPE_NOTIFY_TYPE:
 
+
                 break;
             case TYPE_NOTIFY_DATE:
                 final DateChoiceHolder dateChoiceHolder = (DateChoiceHolder) holder;
-                dateChoiceHolder.reminderDateSwitch = (Switch) itemView.findViewById(R.id.reminder_date_switch);
+                dateChoiceHolder.dateSwitch = (Switch) itemView.findViewById(R.id.reminder_date_switch);
 
-                dateChoiceHolder.linearLayout = (LinearLayout) itemView.findViewById(R.id.child_layout);
+                dateChoiceHolder.childLayout = (LinearLayout) itemView.findViewById(R.id.child_layout);
                 dateChoiceHolder.recyclerView = (RecyclerView) itemView.findViewById(R.id.child_recycler_view);
                 dateChoiceHolder.addDateBtn = (Button) itemView.findViewById(R.id.child_add_date_btn);
                 dateChoiceHolder.addDateBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        dateChoiceHolder.linearLayout.setVisibility(View.VISIBLE);
+                        dateChoiceHolder.childLayout.setVisibility(View.VISIBLE);
                         Animator startOpen = showChildView(dateChoiceHolder);
                         startOpen.start();
                         if (showMoreSet != null) {
@@ -107,12 +108,12 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                         preHolder = holder;
                     }
                 });
-                dateChoiceHolder.reminderDateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                dateChoiceHolder.dateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                         if (isChecked) {
                             //点击展开
-                            dateChoiceHolder.linearLayout.setVisibility(View.VISIBLE);
+                            dateChoiceHolder.childLayout.setVisibility(View.VISIBLE);
                             Animator startOpen = showChildView(dateChoiceHolder);
                             startOpen.start();
                             if (showMoreSet != null) {
@@ -121,8 +122,8 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                             currentOperation = OPERATION_CHOICE_DATE;
                         } else {
                             //点击折叠
-//                            dateChoiceHolder.linearLayout.setVisibility(View.GONE);
-                            Animator startHide = hideChildView(dateChoiceHolder, dateChoiceHolder.linearLayout);
+//                            dateChoiceHolder.childLayout.setVisibility(View.GONE);
+                            Animator startHide = hideChildView(dateChoiceHolder, dateChoiceHolder.childLayout);
                             startHide.start();
                         }
                         preHolder = holder;
@@ -133,8 +134,43 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                 dateChoiceHolder.recyclerView.setLayoutManager(linearLayoutManager);
                 notifyDateRecyclerAdapter = new NotifyDateRecyclerAdapter(mContext);
                 dateChoiceHolder.recyclerView.setAdapter(notifyDateRecyclerAdapter);
+                break;
             case TYPE_NOTIFY_COUNT:
+                final NotifyCountHolder notifyCountHolder = (NotifyCountHolder) holder;
+                notifyCountHolder.countSwitch = (Switch) itemView.findViewById(R.id.count_switch);
+                notifyCountHolder.childLayout = (LinearLayout) itemView.findViewById(R.id.child_layout);
+                notifyCountHolder.answerText = (TextView) itemView.findViewById(R.id.answer_text);
 
+                notifyCountHolder.answerText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (showMoreSet != null) {
+                            showMoreSet.showMoreSetFrameLayout(ShowMoreSet.ShowType.SHOW_COUNT);
+                            currentOperation = OPERATION_CHOICE_COUNT;
+                        }
+                    }
+                });
+                notifyCountHolder.countSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                        if (isChecked) {
+                            //点击展开
+                            notifyCountHolder.childLayout.setVisibility(View.VISIBLE);
+                            Animator startOpen = showChildView(notifyCountHolder);
+                            startOpen.start();
+                            if (showMoreSet != null && notifyCountHolder.answerText.getText().toString().equals("不重复")) {
+                                showMoreSet.showMoreSetFrameLayout(ShowMoreSet.ShowType.SHOW_COUNT);
+                            }
+                        } else {
+                            //点击折叠
+//                            dateChoiceHolder.childLayout.setVisibility(View.GONE);
+                            Animator startHide = hideChildView(notifyCountHolder, notifyCountHolder.childLayout);
+                            startHide.start();
+                        }
+                        currentOperation = OPERATION_CHOICE_COUNT;
+                        preHolder = holder;
+                    }
+                });
                 break;
         }
     }
@@ -146,7 +182,6 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-
         return position;
     }
 
@@ -165,8 +200,8 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
     }
 
     class DateChoiceHolder extends RecyclerView.ViewHolder {
-        Switch reminderDateSwitch;
-        LinearLayout linearLayout;
+        Switch dateSwitch;
+        LinearLayout childLayout;
         RecyclerView recyclerView;
         Button addDateBtn;
 
@@ -174,6 +209,16 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
             super(itemView);
         }
 
+    }
+
+    class NotifyCountHolder extends RecyclerView.ViewHolder {
+        Switch countSwitch;
+        TextView answerText;
+        LinearLayout childLayout;
+
+        public NotifyCountHolder(View itemView) {
+            super(itemView);
+        }
     }
 
 
@@ -215,14 +260,25 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                     startOpen.start();
 
                 } else {
-
+                    ArrayList<String> dateTmp = notifyDateRecyclerAdapter.getDateList();
+                    if (dateTmp.size() == 0) {
+                        DateChoiceHolder dateChoiceHolder = ((DateChoiceHolder) preHolder);
+                        Animator startHide = hideChildView(dateChoiceHolder, dateChoiceHolder.childLayout);
+                        startHide.start();
+                        dateChoiceHolder.dateSwitch.setChecked(false);
+                    }
                 }
                 break;
             case OPERATION_CHOICE_COUNT:
+                NotifyCountHolder notifyCountHolder = (NotifyCountHolder) preHolder;
                 if (isDetermine) {
-
+                    notifyCountHolder.answerText.setText((String) data);
                 } else {
-
+                    if (notifyCountHolder.answerText.getText().equals("不重复")) {
+                        Animator startHide = hideChildView(notifyCountHolder, notifyCountHolder.childLayout);
+                        startHide.start();
+                        notifyCountHolder.countSwitch.setChecked(false);
+                    }
                 }
                 break;
         }

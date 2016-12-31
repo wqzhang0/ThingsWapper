@@ -26,7 +26,7 @@ public class NotifyDateRecyclerAdapter extends RecyclerView.Adapter {
     public NotifyDateRecyclerAdapter(Context context) {
         mContext = context;
         inflater = LayoutInflater.from(context);
-        dateList.add("2016年12月30日15:11");
+//        dateList.add("2016年12月30日15:11");
     }
 
     @Override

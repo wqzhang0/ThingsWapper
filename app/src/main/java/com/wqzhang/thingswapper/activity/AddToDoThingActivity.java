@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -38,7 +37,6 @@ import java.util.Date;
 
 public class AddToDoThingActivity extends Activity implements View.OnClickListener, ShowMoreSet {
     EditText content;
-    Switch reminderCountSwitch, reminderDateSwitch;
     Button submitBtn, dateCancelBtn, dateSubmitBtn;
     FrameLayout reminderSettingLayout;
     ListView reminderCountChoicesListView;
@@ -58,8 +56,7 @@ public class AddToDoThingActivity extends Activity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_to_do_thing_main);
-//        content = (EditText) findViewById(R.id.content);
-//        submitBtn = (Button) findViewById(R.id.submit);
+        submitBtn = (Button) findViewById(R.id.submit);
 
         reminderSettingLayout = (FrameLayout) findViewById(R.id.setting_frame_layout);
         reminderCountChoicesListView = (ListView) findViewById(R.id.count_choices_list_view);
@@ -74,28 +71,11 @@ public class AddToDoThingActivity extends Activity implements View.OnClickListen
 //        emailCheckbox = (CheckBox) findViewById(R.id.email_checkbox);
 //        verticalCheckbox = (CheckBox) findViewById(R.id.vertical_checkbox);
 
-
-//        submitBtn.setOnClickListener(this);
-//        reminderCountSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-//                if (isChecked) {
-////                    reminderDateChoicesLinearLayout.setVisibility(View.GONE);
-//                    showSettingFrameLayout(ActionType.SHOW_COUNT);
-//                } else {
-//                    showSettingFrameLayout(ActionType.HIDE);
-//                }
-//
-//            }
-//        });
-//
-//        reminderDateChoicesLinearLayout.setOnClickListener(this);
         dateCancelBtn.setOnClickListener(this);
         dateSubmitBtn.setOnClickListener(this);
         reminderSettingLayout.setOnClickListener(this);
 //
 
-        init();
 
         RecyclerView addToDoThingRecyclerView = (RecyclerView) findViewById(R.id.add_thing_recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -106,6 +86,7 @@ public class AddToDoThingActivity extends Activity implements View.OnClickListen
         addToDoThingRecyclerAdapter.setShowMoreSet(this);
 
 
+        init();
     }
 
     @Override
@@ -138,34 +119,16 @@ public class AddToDoThingActivity extends Activity implements View.OnClickListen
                 startActivity(intent);
                 break;
 
-            case R.id.reminder_date_switch:
-                break;
-            case R.id.reminder_count_switch:
-//                Calendar calendar = Calendar.getInstance();
-//                Dialog dialog = new DatePickerDialog(AddToDoThingActivity.this, new DatePickerDialog.OnDateSetListener() {
-//                    @Override
-//                    public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-//
-//                        Log.d("year", "|" + year);
-//                        Log.d("month", "|" + month);
-//                        Log.d("day", "|" + dayOfMonth);
-//
-//                    }
-//                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-//                dialog.show();
-
-                break;
             case R.id.setting_frame_layout:
                 showMoreSetFrameLayout(ShowType.HIDE);
-                reminderSettingLayout.setVisibility(View.GONE);
+                addToDoThingRecyclerAdapter.saveOperationData(false, null);
                 break;
             case R.id.date_cancel_btn:
                 addToDoThingRecyclerAdapter.saveOperationData(false, null);
                 showMoreSetFrameLayout(ShowType.HIDE);
                 break;
             case R.id.date_submit_btn:
-
-                Date date = DateUtil.parseDate("2016年12月30日 "+newHourValue+" "+newMinuteValue, DateUtil.CHOICE_PATTERN);
+                Date date = DateUtil.parseDate("2016年12月30日 " + newHourValue + " " + newMinuteValue, DateUtil.CHOICE_PATTERN);
                 addToDoThingRecyclerAdapter.saveOperationData(true, date);
                 showMoreSetFrameLayout(ShowType.HIDE);
                 break;
@@ -204,7 +167,9 @@ public class AddToDoThingActivity extends Activity implements View.OnClickListen
             tmpList.add(a);
         }
         RemindCountAdapter remindCountAdapter = new RemindCountAdapter(this);
+        remindCountAdapter.setAddToDoThingRecyclerAdapter(addToDoThingRecyclerAdapter);
         remindCountAdapter.setChoicesData(tmpList);
+        remindCountAdapter.setShowMoreSet(this);
         reminderCountChoicesListView.setAdapter(remindCountAdapter);
 
         final ArrayList<String> hoursList = new ArrayList<>();
