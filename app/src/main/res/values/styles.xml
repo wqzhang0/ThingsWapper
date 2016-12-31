@@ -1,7 +1,19 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="AppTheme.base">
+
+    </style>
+
+    <style name="AppTheme2" parent="Theme.AppCompat.CompactMenu"></style>
+
+    <style name="AppTheme3" parent="Theme.AppCompat.Light.DarkActionBar">
+
+    </style>
+
+    <style name="AppTheme.base" parent="Theme.AppCompat.Light">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>

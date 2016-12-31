@@ -1,49 +1,36 @@
 package com.wqzhang.thingswapper.activity;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import com.wqzhang.thingswapper.MainApplication;
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.dao.BusinessProcess;
-import com.wqzhang.thingswapper.dao.greendao.User;
-import com.wqzhang.thingswapper.dao.greendao.UserDao;
 import com.wqzhang.thingswapper.db.DatebaseHelper;
 import com.wqzhang.thingswapper.fragment.PoolFragment;
 import com.wqzhang.thingswapper.fragment.ToDoFragment;
 
-import org.greenrobot.greendao.query.Query;
 
-import java.util.ArrayList;
-import java.util.Date;
-
-
-public class MainActivity extends FragmentActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private String TAG = "MainActivity";
     private DatebaseHelper datebaseHelper = null;
     private TextView settingTextView, poolTextView;
 
-    public Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-        }
-    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.to_do_main);
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
 //        datebaseHelper = DatebaseHelper.getInstance();
         settingTextView = (TextView) findViewById(R.id.setting);
         poolTextView = (TextView) findViewById(R.id.pool);

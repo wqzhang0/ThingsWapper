@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="#ffffff">
     <TextView
-        android:id="@+id/content"
+        android:id="@+id/remind_content"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:textColor="#d4237a"

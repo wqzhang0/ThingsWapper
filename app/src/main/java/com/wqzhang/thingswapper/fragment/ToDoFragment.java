@@ -43,7 +43,7 @@ public class ToDoFragment extends Fragment implements OnScrollingListenerImpl {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.to_do_fragment, container, false);
+        view = inflater.inflate(R.layout.show_all_reminders_fragment_main, container, false);
 
         ArrayList<ToDoThing> toDoThings = BusinessProcess.getInstance().readAllThings();
         ToDoThingsRecyclerAdapter toDoThingsRecyclerAdapter = new ToDoThingsRecyclerAdapter(getActivity());

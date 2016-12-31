@@ -1,12 +1,11 @@
 package com.wqzhang.thingswapper.activity;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,15 +14,11 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Switch;
 
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.adapter.AddToDoThingRecyclerAdapter;
 import com.wqzhang.thingswapper.adapter.RemindCountAdapter;
-import com.wqzhang.thingswapper.dao.BusinessProcess;
-import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
 import com.wqzhang.thingswapper.listener.impl.ShowMoreSet;
-import com.wqzhang.thingswapper.tools.Common;
 import com.wqzhang.thingswapper.tools.DateUtil;
 import com.wqzhang.thingswapper.ui.wheelView.LoopView;
 import com.wqzhang.thingswapper.ui.wheelView.OnItemSelectedListener;
@@ -35,9 +30,9 @@ import java.util.Date;
  * Created by wqzhang on 16-12-21.
  */
 
-public class AddToDoThingActivity extends Activity implements View.OnClickListener, ShowMoreSet {
+public class AddToDoThingActivity extends AppCompatActivity implements View.OnClickListener, ShowMoreSet {
     EditText content;
-    Button submitBtn, dateCancelBtn, dateSubmitBtn;
+    Button  dateCancelBtn, dateSubmitBtn;
     FrameLayout reminderSettingLayout;
     ListView reminderCountChoicesListView;
     LoopView reminderDateCalLoopView;
@@ -55,18 +50,19 @@ public class AddToDoThingActivity extends Activity implements View.OnClickListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.add_to_do_thing_main);
-        submitBtn = (Button) findViewById(R.id.submit);
+        setContentView(R.layout.add_reminder_main_layout);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        reminderSettingLayout = (FrameLayout) findViewById(R.id.setting_frame_layout);
-        reminderCountChoicesListView = (ListView) findViewById(R.id.count_choices_list_view);
+        reminderSettingLayout = (FrameLayout) findViewById(R.id.setting_layout);
+        reminderCountChoicesListView = (ListView) findViewById(R.id.count_choices);
         reminderDateCalLoopView = (LoopView) findViewById(R.id.cal_loop_view);
         reminderDateHourLoopView = (LoopView) findViewById(R.id.hour_loop_view);
         reminderDateMinuteLoopView = (LoopView) findViewById(R.id.minute_loop_view);
-        reminderDateChoicesLinearLayout = (LinearLayout) findViewById(R.id.date_choices_layout);
+        reminderDateChoicesLinearLayout = (LinearLayout) findViewById(R.id.date_choices);
 
-        dateCancelBtn = (Button) findViewById(R.id.date_cancel_btn);
-        dateSubmitBtn = (Button) findViewById(R.id.date_submit_btn);
+        dateCancelBtn = (Button) findViewById(R.id.date_choose_cancel);
+        dateSubmitBtn = (Button) findViewById(R.id.date_choose_submit);
 //        alarmCheckbox = (CheckBox) findViewById(R.id.alarm_checkbox);
 //        emailCheckbox = (CheckBox) findViewById(R.id.email_checkbox);
 //        verticalCheckbox = (CheckBox) findViewById(R.id.vertical_checkbox);
@@ -77,7 +73,7 @@ public class AddToDoThingActivity extends Activity implements View.OnClickListen
 //
 
 
-        RecyclerView addToDoThingRecyclerView = (RecyclerView) findViewById(R.id.add_thing_recycler_view);
+        RecyclerView addToDoThingRecyclerView = (RecyclerView) findViewById(R.id.fill_information_layout);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayout.VERTICAL);
         addToDoThingRecyclerView.setLayoutManager(linearLayoutManager);
@@ -93,41 +89,41 @@ public class AddToDoThingActivity extends Activity implements View.OnClickListen
     public void onClick(View view) {
         switch (view.getId()) {
 
-            case R.id.submit:
-                String remindContent = content.getText().toString();
-//                ArrayList<ToDoThingModel> a = DatebaseHelper.getInstance().readToBeDoneThings();
-                if (!TextUtils.isEmpty(remindContent)) {
-                    int reminderType = Common.REMINDER_TYPE_NONE;
 
-                    if (verticalCheckbox.isChecked()) {
-                        reminderType += Common.REMINDER_TYPE_VERTICAL;
-                    }
-                    if (alarmCheckbox.isChecked()) {
-                        reminderType += Common.REMINDER_TYPE_ALARM;
-                    }
-                    if (emailCheckbox.isChecked()) {
-                        reminderType += Common.REMINDER_TYPE_EMAIL;
-                    }
+//                String remindContent = content.getText().toString();
+////                ArrayList<ToDoThingModel> a = DatebaseHelper.getInstance().readToBeDoneThings();
+//                if (!TextUtils.isEmpty(remindContent)) {
+//                    int reminderType = Common.REMINDER_TYPE_NONE;
+//
+//                    if (verticalCheckbox.isChecked()) {
+//                        reminderType += Common.REMINDER_TYPE_VERTICAL;
+//                    }
+//                    if (alarmCheckbox.isChecked()) {
+//                        reminderType += Common.REMINDER_TYPE_ALARM;
+//                    }
+//                    if (emailCheckbox.isChecked()) {
+//                        reminderType += Common.REMINDER_TYPE_EMAIL;
+//                    }
+//
+//                    ToDoThing toDoThing = new ToDoThing();
+//                    toDoThing.setReminderContext(remindContent);
+//                    toDoThing.setReminderType(reminderType);
+//                    BusinessProcess.getInstance().addToDoThing(toDoThing);
+//
+//                }
+//                Intent intent = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
+//                startActivity(intent);
 
-                    ToDoThing toDoThing = new ToDoThing();
-                    toDoThing.setReminderContext(remindContent);
-                    toDoThing.setReminderType(reminderType);
-                    BusinessProcess.getInstance().addToDoThing(toDoThing);
 
-                }
-                Intent intent = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
-                startActivity(intent);
-                break;
-
-            case R.id.setting_frame_layout:
+            case R.id.setting_layout:
                 showMoreSetFrameLayout(ShowType.HIDE);
                 addToDoThingRecyclerAdapter.saveOperationData(false, null);
                 break;
-            case R.id.date_cancel_btn:
+            case R.id.date_choose_cancel:
                 addToDoThingRecyclerAdapter.saveOperationData(false, null);
                 showMoreSetFrameLayout(ShowType.HIDE);
                 break;
-            case R.id.date_submit_btn:
+            case R.id.date_choose_submit:
                 Date date = DateUtil.parseDate("2016年12月30日 " + newHourValue + " " + newMinuteValue, DateUtil.CHOICE_PATTERN);
                 addToDoThingRecyclerAdapter.saveOperationData(true, date);
                 showMoreSetFrameLayout(ShowType.HIDE);

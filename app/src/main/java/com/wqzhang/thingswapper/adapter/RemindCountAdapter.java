@@ -2,11 +2,9 @@ package com.wqzhang.thingswapper.adapter;
 
 import android.content.Context;
 import android.database.DataSetObserver;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -86,7 +84,7 @@ public class RemindCountAdapter implements ListAdapter {
         if (view == null || choicesHolder == null) {
             choicesHolder = new ChoicesHolder();
             view = inflater.inflate(R.layout.reminder_cal_list_item, null);
-            choicesHolder.textView = (TextView) view.findViewById(R.id.content);
+            choicesHolder.textView = (TextView) view.findViewById(R.id.remind_content);
             view.setTag(choicesHolder);
         } else {
             choicesHolder = (ChoicesHolder) view.getTag();

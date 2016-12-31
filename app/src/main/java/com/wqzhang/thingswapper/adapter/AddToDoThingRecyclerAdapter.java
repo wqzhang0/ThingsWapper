@@ -59,18 +59,18 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
         View view = null;
         switch (viewType) {
             case TYPE_EDIT:
-                view = inflater.inflate(R.layout.add_to_do_thing_content_item, parent, false);
+                view = inflater.inflate(R.layout.edit_nofity_content_item, parent, false);
 
                 break;
             case TYPE_NOTIFY_TYPE:
-                view = inflater.inflate(R.layout.add_to_do_thing_notify_type_choice_item, parent, false);
+                view = inflater.inflate(R.layout.choice_notify_type_item, parent, false);
 
                 break;
             case TYPE_NOTIFY_DATE:
-                view = inflater.inflate(R.layout.add_to_do_thing_notify_date_choice_item, parent, false);
+                view = inflater.inflate(R.layout.choice_notify_date_and_time_item, parent, false);
                 return new DateChoiceHolder(view);
             case TYPE_NOTIFY_COUNT:
-                view = inflater.inflate(R.layout.add_to_do_thing_notify_count_choice_item, parent, false);
+                view = inflater.inflate(R.layout.choice_notify_counts_item, parent, false);
                 return new NotifyCountHolder(view);
         }
         return new DefaultHolder(view);
@@ -90,11 +90,11 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                 break;
             case TYPE_NOTIFY_DATE:
                 final DateChoiceHolder dateChoiceHolder = (DateChoiceHolder) holder;
-                dateChoiceHolder.dateSwitch = (Switch) itemView.findViewById(R.id.reminder_date_switch);
+                dateChoiceHolder.dateSwitch = (Switch) itemView.findViewById(R.id.reminder_time_switch);
 
                 dateChoiceHolder.childLayout = (LinearLayout) itemView.findViewById(R.id.child_layout);
                 dateChoiceHolder.recyclerView = (RecyclerView) itemView.findViewById(R.id.child_recycler_view);
-                dateChoiceHolder.addDateBtn = (Button) itemView.findViewById(R.id.child_add_date_btn);
+                dateChoiceHolder.addDateBtn = (Button) itemView.findViewById(R.id.choose_notify_date_and_time);
                 dateChoiceHolder.addDateBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

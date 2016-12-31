@@ -81,7 +81,7 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
         mScroller = new Scroller(mContext);
 
         setOrientation(LinearLayout.HORIZONTAL);
-        View.inflate(mContext, R.layout.slide_view_merge, this);
+        View.inflate(mContext, R.layout.show_reminder_item_slide_view_merge, this);
         mContentView = (LinearLayout) findViewById(R.id.view_content);
         mLeftRelativeView = (RelativeLayout) findViewById(R.id.bottom_left);
         mRightRelativeView = (RelativeLayout) findViewById(R.id.bottom_right);

@@ -47,12 +47,12 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_EMPTY) {
-            View emptyView = inflater.inflate(R.layout.empty_layout, parent, false);
+            View emptyView = inflater.inflate(R.layout.empty_fullscreen_view, parent, false);
             EmptyViewHolder emptyViewHolder = new EmptyViewHolder(emptyView);
             return emptyViewHolder;
         } else {
             parent = new SlideContentView(mContext);
-            View view = inflater.inflate(R.layout.list_view_item, parent, false);
+            View view = inflater.inflate(R.layout.show_reminder_item, parent, false);
             SlideContentView slideContentView = new SlideContentView(mContext);
             slideContentView.setContentView(view);
 
