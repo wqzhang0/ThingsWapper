@@ -76,6 +76,9 @@ public class ShowThingsVu implements Vu {
             case PullFreshScrollingEvent.TYPE_START_SCROLL_WITH_DURATION:
                 mScroller.startScroll(event.getStartX(), event.getStartY(), event.getEndX(), event.getEndY(), event.getDuration());
                 break;
+            case PullFreshScrollingEvent.TYPE_CHANGE_VIEW:
+                mScroller.startScroll(0, -300, 0, 300, 600);
+                break;
 
         }
         view.postInvalidate();

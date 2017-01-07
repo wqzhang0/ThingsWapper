@@ -8,6 +8,7 @@ public class PullFreshScrollingEvent {
     public static final int TYPE_SCROLL_TO = 1;
     public static final int TYPE_START_SCROLL = 2;
     public static final int TYPE_START_SCROLL_WITH_DURATION = 3;
+    public static final int TYPE_CHANGE_VIEW = 4;
 
     private int type;
     private int startX;
@@ -17,6 +18,10 @@ public class PullFreshScrollingEvent {
     private int duration;
 
     private PullFreshScrollingEvent() {
+    }
+
+    public PullFreshScrollingEvent(int type) {
+        this.type = type;
     }
 
     public PullFreshScrollingEvent(int endX, int endY) {

@@ -114,14 +114,16 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                         scrolledState = DO_NOTHING;
                     }
 
-                    if (scrolledState == PULL_DOWN) {
+                    if (scrolledState == PULL_DOWN || scrolledState == PULL_DOWN_COMPLETE) {
                         //可以下滑
                         if (scrollValue <= 200) {
-                            bus.post(new PullFreshScrollingEvent(0,-scrollValue));
+                            bus.post(new PullFreshScrollingEvent(0, -scrollValue));
+                        } else if (scrollValue <= 1000) {
+                            bus.post(new PullFreshScrollingEvent(0, -scrollValue / 5 - 160));
                         } else {
-                            bus.post(new PullFreshScrollingEvent(0,-200));
+                            bus.post(new PullFreshScrollingEvent(0, -360));
                         }
-                        if (scrollValue > 180) {
+                        if (scrollValue > 200) {
                             OnScrolledToDownComplete();
                             scrolledState = PULL_DOWN_COMPLETE;
                         } else {
@@ -131,11 +133,13 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                     } else if (scrolledState == PULL_UP || scrolledState == PULL_UP_COMPLETE) {
                         //可以上滑
                         if (scrollValue >= -200) {
-                            bus.post(new PullFreshScrollingEvent(0,-scrollValue));
+                            bus.post(new PullFreshScrollingEvent(0, -scrollValue));
+                        } else if (scrollValue >= -1000) {
+                            bus.post(new PullFreshScrollingEvent(0, -scrollValue / 5 + 160));
                         } else {
-                            bus.post(new PullFreshScrollingEvent(0,200));
+                            bus.post(new PullFreshScrollingEvent(0, 360));
                         }
-                        if (scrollValue > -180) {
+                        if (scrollValue > -200) {
                             OnScrolledToUp();
                         } else {
                             OnScrolledToUpComplete();
@@ -149,78 +153,42 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                     }
 
                 }
+
                 lastY = (int) event.getRawY();
                 break;
             case MotionEvent.ACTION_UP:
 //                scrolledState = RESET;
-                if (scrolledState == PULL_UP_COMPLETE) {
+                if (scrolledState == PULL_UP_COMPLETE)
+
+                {
                     Log.d(TAG, "切换至下一页");
+                    bus.post(new PullFreshScrollingEvent(PullFreshScrollingEvent.TYPE_CHANGE_VIEW));
+//                    bus.post(new PullFreshScrollingEvent(0, 0, 0, 0, 1000));
+                } else if (scrolledState == PULL_DOWN_COMPLETE)
 
-
-                } else if (scrolledState == PULL_DOWN_COMPLETE) {
+                {
 
                     Intent intent = new Intent("com.wqzhang.thingswapper.activity.AddToDoThingActivity");
                     mContext.startActivity(intent);
+                    bus.post(new PullFreshScrollingEvent(0, 0, 0, 0));
+                } else
+
+                {
+                    bus.post(new PullFreshScrollingEvent(0, 0, 0, 0));
                 }
-                bus.post(new PullFreshScrollingEvent(0, 0, 0, 0, 1000));
+
                 OnScrolledReset();
 
             default:
                 break;
         }
 
-        return super.onTouchEvent(event);
+        return super.
+
+                onTouchEvent(event);
+
     }
 
-    @Override
-    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
-//        Log.d("onScrolled", l + "|" + t + "|" + oldl + "|" + oldt);
-        super.onScrollChanged(l, t, oldl, oldt);
-    }
-
-    @Override
-    public void onScrollStateChanged(int state) {
-        Log.d("onScrolled", "state" + state);
-        super.onScrollStateChanged(state);
-    }
-
-
-    @Override
-    public void onScrolled(int dx, int dy) {
-//        if (allowPull) {
-//            dy = dy / 8;
-//        }
-////        super.onScrolled(0, 0);
-//
-//
-////        Log.d("onScrolled", "dy" + dy);
-//
-//        ToDoThingsRecyclerAdapter toDoThingsRecyclerAdapter = (ToDoThingsRecyclerAdapter) getAdapter();
-//        if (!canScrollVertically(-1)) {
-//            Log.d("onScrolled", "滑动至顶部");
-//            scrolledState = PULL_UP;
-////            recyclerAdapter.hiddenFooterView();
-////            recyclerAdapter.showHeaderView();
-//
-////            recyclerAdapter.notifyDataSetChanged();
-////                    onScrolledToTop();
-//        } else if (!canScrollVertically(1)) {
-//            Log.d("onScrolled", "滑动至底部");
-//            scrolledState = PULL_DOWN;
-////            recyclerAdapter.showFooterView();
-////            recyclerAdapter.hiddenHeaderView();
-////            recyclerAdapter.notifyDataSetChanged();
-////                    onScrolledToBottom();
-//        } else if (dy < 0) {
-////            Log.d("onScrolled", "下滑");
-////                    onScrolledUp();
-//        } else if (dy > 0) {
-////            Log.d("onScrolled", "上滑");
-//
-//            if (allowPull) ;
-////                    onScrolledDown();
-//        }
-    }
 
     public void addOnScrolledListener(OnScrolledListener onScrolledListener) {
         if (onScrolledListeners == null) {
@@ -239,8 +207,6 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
     public void setAllowPull(boolean allowPull) {
         this.allowPull = allowPull;
     }
-
-
 
     private void OnScrolledToDown() {
         for (OnScrolledListener onScrollListener : onScrolledListeners) {
