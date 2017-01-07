@@ -1,11 +1,19 @@
 package com.wqzhang.thingswapper.activitys;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.dao.AddThingOperationXMLData;
+import com.wqzhang.thingswapper.dao.BusinessProcess;
 import com.wqzhang.thingswapper.dao.SharedPreferencesControl;
 import com.wqzhang.thingswapper.events.SaveChooseOperationEvent;
 import com.wqzhang.thingswapper.events.ShowMoreSetEvent;
@@ -36,7 +44,6 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(vu.getView());
         bus = EventBus.getDefault();
 
         bus.register(this);
@@ -51,6 +58,7 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
     @Override
     protected void onBind() {
         setSupportActionBar(vu.getToolBar());
+
 
         vu.getAddCancel().setOnClickListener(this);
         vu.getAddSubmit().setOnClickListener(this);
@@ -67,15 +75,64 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
         return AddThingVu.class;
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (isShouldHideInput(v, ev)) {
+
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+            return super.dispatchTouchEvent(ev);
+        }
+        // 必不可少，否则所有的组件都不会有TouchEvent了
+        if (getWindow().superDispatchTouchEvent(ev)) {
+            return true;
+        }
+
+        return onTouchEvent(ev);
+    }
+
+    public boolean isShouldHideInput(View v, MotionEvent event) {
+        if (v != null && (v instanceof EditText)) {
+            int[] leftTop = {0, 0};
+            //获取输入框当前的location位置
+            v.getLocationInWindow(leftTop);
+            int left = leftTop[0];
+            int top = leftTop[1];
+            int bottom = top + v.getHeight();
+            int right = left + v.getWidth();
+            if (event.getX() > left && event.getX() < right
+                    && event.getY() > top && event.getY() < bottom) {
+                // 点击的是输入框区域，保留点击EditText的事件
+                return false;
+            } else {
+                //使EditText触发一次失去焦点事件
+                v.setFocusable(false);
+//                v.setFocusable(true); //这里不需要是因为下面一句代码会同时实现这个功能
+                v.setFocusableInTouchMode(true);
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.add_cancel:
+                bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_CONTEXT, ((EditText) findViewById(R.id.remind_content)).getText().toString()));
                 Intent intent = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
                 startActivity(intent);
                 break;
             case R.id.add_submit:
+                bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_CONTEXT, ((EditText) findViewById(R.id.remind_content)).getText().toString()));
+                BusinessProcess.getInstance().addToDoThing(AddThingOperationXMLData.getInstall().getToDothing(),
+                        AddThingOperationXMLData.getInstall().getNotifycation());
+
                 AddThingOperationXMLData.getInstall().clearHistory();
 
                 Intent intent2 = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
@@ -85,16 +142,13 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
                 bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.HIDE));
                 bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE, new Date(), false));
                 bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_COUNTS, new Date(), false));
-//                addToDoThingRecyclerAdapter.saveOperationData(false, null);
                 break;
             case R.id.time_choose_cancel:
-//                addToDoThingRecyclerAdapter.saveOperationData(false, null);
                 bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE, new Date(), false));
                 bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.HIDE));
                 break;
             case R.id.time_choose_submit:
                 Date date = DateUtil.parseDate("2016年12月30日 " + newHourValue + " " + newMinuteValue, DateUtil.CHOICE_PATTERN);
-//                addToDoThingRecyclerAdapter.saveOperationData(true, date);
 
                 bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE, date, true));
                 bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.HIDE));
@@ -125,5 +179,6 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
                 break;
         }
     }
+
 
 }

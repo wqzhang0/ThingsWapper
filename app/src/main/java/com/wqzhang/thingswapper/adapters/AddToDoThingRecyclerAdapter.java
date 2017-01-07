@@ -107,6 +107,16 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                         return false;
                     }
                 });
+                editHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View view, boolean hasFocus) {
+                        if (hasFocus) {
+                            Log.d("editText", "获得焦点 ");
+                        } else {
+                            Log.d("editText", "失去焦点 ");
+                        }
+                    }
+                });
 
                 break;
             case TYPE_NOTIFY_TYPE:
@@ -264,6 +274,7 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
 
     /**
      * 设置历史数据
+     *
      * @param historyData
      */
     public void setDataAndFlushView(HistoryData historyData) {
@@ -329,6 +340,7 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
 
     /**
      * 方法用于 switch 被选择时的动画效果
+     *
      * @param parentHolder
      * @return
      */
@@ -358,6 +370,7 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
 
     /**
      * 根据操作的类型.保存各种数据
+     *
      * @param saveChooseOperationEvent
      */
     @Subscribe

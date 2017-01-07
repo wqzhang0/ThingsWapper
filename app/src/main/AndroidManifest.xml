@@ -27,7 +27,9 @@
         </activity>
 
 
-        <activity android:name=".activitys.AddToDoThingActivity">
+        <activity
+            android:name=".activitys.AddToDoThingActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
             <intent-filter>
                 <action android:name="com.wqzhang.thingswapper.activity.AddToDoThingActivity" />
                 <category android:name="android.intent.category.DEFAULT" />

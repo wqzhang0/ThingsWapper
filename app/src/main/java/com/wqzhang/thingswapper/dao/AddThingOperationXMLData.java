@@ -1,8 +1,11 @@
 package com.wqzhang.thingswapper.dao;
 
+import com.wqzhang.thingswapper.dao.greendao.Notification;
+import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
 import com.wqzhang.thingswapper.events.SaveChooseOperationEvent;
 import com.wqzhang.thingswapper.exceptions.CustomerException;
 import com.wqzhang.thingswapper.model.HistoryData;
+import com.wqzhang.thingswapper.tools.Common;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -88,6 +91,58 @@ public class AddThingOperationXMLData {
         sharedPreferencesControl.getEditor().clear().commit();
     }
 
+
+    /**
+     * 获取临时存储提醒时间的内容
+     *
+     * @return
+     */
+    public ToDoThing getToDothing() {
+        ToDoThing toDoThing = new ToDoThing();
+        toDoThing.setCreateDate(new Date());
+        toDoThing.setIsSynchronize(false);
+        toDoThing.setStatus(Common.STATUS_TO_BE_DONE);
+        toDoThing.setReminderContext(readContent());
+        toDoThing.setReminderType(readNotifyType());
+        return toDoThing;
+    }
+
+    /**
+     * 获取临时存储提醒时间的内容
+     *
+     * @return
+     */
+    public ArrayList<Notification> getNotifycation() {
+        ArrayList<Notification> notificationArrayList = new ArrayList<>();
+
+        ArrayList<Date> dates = readNotifyTime();
+        if (dates.size() != 0) {
+            Notification notification = new Notification();
+            notification.setIsNotify(false);
+            notification.setIsSynchronize(false);
+            notificationArrayList.add(notification);
+        } else if (dates.size() == 1) {
+            //只有一个时间
+            //现在版本 只有提醒时间  无其他
+            Notification notification = new Notification();
+            notification.setIsNotify(false);
+            notification.setIsSynchronize(false);
+            notification.setReminderDate(dates.get(0));
+
+            notificationArrayList.add(notification);
+
+        } else {
+            //多个时间提醒
+            for (Date _date : dates) {
+                Notification notification = new Notification();
+                notification.setIsNotify(false);
+                notification.setIsSynchronize(false);
+                notification.setReminderDate(_date);
+                notificationArrayList.add(notification);
+            }
+        }
+        return notificationArrayList;
+    }
 
     public String readContent() {
         return sharedPreferencesControl.getSharedPreferences().getString("NOTIFY_CONTENT", "");

@@ -34,6 +34,8 @@ public class MainApplication extends Application {
         SharedPreferencesControl.init(mContext);
 
         AddThingOperationXMLData.getInstall().init();
+
+
 //        DevOpenHelper helper = new DevOpenHelper(this, "notes-db");
 //        Database db = helper.getWritableDb();
 //        daoSession = new DaoMaster(db).newSession();

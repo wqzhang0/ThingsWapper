@@ -93,7 +93,6 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                     ViewHolder viewHolder = this.findViewHolderForAdapterPosition(position);
                     if (viewHolder != null) {
                         if (viewHolder instanceof ToDoThingsRecyclerAdapter.SlideViewHolder) {
-//                                viewHolder = (RecyclerAdapter.ViewHolder) this.findViewHolderForAdapterPosition(position);
                             slideContentView = ((ToDoThingsRecyclerAdapter.SlideViewHolder) viewHolder).slide_content_view;
                         }
                     }
@@ -147,45 +146,29 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                         }
                         return true;
                     } else if (scrolledState == RESET) {
-
                     } else if (scrolledState == DO_NOTHING) {
-
                     }
-
                 }
-
                 lastY = (int) event.getRawY();
                 break;
             case MotionEvent.ACTION_UP:
 //                scrolledState = RESET;
-                if (scrolledState == PULL_UP_COMPLETE)
-
-                {
+                if (scrolledState == PULL_UP_COMPLETE) {
                     Log.d(TAG, "切换至下一页");
                     bus.post(new PullFreshScrollingEvent(PullFreshScrollingEvent.TYPE_CHANGE_VIEW));
 //                    bus.post(new PullFreshScrollingEvent(0, 0, 0, 0, 1000));
-                } else if (scrolledState == PULL_DOWN_COMPLETE)
-
-                {
-
+                } else if (scrolledState == PULL_DOWN_COMPLETE) {
                     Intent intent = new Intent("com.wqzhang.thingswapper.activity.AddToDoThingActivity");
                     mContext.startActivity(intent);
                     bus.post(new PullFreshScrollingEvent(0, 0, 0, 0));
-                } else
-
-                {
+                } else {
                     bus.post(new PullFreshScrollingEvent(0, 0, 0, 0));
                 }
-
                 OnScrolledReset();
-
             default:
                 break;
         }
-
-        return super.
-
-                onTouchEvent(event);
+        return super.onTouchEvent(event);
 
     }
 

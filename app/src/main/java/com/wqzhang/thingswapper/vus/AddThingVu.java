@@ -31,6 +31,7 @@ import java.util.ArrayList;
 public class AddThingVu implements Vu {
     protected View view;
     TextView addCancel, addSubmit;
+    EditText reminderContent ;
     Button timeChooseCancel, timeChooseSubmit;
 
     FrameLayout reminderSettingLayout;
@@ -49,6 +50,8 @@ public class AddThingVu implements Vu {
     @Override
     public void init(LayoutInflater inflater, ViewGroup container) {
         view = inflater.inflate(R.layout.add_reminder_main_layout, container, false);
+
+
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         addCancel = (TextView) view.findViewById(R.id.add_cancel);
         addSubmit = (TextView) view.findViewById(R.id.add_submit);
@@ -62,10 +65,6 @@ public class AddThingVu implements Vu {
         timeChooseCancel = (Button) view.findViewById(R.id.time_choose_cancel);
         timeChooseSubmit = (Button) view.findViewById(R.id.time_choose_submit);
 
-
-//
-
-
         RecyclerView fillInformationLayout = (RecyclerView) view.findViewById(R.id.fill_information_layout);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(inflater.getContext());
         linearLayoutManager.setOrientation(LinearLayout.VERTICAL);
@@ -73,7 +72,6 @@ public class AddThingVu implements Vu {
 
         addToDoThingRecyclerAdapter = new AddToDoThingRecyclerAdapter(inflater.getContext());
         fillInformationLayout.setAdapter(addToDoThingRecyclerAdapter);
-
 
         Resources resources = inflater.getContext().getResources();
         String[] tmpStringNum = resources.getStringArray(R.array.reminder_count_choices);
@@ -136,6 +134,9 @@ public class AddThingVu implements Vu {
         reminderDateCalLoopView.setItems(calList);
         reminderDateMinuteLoopView.setTextSize(15);
         reminderDateMinuteLoopView.setInitPosition(0);
+
+
+
     }
 
     @Override
@@ -190,5 +191,9 @@ public class AddThingVu implements Vu {
 
     public TextView getAddCancel() {
         return addCancel;
+    }
+
+    public EditText getReminderContent() {
+        return reminderContent;
     }
 }

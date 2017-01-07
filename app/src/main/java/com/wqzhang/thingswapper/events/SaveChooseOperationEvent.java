@@ -28,6 +28,11 @@ public class SaveChooseOperationEvent {
         this.notifyType = notifyType;
     }
 
+    public SaveChooseOperationEvent(int type, String content) {
+        this.type = type;
+        this.content = content;
+    }
+
     public SaveChooseOperationEvent(int type, String notifityCounts, boolean isDetermine) {
         this.type = type;
         this.notifityCounts = notifityCounts;

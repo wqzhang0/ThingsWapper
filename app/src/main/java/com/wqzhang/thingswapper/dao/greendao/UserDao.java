@@ -29,6 +29,7 @@ public class UserDao extends AbstractDao<User, Long> {
         public final static Property Email = new Property(4, String.class, "email", false, "EMAIL");
         public final static Property CreateDate = new Property(5, java.util.Date.class, "createDate", false, "CREATE_DATE");
         public final static Property IsSynchronize = new Property(6, Boolean.class, "isSynchronize", false, "IS_SYNCHRONIZE");
+        public final static Property DefaultLoginAccount = new Property(7, Boolean.class, "defaultLoginAccount", false, "DEFAULT_LOGIN_ACCOUNT");
     }
 
     private DaoSession daoSession;
@@ -53,7 +54,8 @@ public class UserDao extends AbstractDao<User, Long> {
                 "\"PASSWORD\" TEXT," + // 3: password
                 "\"EMAIL\" TEXT," + // 4: email
                 "\"CREATE_DATE\" INTEGER," + // 5: createDate
-                "\"IS_SYNCHRONIZE\" INTEGER);"); // 6: isSynchronize
+                "\"IS_SYNCHRONIZE\" INTEGER," + // 6: isSynchronize
+                "\"DEFAULT_LOGIN_ACCOUNT\" INTEGER);"); // 7: defaultLoginAccount
     }
 
     /** Drops the underlying database table. */
@@ -100,6 +102,11 @@ public class UserDao extends AbstractDao<User, Long> {
         if (isSynchronize != null) {
             stmt.bindLong(7, isSynchronize ? 1L: 0L);
         }
+ 
+        Boolean defaultLoginAccount = entity.getDefaultLoginAccount();
+        if (defaultLoginAccount != null) {
+            stmt.bindLong(8, defaultLoginAccount ? 1L: 0L);
+        }
     }
 
     @Override
@@ -140,6 +147,11 @@ public class UserDao extends AbstractDao<User, Long> {
         if (isSynchronize != null) {
             stmt.bindLong(7, isSynchronize ? 1L: 0L);
         }
+ 
+        Boolean defaultLoginAccount = entity.getDefaultLoginAccount();
+        if (defaultLoginAccount != null) {
+            stmt.bindLong(8, defaultLoginAccount ? 1L: 0L);
+        }
     }
 
     @Override
@@ -162,7 +174,8 @@ public class UserDao extends AbstractDao<User, Long> {
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // password
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // email
             cursor.isNull(offset + 5) ? null : new java.util.Date(cursor.getLong(offset + 5)), // createDate
-            cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0 // isSynchronize
+            cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0, // isSynchronize
+            cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0 // defaultLoginAccount
         );
         return entity;
     }
@@ -176,6 +189,7 @@ public class UserDao extends AbstractDao<User, Long> {
         entity.setEmail(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setCreateDate(cursor.isNull(offset + 5) ? null : new java.util.Date(cursor.getLong(offset + 5)));
         entity.setIsSynchronize(cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0);
+        entity.setDefaultLoginAccount(cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0);
      }
     
     @Override

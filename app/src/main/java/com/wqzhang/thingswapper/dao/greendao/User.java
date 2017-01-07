@@ -25,6 +25,7 @@ public class User {
     private String email;
     private java.util.Date createDate;
     private Boolean isSynchronize;
+    private Boolean defaultLoginAccount;
 
     /** Used to resolve relations */
     @Generated
@@ -51,7 +52,7 @@ public class User {
     }
 
     @Generated
-    public User(Long id, String name, String account, String password, String email, java.util.Date createDate, Boolean isSynchronize) {
+    public User(Long id, String name, String account, String password, String email, java.util.Date createDate, Boolean isSynchronize, Boolean defaultLoginAccount) {
         this.id = id;
         this.name = name;
         this.account = account;
@@ -59,6 +60,7 @@ public class User {
         this.email = email;
         this.createDate = createDate;
         this.isSynchronize = isSynchronize;
+        this.defaultLoginAccount = defaultLoginAccount;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -124,7 +126,15 @@ public class User {
         this.isSynchronize = isSynchronize;
     }
 
-    /** To-many relationship, resolved on first access (and after onScrolledReset). Changes to to-many relations are not persisted, make changes to the target entity. */
+    public Boolean getDefaultLoginAccount() {
+        return defaultLoginAccount;
+    }
+
+    public void setDefaultLoginAccount(Boolean defaultLoginAccount) {
+        this.defaultLoginAccount = defaultLoginAccount;
+    }
+
+    /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
     @Generated
     public List<ToDoThing> getToDoThings() {
         if (toDoThings == null) {

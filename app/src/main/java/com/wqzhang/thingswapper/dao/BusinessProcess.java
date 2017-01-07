@@ -4,8 +4,10 @@ import android.util.Log;
 
 import com.wqzhang.thingswapper.MainApplication;
 import com.wqzhang.thingswapper.dao.greendao.*;
+import com.wqzhang.thingswapper.model.HistoryData;
 
 import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +23,7 @@ public class BusinessProcess implements BusinessProcessImpl {
     static ToDoThingDao toDoThingDao;
     static UserDao userDao;
     static NotificationDao notificationDao;
+    static Connection_T_NDao connection_t_nDao;
 
     public static BusinessProcess getInstance() {
         return businessProcess;
@@ -36,6 +39,9 @@ public class BusinessProcess implements BusinessProcessImpl {
             toDoThingDao = daoSession.getToDoThingDao();
             userDao = daoSession.getUserDao();
             notificationDao = daoSession.getNotificationDao();
+            connection_t_nDao = daoSession.getConnection_T_NDao();
+
+
         }
 
 
@@ -44,17 +50,19 @@ public class BusinessProcess implements BusinessProcessImpl {
 
     @Override
     public User readOrAddUserInfo() {
-        Query<User> userQuery = userDao.queryBuilder().build();
-        ArrayList<User> userArrayList = (ArrayList<User>) userQuery.list();
-
+        //查看数据库中是否有用户账户  如果没有 则新创建一个
+        QueryBuilder<User> userQueryBuilder = userDao.queryBuilder();
+        ArrayList<User> userArrayList = (ArrayList<User>) userQueryBuilder.list();
         User user;
         if (userArrayList.size() == 0) {
             user = new User();
-            user.setCreateDate(new Date(System.currentTimeMillis()));
+            user.setCreateDate(new Date());
+            user.setIsSynchronize(false);
+            user.setName("default");
+            user.setDefaultLoginAccount(true);
             userDao.insert(user);
         } else {
-            user = userArrayList.get(0);
-            Log.e("User_Info", user.toString());
+            user = userQueryBuilder.where(UserDao.Properties.DefaultLoginAccount.eq(true)).list().get(0);
         }
         return user;
     }
@@ -71,7 +79,7 @@ public class BusinessProcess implements BusinessProcessImpl {
 
     @Override
     public ArrayList<ToDoThing> readAllThings() {
-        Query<ToDoThing> todoThingQueue =  toDoThingDao.queryBuilder().build();
+        Query<ToDoThing> todoThingQueue = toDoThingDao.queryBuilder().build();
         ArrayList<ToDoThing> toDoThings = (ArrayList<ToDoThing>) todoThingQueue.list();
         return toDoThings;
     }
@@ -84,7 +92,22 @@ public class BusinessProcess implements BusinessProcessImpl {
 
     @Override
     public void addToDoThing(ToDoThing toDoThing, List<Notification> notificationList) {
+        ArrayList<Connection_T_N> connection_t_nArrayList = new ArrayList<>();
+        for (Notification notification : notificationList) {
+            Connection_T_N connection_t_n = new Connection_T_N();
 
+            toDoThing.setUser(readOrAddUserInfo());
+
+            toDoThingDao.insert(toDoThing);
+            connection_t_n.setToDoThing(toDoThing);
+
+            notificationDao.insert(notification);
+            connection_t_n.setNotification(notification);
+
+            connection_t_nArrayList.add(connection_t_n);
+        }
+
+        connection_t_nDao.insertInTx(connection_t_nArrayList);
     }
 
     @Override
