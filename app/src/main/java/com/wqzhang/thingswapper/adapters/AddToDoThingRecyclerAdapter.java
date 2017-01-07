@@ -1,24 +1,39 @@
-package com.wqzhang.thingswapper.adapter;
+package com.wqzhang.thingswapper.adapters;
 
 import android.animation.Animator;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.wqzhang.thingswapper.R;
-import com.wqzhang.thingswapper.listener.impl.ShowMoreSet;
+import com.wqzhang.thingswapper.dao.AddThingOperationXMLData;
+import com.wqzhang.thingswapper.events.SaveChooseOperationEvent;
+import com.wqzhang.thingswapper.events.ShowMoreSetEvent;
+import com.wqzhang.thingswapper.model.HistoryData;
+import com.wqzhang.thingswapper.tools.Common;
 import com.wqzhang.thingswapper.tools.DateUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Date;
+
+import static com.wqzhang.thingswapper.tools.Common.REMINDER_TYPE_ALARM;
+import static com.wqzhang.thingswapper.tools.Common.REMINDER_TYPE_EMAIL;
+import static com.wqzhang.thingswapper.tools.Common.REMINDER_TYPE_VERTICAL;
 
 /**
  * Created by wqzhang on 16-12-30.
@@ -37,21 +52,24 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
 
     private Context mContext;
     private LayoutInflater inflater;
-
-    private ShowMoreSet showMoreSet;
+    private EventBus bus;
 
     private RecyclerView.ViewHolder preHolder;
+
+    private HistoryData historyData;
 
     NotifyDateRecyclerAdapter notifyDateRecyclerAdapter;
     int[] date = new int[]{0, 1, 2, 3};
 
-    public AddToDoThingRecyclerAdapter() {
+    private AddToDoThingRecyclerAdapter() {
         super();
     }
 
     public AddToDoThingRecyclerAdapter(Context context) {
         this.mContext = context;
         inflater = LayoutInflater.from(context);
+        bus = EventBus.getDefault();
+        bus.register(this);
     }
 
     @Override
@@ -60,12 +78,10 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
         switch (viewType) {
             case TYPE_EDIT:
                 view = inflater.inflate(R.layout.edit_nofity_content_item, parent, false);
-
-                break;
+                return new EditHolder(view);
             case TYPE_NOTIFY_TYPE:
                 view = inflater.inflate(R.layout.choice_notify_type_item, parent, false);
-
-                break;
+                return new NotifyTypeHolder(view);
             case TYPE_NOTIFY_DATE:
                 view = inflater.inflate(R.layout.choice_notify_date_and_time_item, parent, false);
                 return new DateChoiceHolder(view);
@@ -73,37 +89,99 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                 view = inflater.inflate(R.layout.choice_notify_counts_item, parent, false);
                 return new NotifyCountHolder(view);
         }
-        return new DefaultHolder(view);
+        return null;
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-        final View itemView = holder.itemView;
-
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         switch (getItemViewType(position)) {
             case TYPE_EDIT:
+                final EditHolder editHolder = (EditHolder) holder;
+                if (historyData != null && historyData.getContent() != null) {
+                    editHolder.editText.setText(historyData.getContent());
+                }
+                editHolder.editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                        Log.d("onEditorAction Value", editHolder.editText.getText().toString());
+                        return false;
+                    }
+                });
 
                 break;
             case TYPE_NOTIFY_TYPE:
+                final NotifyTypeHolder notifyTypeHolder = (NotifyTypeHolder) holder;
+                int notifyType = 0;
+                if (historyData != null) {
+                    notifyType = historyData.getNotifyType();
 
+                }
+                if ((notifyType & Common.REMINDER_TYPE_ALARM) > 0) {
+                    notifyTypeHolder.alarmCheckbox.setChecked(true);
+                }
+                if ((notifyType & Common.REMINDER_TYPE_EMAIL) > 0) {
+                    notifyTypeHolder.emailCheckbox.setChecked(true);
+                }
+                if ((notifyType & Common.REMINDER_TYPE_VERTICAL) > 0) {
+                    notifyTypeHolder.verticalCheckbox.setChecked(true);
+                }
+                notifyTypeHolder.alarmCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                        if (isChecked) {
+                            bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTIFY_TYPE, REMINDER_TYPE_ALARM));
+                        } else {
+                            bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTIFY_TYPE, -REMINDER_TYPE_ALARM));
+                        }
+                    }
+                });
 
+                notifyTypeHolder.emailCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                        if (isChecked) {
+                            bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTIFY_TYPE, REMINDER_TYPE_EMAIL));
+                        } else {
+                            bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTIFY_TYPE, -REMINDER_TYPE_EMAIL));
+                        }
+                    }
+                });
+
+                notifyTypeHolder.verticalCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                        if (isChecked) {
+                            bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTIFY_TYPE, REMINDER_TYPE_VERTICAL));
+                        } else {
+                            bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTIFY_TYPE, -REMINDER_TYPE_VERTICAL));
+                        }
+                    }
+                });
                 break;
             case TYPE_NOTIFY_DATE:
                 final DateChoiceHolder dateChoiceHolder = (DateChoiceHolder) holder;
-                dateChoiceHolder.dateSwitch = (Switch) itemView.findViewById(R.id.reminder_time_switch);
 
-                dateChoiceHolder.childLayout = (LinearLayout) itemView.findViewById(R.id.child_layout);
-                dateChoiceHolder.recyclerView = (RecyclerView) itemView.findViewById(R.id.child_recycler_view);
-                dateChoiceHolder.addDateBtn = (Button) itemView.findViewById(R.id.choose_notify_date_and_time);
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
+                linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                dateChoiceHolder.recyclerView.setLayoutManager(linearLayoutManager);
+                notifyDateRecyclerAdapter = new NotifyDateRecyclerAdapter(mContext);
+
+                dateChoiceHolder.recyclerView.setAdapter(notifyDateRecyclerAdapter);
+                if (historyData != null) {
+                    if (historyData.getDates().size() != 0) {
+                        notifyDateRecyclerAdapter.setDateList(historyData.getDates());
+                        dateChoiceHolder.childLayout.setVisibility(View.VISIBLE);
+                        dateChoiceHolder.dateSwitch.setChecked(true);
+                    }
+                }
+
                 dateChoiceHolder.addDateBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         dateChoiceHolder.childLayout.setVisibility(View.VISIBLE);
                         Animator startOpen = showChildView(dateChoiceHolder);
                         startOpen.start();
-                        if (showMoreSet != null) {
-                            showMoreSet.showMoreSetFrameLayout(ShowMoreSet.ShowType.SHOW_DATE);
-                        }
+                        bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.SHOW_DATE));
                         currentOperation = OPERATION_CHOICE_DATE;
                         preHolder = holder;
                     }
@@ -116,9 +194,7 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                             dateChoiceHolder.childLayout.setVisibility(View.VISIBLE);
                             Animator startOpen = showChildView(dateChoiceHolder);
                             startOpen.start();
-                            if (showMoreSet != null) {
-                                showMoreSet.showMoreSetFrameLayout(ShowMoreSet.ShowType.SHOW_DATE);
-                            }
+                            bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.SHOW_DATE));
                             currentOperation = OPERATION_CHOICE_DATE;
                         } else {
                             //点击折叠
@@ -129,27 +205,28 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                         preHolder = holder;
                     }
                 });
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
-                linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                dateChoiceHolder.recyclerView.setLayoutManager(linearLayoutManager);
-                notifyDateRecyclerAdapter = new NotifyDateRecyclerAdapter(mContext);
-                dateChoiceHolder.recyclerView.setAdapter(notifyDateRecyclerAdapter);
+
                 break;
             case TYPE_NOTIFY_COUNT:
                 final NotifyCountHolder notifyCountHolder = (NotifyCountHolder) holder;
-                notifyCountHolder.countSwitch = (Switch) itemView.findViewById(R.id.count_switch);
-                notifyCountHolder.childLayout = (LinearLayout) itemView.findViewById(R.id.child_layout);
-                notifyCountHolder.answerText = (TextView) itemView.findViewById(R.id.answer_text);
 
+                //检验是否有上一次没操作完的数据  并展示
+                if (historyData != null && !historyData.getNotifyCounts().equals("不重复")) {
+                    String notifyCounts = historyData.getNotifyCounts();
+                    notifyCountHolder.countSwitch.setChecked(true);
+                    notifyCountHolder.answerText.setText(notifyCounts);
+                    notifyCountHolder.childLayout.setVisibility(View.VISIBLE);
+                }
+
+                //点击 展示 重复提醒设置 视图
                 notifyCountHolder.answerText.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (showMoreSet != null) {
-                            showMoreSet.showMoreSetFrameLayout(ShowMoreSet.ShowType.SHOW_COUNT);
-                            currentOperation = OPERATION_CHOICE_COUNT;
-                        }
+                        bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.SHOW_COUNT));
+                        currentOperation = OPERATION_CHOICE_COUNT;
                     }
                 });
+                //点击 switch 展开 重复提醒设置 视图 和子视图
                 notifyCountHolder.countSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
@@ -158,8 +235,8 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                             notifyCountHolder.childLayout.setVisibility(View.VISIBLE);
                             Animator startOpen = showChildView(notifyCountHolder);
                             startOpen.start();
-                            if (showMoreSet != null && notifyCountHolder.answerText.getText().toString().equals("不重复")) {
-                                showMoreSet.showMoreSetFrameLayout(ShowMoreSet.ShowType.SHOW_COUNT);
+                            if (notifyCountHolder.answerText.getText().toString().equals("不重复")) {
+                                bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.SHOW_COUNT));
                             }
                         } else {
                             //点击折叠
@@ -185,20 +262,40 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
         return position;
     }
 
+    /**
+     * 设置历史数据
+     * @param historyData
+     */
+    public void setDataAndFlushView(HistoryData historyData) {
+        this.historyData = historyData;
+        this.notifyDataSetChanged();
+    }
+
+    //提醒内容展示Holder
     class EditHolder extends RecyclerView.ViewHolder {
+        EditText editText;
 
         public EditHolder(View itemView) {
             super(itemView);
+            editText = (EditText) itemView.findViewById(R.id.remind_content);
         }
     }
 
-    class DefaultHolder extends RecyclerView.ViewHolder {
+    //提醒类型展示Holder
+    class NotifyTypeHolder extends RecyclerView.ViewHolder {
+        CheckBox alarmCheckbox;
+        CheckBox emailCheckbox;
+        CheckBox verticalCheckbox;
 
-        public DefaultHolder(View itemView) {
+        public NotifyTypeHolder(View itemView) {
             super(itemView);
+            alarmCheckbox = (CheckBox) itemView.findViewById(R.id.alarm_checkbox);
+            emailCheckbox = (CheckBox) itemView.findViewById(R.id.email_checkbox);
+            verticalCheckbox = (CheckBox) itemView.findViewById(R.id.vertical_checkbox);
         }
     }
 
+    //提醒时间展示holder
     class DateChoiceHolder extends RecyclerView.ViewHolder {
         Switch dateSwitch;
         LinearLayout childLayout;
@@ -207,10 +304,15 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
 
         public DateChoiceHolder(View itemView) {
             super(itemView);
+            dateSwitch = (Switch) itemView.findViewById(R.id.reminder_time_switch);
+            childLayout = (LinearLayout) itemView.findViewById(R.id.child_layout);
+            recyclerView = (RecyclerView) itemView.findViewById(R.id.child_recycler_view);
+            addDateBtn = (Button) itemView.findViewById(R.id.choose_notify_date_and_time);
         }
 
     }
 
+    //提醒次数holder 类型
     class NotifyCountHolder extends RecyclerView.ViewHolder {
         Switch countSwitch;
         TextView answerText;
@@ -218,10 +320,18 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
 
         public NotifyCountHolder(View itemView) {
             super(itemView);
+            countSwitch = (Switch) itemView.findViewById(R.id.count_switch);
+            childLayout = (LinearLayout) itemView.findViewById(R.id.child_layout);
+            answerText = (TextView) itemView.findViewById(R.id.answer_text);
         }
     }
 
 
+    /**
+     * 方法用于 switch 被选择时的动画效果
+     * @param parentHolder
+     * @return
+     */
     public static Animator showChildView(RecyclerView.ViewHolder parentHolder) {
         View parent = (View) parentHolder.itemView.getParent();
         if (parent == null)
@@ -246,21 +356,24 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
         return animator;
     }
 
-
-    public void saveOperationData(boolean isDetermine, Object data) {
+    /**
+     * 根据操作的类型.保存各种数据
+     * @param saveChooseOperationEvent
+     */
+    @Subscribe
+    public void save(SaveChooseOperationEvent saveChooseOperationEvent) {
         switch (currentOperation) {
             case OPERATION_CHOICE_DATE:
-                if (isDetermine) {
+                if (saveChooseOperationEvent.isDetermine()) {
 
-                    ArrayList<String> dateTmp = notifyDateRecyclerAdapter.getDateList();
-                    dateTmp.add(DateUtil.formatTimesTampDate((Date) data));
+                    ArrayList<Date> dateTmp = notifyDateRecyclerAdapter.getDateList();
+                    dateTmp.add(saveChooseOperationEvent.getDate());
                     notifyDateRecyclerAdapter.setDateList(dateTmp);
-//                    notifyItemChanged(TYPE_NOTIFY_DATE);
                     Animator startOpen = showChildView(preHolder);
                     startOpen.start();
 
                 } else {
-                    ArrayList<String> dateTmp = notifyDateRecyclerAdapter.getDateList();
+                    ArrayList<Date> dateTmp = notifyDateRecyclerAdapter.getDateList();
                     if (dateTmp.size() == 0) {
                         DateChoiceHolder dateChoiceHolder = ((DateChoiceHolder) preHolder);
                         Animator startHide = hideChildView(dateChoiceHolder, dateChoiceHolder.childLayout);
@@ -271,8 +384,8 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                 break;
             case OPERATION_CHOICE_COUNT:
                 NotifyCountHolder notifyCountHolder = (NotifyCountHolder) preHolder;
-                if (isDetermine) {
-                    notifyCountHolder.answerText.setText((String) data);
+                if (saveChooseOperationEvent.isDetermine()) {
+                    notifyCountHolder.answerText.setText(saveChooseOperationEvent.getNotifityCounts());
                 } else {
                     if (notifyCountHolder.answerText.getText().equals("不重复")) {
                         Animator startHide = hideChildView(notifyCountHolder, notifyCountHolder.childLayout);
@@ -282,11 +395,6 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                 }
                 break;
         }
-
-    }
-
-    public void setShowMoreSet(ShowMoreSet showMoreSet) {
-        this.showMoreSet = showMoreSet;
     }
 
     //    public static Animator ofItemViewHeight(RecyclerView.ViewHolder holder) {

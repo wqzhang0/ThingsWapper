@@ -58,4 +58,5 @@ dependencies {
     //    compile 'org.greenrobot:greendao:3.2.0'
     compile project(':daoexamplegenerator')
     compile files('libs/greendao-api-3.2.0.jar')
+    compile files('libs/eventbus-3.0.0.jar')
 }

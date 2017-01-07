@@ -3,14 +3,14 @@ package com.wqzhang.thingswapper;
 import android.app.Application;
 import android.content.Context;
 
+import com.wqzhang.thingswapper.dao.AddThingOperationXMLData;
 import com.wqzhang.thingswapper.dao.BusinessProcess;
+import com.wqzhang.thingswapper.dao.SharedPreferencesControl;
 import com.wqzhang.thingswapper.dao.greendao.DaoMaster;
 import com.wqzhang.thingswapper.dao.greendao.DaoSession;
 
 
 import org.greenrobot.greendao.database.Database;
-
-import java.util.Date;
 
 /**
  * Created by wqzhang on 16-12-20.
@@ -31,6 +31,9 @@ public class MainApplication extends Application {
         daoSession = new DaoMaster(db).newSession();
 
         BusinessProcess.init(daoSession);
+        SharedPreferencesControl.init(mContext);
+
+        AddThingOperationXMLData.getInstall().init();
 //        DevOpenHelper helper = new DevOpenHelper(this, "notes-db");
 //        Database db = helper.getWritableDb();
 //        daoSession = new DaoMaster(db).newSession();

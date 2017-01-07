@@ -1,4 +1,4 @@
-package com.wqzhang.thingswapper.adapter;
+package com.wqzhang.thingswapper.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,15 +8,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.wqzhang.thingswapper.R;
+import com.wqzhang.thingswapper.tools.DateUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by wqzhang on 16-12-30.
  */
 
 public class NotifyDateRecyclerAdapter extends RecyclerView.Adapter {
-    private ArrayList<String> dateList = new ArrayList<>();
+    private ArrayList<Date> dateList = new ArrayList<>();
     private Context mContext;
     private LayoutInflater inflater;
 
@@ -26,8 +28,8 @@ public class NotifyDateRecyclerAdapter extends RecyclerView.Adapter {
     public NotifyDateRecyclerAdapter(Context context) {
         mContext = context;
         inflater = LayoutInflater.from(context);
-//        dateList.add("2016年12月30日15:11");
     }
+
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -40,7 +42,7 @@ public class NotifyDateRecyclerAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         DefaultHolder defaultHolder = (DefaultHolder) holder;
         defaultHolder.textView = (TextView) defaultHolder.itemView.findViewById(R.id.date);
-        defaultHolder.textView.setText(dateList.get(position));
+        defaultHolder.textView.setText(DateUtil.formatDateByFormat(dateList.get(position),DateUtil.TIMESTAMP_PATTERN));
     }
 
     @Override
@@ -48,12 +50,12 @@ public class NotifyDateRecyclerAdapter extends RecyclerView.Adapter {
         return dateList.size();
     }
 
-    public void setDateList(ArrayList<String> dateList) {
-        this.dateList = dateList;
-        notifyDataSetChanged();
+    public void setDateList(ArrayList<Date> dates) {
+        this.dateList = dates;
+        this.notifyDataSetChanged();
     }
 
-    public ArrayList<String> getDateList() {
+    public ArrayList<Date> getDateList() {
         return dateList;
     }
 

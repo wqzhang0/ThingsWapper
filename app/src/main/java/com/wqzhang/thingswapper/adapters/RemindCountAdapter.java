@@ -1,4 +1,4 @@
-package com.wqzhang.thingswapper.adapter;
+package com.wqzhang.thingswapper.adapters;
 
 import android.content.Context;
 import android.database.DataSetObserver;
@@ -9,7 +9,10 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.wqzhang.thingswapper.R;
-import com.wqzhang.thingswapper.listener.impl.ShowMoreSet;
+import com.wqzhang.thingswapper.events.SaveChooseOperationEvent;
+import com.wqzhang.thingswapper.events.ShowMoreSetEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
@@ -25,9 +28,7 @@ public class RemindCountAdapter implements ListAdapter {
 
     private ChoicesHolder choicesHolder;
 
-    private AddToDoThingRecyclerAdapter addToDoThingRecyclerAdapter;
-
-    private ShowMoreSet showMoreSet;
+    private EventBus bus;
 
 
     public void setChoicesData(ArrayList<String> data) {
@@ -37,6 +38,7 @@ public class RemindCountAdapter implements ListAdapter {
     public RemindCountAdapter(Context context) {
         this.mContext = context;
         inflater = LayoutInflater.from(context);
+        bus = EventBus.getDefault();
     }
 
     @Override
@@ -93,12 +95,8 @@ public class RemindCountAdapter implements ListAdapter {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (addToDoThingRecyclerAdapter != null) {
-                    addToDoThingRecyclerAdapter.saveOperationData(true, choicesData.get(i));
-                }
-                if(showMoreSet!=null){
-                    showMoreSet.showMoreSetFrameLayout(ShowMoreSet.ShowType.HIDE);
-                }
+                bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_COUNTS, choicesData.get(i), true));
+                bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.HIDE));
             }
         });
 
@@ -122,13 +120,5 @@ public class RemindCountAdapter implements ListAdapter {
 
     class ChoicesHolder {
         TextView textView;
-    }
-
-    public void setAddToDoThingRecyclerAdapter(AddToDoThingRecyclerAdapter addToDoThingRecyclerAdapter) {
-        this.addToDoThingRecyclerAdapter = addToDoThingRecyclerAdapter;
-    }
-
-    public void setShowMoreSet(ShowMoreSet showMoreSet) {
-        this.showMoreSet = showMoreSet;
     }
 }

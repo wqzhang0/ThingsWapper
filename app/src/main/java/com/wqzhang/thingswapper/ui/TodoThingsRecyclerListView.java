@@ -8,10 +8,12 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.wqzhang.thingswapper.adapter.ToDoThingsRecyclerAdapter;
+import com.wqzhang.thingswapper.adapters.ToDoThingsRecyclerAdapter;
+import com.wqzhang.thingswapper.events.PullFreshScrollingEvent;
 import com.wqzhang.thingswapper.listener.abs.OnScrolledListener;
 import com.wqzhang.thingswapper.listener.impl.AllowPullStateListenerImpl;
-import com.wqzhang.thingswapper.listener.impl.OnScrollingListenerImpl;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
@@ -26,8 +28,8 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
 
     private Context mContext;
     SlideContentView slideContentView = null;
+    private EventBus bus;
 
-    private OnScrollingListenerImpl onScrollingListener;
 
     private static int scrolledState = -1;
     public final static int PULL_UP = Integer.parseInt("000001", 2);
@@ -44,16 +46,19 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
     public TodoThingsRecyclerListView(Context context) {
         super(context);
         this.mContext = context;
+        bus = EventBus.getDefault();
     }
 
     public TodoThingsRecyclerListView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.mContext = context;
+        bus = EventBus.getDefault();
     }
 
     public TodoThingsRecyclerListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.mContext = context;
+        bus = EventBus.getDefault();
     }
 
 
@@ -112,9 +117,9 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                     if (scrolledState == PULL_DOWN) {
                         //可以下滑
                         if (scrollValue <= 200) {
-                            onScrollingListener.scrollTo(0, -scrollValue);
+                            bus.post(new PullFreshScrollingEvent(0,-scrollValue));
                         } else {
-                            onScrollingListener.scrollTo(0, -200);
+                            bus.post(new PullFreshScrollingEvent(0,-200));
                         }
                         if (scrollValue > 180) {
                             OnScrolledToDownComplete();
@@ -123,12 +128,12 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                             OnScrolledToDown();
                         }
                         return true;
-                    } else if (scrolledState == PULL_UP) {
+                    } else if (scrolledState == PULL_UP || scrolledState == PULL_UP_COMPLETE) {
                         //可以上滑
                         if (scrollValue >= -200) {
-                            onScrollingListener.scrollTo(0, -scrollValue);
+                            bus.post(new PullFreshScrollingEvent(0,-scrollValue));
                         } else {
-                            onScrollingListener.scrollTo(0, 200);
+                            bus.post(new PullFreshScrollingEvent(0,200));
                         }
                         if (scrollValue > -180) {
                             OnScrolledToUp();
@@ -157,7 +162,7 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                     Intent intent = new Intent("com.wqzhang.thingswapper.activity.AddToDoThingActivity");
                     mContext.startActivity(intent);
                 }
-                onScrollingListener.startScroll(0, 0, 0, 0, 1000);
+                bus.post(new PullFreshScrollingEvent(0, 0, 0, 0, 1000));
                 OnScrolledReset();
 
             default:
@@ -235,9 +240,7 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
         this.allowPull = allowPull;
     }
 
-    public void setOnScrollingListener(OnScrollingListenerImpl onScrollingListener) {
-        this.onScrollingListener = onScrollingListener;
-    }
+
 
     private void OnScrolledToDown() {
         for (OnScrolledListener onScrollListener : onScrolledListeners) {

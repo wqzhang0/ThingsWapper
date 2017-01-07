@@ -1,4 +1,4 @@
-package com.wqzhang.thingswapper.adapter;
+package com.wqzhang.thingswapper.adapters;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;

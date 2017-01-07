@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activitys.MainActivity"
             android:label="">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,7 +27,7 @@
         </activity>
 
 
-        <activity android:name=".activity.AddToDoThingActivity">
+        <activity android:name=".activitys.AddToDoThingActivity">
             <intent-filter>
                 <action android:name="com.wqzhang.thingswapper.activity.AddToDoThingActivity" />
                 <category android:name="android.intent.category.DEFAULT" />

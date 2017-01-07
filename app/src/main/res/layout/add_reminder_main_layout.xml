@@ -52,7 +52,9 @@
             android:id="@+id/fill_information_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:overScrollMode="never" />
+            android:overScrollMode="never"
+
+            />
 
 
         <FrameLayout
@@ -88,14 +90,14 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/date_choose_cancel"
+                        android:id="@+id/time_choose_cancel"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="取消" />
 
                     <Button
-                        android:id="@+id/date_choose_submit"
+                        android:id="@+id/time_choose_submit"
                         android:layout_width="1dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
