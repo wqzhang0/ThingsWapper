@@ -231,6 +231,7 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                     public void onClick(View view) {
                         bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.SHOW_COUNT));
                         currentOperation = OPERATION_CHOICE_COUNT;
+                        preHolder = holder;
                     }
                 });
                 //点击 switch 展开 重复提醒设置 视图 和子视图
