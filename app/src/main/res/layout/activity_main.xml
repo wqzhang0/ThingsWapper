@@ -8,9 +8,11 @@
     <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="48dp"
         android:background="#e6e6e6"
         android:elevation="5dp">
+        <!--android:layout_height="?attr/actionBarSize"-->
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,13 +28,14 @@
             <!--android:layout_marginRight="20dp"-->
             <!--android:background="@drawable/search_bar" />-->
             <TextView
-                android:layout_width="300dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="20dp"
                 android:background="@drawable/search_bar"
                 android:gravity="center"
                 android:text="搜索事项"
                 android:textColor="#8a8a8a"
+                android:layout_weight="1"
                 android:textSize="18dp" />
 
             <ImageView

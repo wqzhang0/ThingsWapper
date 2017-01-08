@@ -9,6 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="right|center_horizontal"
-        android:text="2016年12月30日    15:05" />
+        android:layout_marginRight="36dp"
+        android:text="2016年12月30日    15:05"
+        android:textSize="16dp" />
 
 </LinearLayout>

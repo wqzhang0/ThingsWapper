@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/AddThingsItemStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="30dp"
     android:layout_marginBottom="180dp"
     android:orientation="vertical">
 
@@ -13,10 +13,11 @@
         android:orientation="horizontal">
 
         <TextView
+            style="@style/AddThingsTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:text="提醒次数:" />
 
         <Switch
@@ -24,6 +25,11 @@
             android:layout_width="1dp"
             android:layout_height="wrap_content"
             android:layout_weight="4" />
+
+
+        <!--android:showText="true"-->
+        <!--android:textOff="关闭"-->
+        <!--android:textOn="打开"-->
     </LinearLayout>
 
     <LinearLayout

@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:elevation="1dp"
     android:focusable="true"
     android:focusableInTouchMode="true">
 
@@ -9,13 +11,13 @@
         android:id="@+id/remind_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#E0FFce"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:gravity="top|left"
         android:inputType="textMultiLine"
-        android:minLines="5"
         android:maxLines="6"
+        android:minLines="5"
         android:textSize="20dp">
-
 
     </EditText>
 </LinearLayout>
