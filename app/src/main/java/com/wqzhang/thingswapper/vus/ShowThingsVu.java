@@ -78,6 +78,7 @@ public class ShowThingsVu implements Vu {
                 break;
             case PullFreshScrollingEvent.TYPE_CHANGE_VIEW:
                 mScroller.startScroll(0, -300, 0, 300, 600);
+                recyclerView.getAdapter().notifyDataSetChanged();
                 break;
 
         }

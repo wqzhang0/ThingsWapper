@@ -11,7 +11,6 @@ import android.view.View;
 import com.wqzhang.thingswapper.adapters.ToDoThingsRecyclerAdapter;
 import com.wqzhang.thingswapper.events.PullFreshScrollingEvent;
 import com.wqzhang.thingswapper.listener.abs.OnScrolledListener;
-import com.wqzhang.thingswapper.listener.impl.AllowPullStateListenerImpl;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -23,7 +22,7 @@ import static android.view.accessibility.AccessibilityEvent.INVALID_POSITION;
  * Created by wqzhang on 16-11-30.
  */
 
-public class TodoThingsRecyclerListView extends android.support.v7.widget.RecyclerView implements AllowPullStateListenerImpl {
+public class TodoThingsRecyclerListView extends android.support.v7.widget.RecyclerView {
     private String TAG = "RecyclerListView";
 
     private Context mContext;
@@ -31,15 +30,19 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
     private EventBus bus;
 
 
-    private static int scrolledState = -1;
+    public final static int NOT_ALLOW_PULL = -1;
     public final static int PULL_UP = Integer.parseInt("000001", 2);
     public final static int PULL_UP_COMPLETE = Integer.parseInt("000010", 2);
     public final static int PULL_DOWN = Integer.parseInt("000100", 2);
     public final static int PULL_DOWN_COMPLETE = Integer.parseInt("001000", 2);
-    public final static int RESET = Integer.parseInt("010000", 2);
-    public final static int DO_NOTHING = Integer.parseInt("100000", 2);
+    public final static int PULL_DOUBLE = Integer.parseInt("010000", 2);
 
-    private static boolean allowPull;
+
+    private static int scrolledState = NOT_ALLOW_PULL;
+
+//    public final static int RESET = Integer.parseInt("010000", 2);
+//    public final static int DO_NOTHING = Integer.parseInt("100000", 2);
+
 
     ArrayList<OnScrolledListener> onScrolledListeners = new ArrayList<>();
 
@@ -67,14 +70,14 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-//        Log.d(TAG, "Touch " + event.getAction());
+        Log.d(TAG, "Touch " + event.getAction());
         int X = 0, Y = 0;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                scrolledState = -1;
                 X = (int) event.getX();
                 Y = (int) event.getY();
-                Log.d(TAG, "X " + X + "Y" + Y);
+                lastY = (int) event.getRawY();
+
                 View targetItemView = this.findChildViewUnder(X, Y);
 
                 //先重置上一次的操作
@@ -97,23 +100,18 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                         }
                     }
                 }
-
-
-                lastY = (int) event.getRawY();
                 break;
             case MotionEvent.ACTION_MOVE:
-
-                if (allowPull) {
-                    int scrollValue = (int) (event.getRawY() - lastY);
-                    if (scrollValue < 0) {
-                        scrolledState = PULL_UP;
-                    } else if (scrollValue > 0) {
-                        scrolledState = PULL_DOWN;
+                int scrollValue = (int) (event.getRawY() - lastY);
+                if ((scrolledState == PULL_DOWN || scrolledState == PULL_DOWN_COMPLETE || scrolledState == PULL_DOUBLE)) {
+                    if (scrollValue <= 0) {
+                        //如果向上滑动  则取消此次可下拉拖动的效果
+                        OnScrolledReset();
+                        bus.post(new PullFreshScrollingEvent(0, 0));
+                        if (scrolledState != PULL_DOUBLE) {
+                            scrolledState = NOT_ALLOW_PULL;
+                        }
                     } else {
-                        scrolledState = DO_NOTHING;
-                    }
-
-                    if (scrolledState == PULL_DOWN || scrolledState == PULL_DOWN_COMPLETE) {
                         //可以下滑
                         if (scrollValue <= 200) {
                             bus.post(new PullFreshScrollingEvent(0, -scrollValue));
@@ -126,10 +124,23 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                             OnScrolledToDownComplete();
                             scrolledState = PULL_DOWN_COMPLETE;
                         } else {
+                            if (scrolledState != PULL_DOUBLE) {
+                                scrolledState = PULL_DOWN;
+                            }
                             OnScrolledToDown();
                         }
                         return true;
-                    } else if (scrolledState == PULL_UP || scrolledState == PULL_UP_COMPLETE) {
+                    }
+                }
+                if ((scrolledState == PULL_UP || scrolledState == PULL_UP_COMPLETE || scrolledState == PULL_DOUBLE)) {
+                    if (scrollValue >= 0) {
+                        //如果向下滑动  则取消此次可上拉拖动的效果
+                        OnScrolledReset();
+                        bus.post(new PullFreshScrollingEvent(0, 0));
+                        if (scrolledState != PULL_DOUBLE) {
+                            scrolledState = NOT_ALLOW_PULL;
+                        }
+                    } else {
                         //可以上滑
                         if (scrollValue >= -200) {
                             bus.post(new PullFreshScrollingEvent(0, -scrollValue));
@@ -139,24 +150,25 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                             bus.post(new PullFreshScrollingEvent(0, 360));
                         }
                         if (scrollValue > -200) {
+                            if (scrolledState != PULL_DOUBLE) {
+                                scrolledState = PULL_UP;
+                            }
                             OnScrolledToUp();
                         } else {
                             OnScrolledToUpComplete();
                             scrolledState = PULL_UP_COMPLETE;
                         }
                         return true;
-                    } else if (scrolledState == RESET) {
-                    } else if (scrolledState == DO_NOTHING) {
                     }
+
                 }
+
                 lastY = (int) event.getRawY();
                 break;
             case MotionEvent.ACTION_UP:
-//                scrolledState = RESET;
                 if (scrolledState == PULL_UP_COMPLETE) {
                     Log.d(TAG, "切换至下一页");
                     bus.post(new PullFreshScrollingEvent(PullFreshScrollingEvent.TYPE_CHANGE_VIEW));
-//                    bus.post(new PullFreshScrollingEvent(0, 0, 0, 0, 1000));
                 } else if (scrolledState == PULL_DOWN_COMPLETE) {
                     Intent intent = new Intent("com.wqzhang.thingswapper.activity.AddToDoThingActivity");
                     mContext.startActivity(intent);
@@ -168,6 +180,7 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
             default:
                 break;
         }
+
         return super.onTouchEvent(event);
 
     }
@@ -185,10 +198,8 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
         onScrolledListeners.add(onScrolledListener);
     }
 
-
-    @Override
-    public void setAllowPull(boolean allowPull) {
-        this.allowPull = allowPull;
+    public static void setScrolledState(int scrolledState) {
+        TodoThingsRecyclerListView.scrolledState = scrolledState;
     }
 
     private void OnScrolledToDown() {
@@ -220,4 +231,16 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
             onScrollListener.onScrolledReset();
         }
     }
+
+
+    private void scrolledStateChange(int newScrolledState) {
+        oldScrolledState = scrolledState;
+        scrolledState = newScrolledState;
+    }
+
+    private void scrolledStateRollBack() {
+        scrolledState = oldScrolledState;
+    }
+
+    static int oldScrolledState;
 }

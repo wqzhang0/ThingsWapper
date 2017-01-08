@@ -80,6 +80,15 @@ public class AddThingOperationXMLData {
                 }
                 sharedPreferencesControl.getEditor().putString("NOTIFY_DATES", sb.toString()).commit();
                 break;
+            case SaveChooseOperationEvent.TYPE_IS_REPEAT:
+                sharedPreferencesControl.getEditor().putBoolean("IS_REPEAT", saveChooseOperationEvent.isDetermine()).commit();
+
+                break;
+            case SaveChooseOperationEvent.TYPE_IS_REMINDER:
+                sharedPreferencesControl.getEditor().putBoolean("IS_REMINDER", saveChooseOperationEvent.isDetermine()).commit();
+
+                break;
+
         }
 
     }
@@ -116,7 +125,7 @@ public class AddThingOperationXMLData {
         ArrayList<Notification> notificationArrayList = new ArrayList<>();
 
         ArrayList<Date> dates = readNotifyTime();
-        if (dates.size() != 0) {
+        if (dates.size() == 0) {
             Notification notification = new Notification();
             notification.setIsNotify(false);
             notification.setIsSynchronize(false);

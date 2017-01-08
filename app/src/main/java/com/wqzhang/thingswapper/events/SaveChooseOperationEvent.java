@@ -11,6 +11,12 @@ public class SaveChooseOperationEvent {
     public final static int TYPE_SAVE_NOTIFY_TYPE = 2;
     public final static int TYPE_SAVE_NOTYFLY_COUNTS = 3;
     public final static int TYPE_SAVE_NOTYFLY_DATE = 4;
+    //是否提醒  根据时间选择开关进行判断
+    public final static int TYPE_IS_REMINDER = 5;
+
+    //是否重复  根据重复选择开关 进行判断
+    public final static int TYPE_IS_REPEAT = 6;
+
 
     private int type;
     private Date date;
@@ -42,6 +48,11 @@ public class SaveChooseOperationEvent {
     public SaveChooseOperationEvent(int type, Date date, boolean isDetermine) {
         this.type = type;
         this.date = date;
+        this.isDetermine = isDetermine;
+    }
+
+    public SaveChooseOperationEvent(int type, boolean isDetermine) {
+        this.type = type;
         this.isDetermine = isDetermine;
     }
 

@@ -33,6 +33,7 @@ public class BottomLayoutOnScrolledListener extends OnScrolledListener {
     @Override
     public void onScrolledToUpComplete() {
         textView.setText(text2);
+        layout.setVisibility(View.VISIBLE);
 //        super.onScrolledToUpComplete();
     }
 

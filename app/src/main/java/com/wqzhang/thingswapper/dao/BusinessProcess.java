@@ -40,11 +40,7 @@ public class BusinessProcess implements BusinessProcessImpl {
             userDao = daoSession.getUserDao();
             notificationDao = daoSession.getNotificationDao();
             connection_t_nDao = daoSession.getConnection_T_NDao();
-
-
         }
-
-
     }
 
 

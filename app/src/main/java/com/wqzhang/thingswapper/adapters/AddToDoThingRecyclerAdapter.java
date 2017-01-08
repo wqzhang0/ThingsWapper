@@ -107,16 +107,7 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                         return false;
                     }
                 });
-                editHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                    @Override
-                    public void onFocusChange(View view, boolean hasFocus) {
-                        if (hasFocus) {
-                            Log.d("editText", "获得焦点 ");
-                        } else {
-                            Log.d("editText", "失去焦点 ");
-                        }
-                    }
-                });
+
 
                 break;
             case TYPE_NOTIFY_TYPE:
@@ -210,6 +201,9 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                             //点击折叠
 //                            dateChoiceHolder.childLayout.setVisibility(View.GONE);
                             Animator startHide = hideChildView(dateChoiceHolder, dateChoiceHolder.childLayout);
+
+                            bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_IS_REMINDER, false));
+
                             startHide.start();
                         }
                         preHolder = holder;
@@ -248,11 +242,17 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                             if (notifyCountHolder.answerText.getText().toString().equals("不重复")) {
                                 bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.SHOW_COUNT));
                             }
+                            //将xml里存储的 是否重复提醒字段(IS_REPEAT) 值更改为true
+                            bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_IS_REPEAT, true));
+
                         } else {
                             //点击折叠
-//                            dateChoiceHolder.childLayout.setVisibility(View.GONE);
                             Animator startHide = hideChildView(notifyCountHolder, notifyCountHolder.childLayout);
                             startHide.start();
+
+                            //将xml里存储的 是否重复提醒字段(IS_REPEAT) 值更改为false
+                            bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_IS_REPEAT, false));
+
                         }
                         currentOperation = OPERATION_CHOICE_COUNT;
                         preHolder = holder;
@@ -385,8 +385,16 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                     Animator startOpen = showChildView(preHolder);
                     startOpen.start();
 
+                    //将xml里存储的 是否提醒字段(IS_REMINDER) 值更改为true
+                    bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_IS_REMINDER, true));
+
+
                 } else {
                     ArrayList<Date> dateTmp = notifyDateRecyclerAdapter.getDateList();
+
+                    //将xml里存储的 是否提醒字段(IS_REMINDER) 值更改为false
+                    bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_IS_REMINDER, false));
+
                     if (dateTmp.size() == 0) {
                         DateChoiceHolder dateChoiceHolder = ((DateChoiceHolder) preHolder);
                         Animator startHide = hideChildView(dateChoiceHolder, dateChoiceHolder.childLayout);

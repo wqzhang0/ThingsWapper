@@ -9,8 +9,8 @@ import android.widget.TextView;
 
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
-import com.wqzhang.thingswapper.listener.impl.AllowPullStateListenerImpl;
 import com.wqzhang.thingswapper.ui.SlideContentView;
+import com.wqzhang.thingswapper.ui.TodoThingsRecyclerListView;
 
 import java.util.ArrayList;
 
@@ -29,16 +29,12 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
     private Context mContext = null;
     private ArrayList<ToDoThing> toDoThings;
 
-    AllowPullStateListenerImpl allowPullStateListenerImpl;
 
     public ToDoThingsRecyclerAdapter(Context context) {
         mContext = context;
         inflater = LayoutInflater.from(context);
     }
 
-    public void setAllowPullStateListenerImpl(AllowPullStateListenerImpl changeScrolledState) {
-        this.allowPullStateListenerImpl = changeScrolledState;
-    }
 
     public void setData(ArrayList<ToDoThing> toDoThings) {
         this.toDoThings = toDoThings;
@@ -65,6 +61,9 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         if (getItemViewType(position) == TYPE_EMPTY) {
+            //默认可以上拉
+            TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOUBLE);
+
             return;
         } else {
             SlideViewHolder slideViewHolder = (SlideViewHolder) holder;
@@ -84,7 +83,6 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        allowPullStateListenerImpl.setAllowPull(true);
         return (toDoThings == null || toDoThings.size() == 0) ? 1 : toDoThings.size();
     }
 
