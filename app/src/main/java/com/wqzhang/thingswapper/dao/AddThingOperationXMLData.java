@@ -68,6 +68,7 @@ public class AddThingOperationXMLData {
                 sharedPreferencesControl.getEditor().putString("NOTIFY_COUNTS", saveChooseOperationEvent.getNotifityCounts()).commit();
                 break;
             case SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE:
+                if (!saveChooseOperationEvent.isDetermine()) return;
                 ArrayList<Date> dates = readNotifyTime();
                 dates.add(saveChooseOperationEvent.getDate());
                 StringBuilder sb = new StringBuilder();
@@ -88,9 +89,29 @@ public class AddThingOperationXMLData {
                 sharedPreferencesControl.getEditor().putBoolean("IS_REMINDER", saveChooseOperationEvent.isDetermine()).commit();
 
                 break;
+            default:
+                break;
 
         }
 
+    }
+
+    /**
+     * 是否重复提醒
+     *
+     * @return
+     */
+    public boolean isRepeat() {
+        return sharedPreferencesControl.getSharedPreferences().getBoolean("IS_REPEAT", false);
+    }
+
+    /**
+     * 是否需要提醒
+     *
+     * @return
+     */
+    public boolean isReminder() {
+        return sharedPreferencesControl.getSharedPreferences().getBoolean("IS_REMINDER", false);
     }
 
     /**
