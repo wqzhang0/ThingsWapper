@@ -36,13 +36,13 @@
         android:id="@+id/child_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:orientation="vertical"
         android:visibility="gone">
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
+            android:layout_marginTop="8dp"
             android:background="@drawable/poi_list_divider_line" />
 
         <android.support.v7.widget.RecyclerView

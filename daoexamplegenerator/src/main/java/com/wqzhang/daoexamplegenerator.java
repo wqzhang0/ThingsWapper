@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class daoexamplegenerator {
     public static void main(String[] args) throws Exception {
-        Schema schema = new Schema(5, "com.wqzhang.thingswapper.dao.greendao");
+        Schema schema = new Schema(6, "com.wqzhang.thingswapper.dao.greendao");
         schema.enableKeepSectionsByDefault();
         initDatabase(schema);
         new DaoGenerator().generateAll(schema, "/home/wqzhang/GraduationProjectCode/ThingsWapper/app/src/main/java");

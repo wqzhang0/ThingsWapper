@@ -4,20 +4,20 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.wqzhang.thingswapper.adapters.ToDoThingsRecyclerAdapter;
 import com.wqzhang.thingswapper.dao.BusinessProcess;
 import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
 import com.wqzhang.thingswapper.listener.BottomLayoutOnScrolledListener;
 import com.wqzhang.thingswapper.listener.TopLayoutOnScrolledListener;
-import com.wqzhang.thingswapper.listener.abs.OnScrolledListener;
+import com.wqzhang.thingswapper.ui.CustomerItemDecoration;
 import com.wqzhang.thingswapper.ui.TodoThingsRecyclerListView;
 import com.wqzhang.thingswapper.vus.ShowThingsVu;
 
 import java.util.ArrayList;
 
 import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
+import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL;
 
 /**
  * Created by wqzhang on 16-12-1.
@@ -39,58 +39,17 @@ public class ShowThingsFragment extends BasePartenerFragment<ShowThingsVu> {
 //                = new StaggeredGridLayoutManager(4, RecyclerView.VERTICAL);
 
 
-//        DecorationTest decorationTest = new DecorationTest(getActivity());
-//        View mHeaderView = inflater.inflate(R.layout.header_footer_view, container, false);
-//        TextView mHeaderTittle = (TextView) mHeaderView.findViewById(R.id.tittle);
-//        mHeaderTittle.setText("下拉添加");
-//
-//        View mFooterView = inflater.inflate(R.layout.header_footer_view, container, false);
-//        TextView mFooterTittle = (TextView) mHeaderView.findViewById(R.id.tittle);
-//        mFooterTittle.setText("上拉更换视图");
-//
-//        recyclerAdapter.setHeaderView(mHeaderView);
-//
-//        recyclerAdapter.setFooterView(mFooterView);
-
-//        swipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
-
-//        bottomImageView = (ImageView) view.findViewById(R.id.bottomImageView);
-//        recyclerView.setBottomImageView(bottomImageView);
-//        topImageView = (ImageView) view.findViewById(R.id.topImageView);
-//        recyclerView.setTopImageView(topImageView);
-//        recyclerView.addItemDecoration(decorationTest);
-
-
-//        int touchSlop= ViewConfiguration.get(getActivity()).getScaledTouchSlop();
-
-
-//        recyclerView.postInvalidate();
-
-//        view.setTranslationY(100);
-
-
-//        return super.onCreateView(inflater, container, savedInstanceState);
-//        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                swipeRefresh.setRefreshing(false);
-//            }
-//        });
-
-
-//        view.scrollTo(0,0-300);
-    // binderOnScrolledListeners
-
-
     @Override
     public void onResume() {
-        Log.d(TAG,"onResume");
+        Log.d(TAG, "onResume");
         super.onResume();
+
     }
+
 
     @Override
     public void onStart() {
-        Log.d(TAG,"onStart");
+        Log.d(TAG, "onStart");
         super.onStart();
     }
 
@@ -101,33 +60,57 @@ public class ShowThingsFragment extends BasePartenerFragment<ShowThingsVu> {
         ToDoThingsRecyclerAdapter toDoThingsRecyclerAdapter = new ToDoThingsRecyclerAdapter(getActivity());
 
         ArrayList<ToDoThing> toDoThings = BusinessProcess.getInstance().readAllThings();
-        toDoThingsRecyclerAdapter.setData(null);
+        toDoThingsRecyclerAdapter.setData(toDoThings);
         vu.getRecyclerView().setAdapter(toDoThingsRecyclerAdapter);
+        vu.getRecyclerView().addItemDecoration(new CustomerItemDecoration());
 
         //默认可以上拉
         TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOWN);
 
+        int lastPosition = ((LinearLayoutManager) vu.getRecyclerView().getLayoutManager()).findLastVisibleItemPosition();
+        if (lastPosition == vu.getRecyclerView().getAdapter().getItemCount() - 1) {
+            TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOUBLE);
+        }
+
         vu.getRecyclerView().addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 //在这里进行是否滑动至底部或者滑动至顶部的逻辑判断
                 //在 结束后进行判断  而不是在滑动过程过程中进行判断
 
+                int lastPosition = -1;
+                int firstPosition = -1;
+                boolean canPullUp = false;
+                boolean canPullDown = false;
+                RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+
                 //firstChildView getTop 为0   但是recyclerView.getTop() 会根据不同尺寸手机 多出不同像素
-                Log.d("onScrollStateChanged", "onScrollStateChanged" + newState);
+//                Log.d("onScrollStateChanged", "onScrollStateChanged" + newState);
+                if (newState == SCROLL_STATE_TOUCH_SCROLL) {
+                    lastPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
+                    View lastChildView = layoutManager.getChildAt(layoutManager.getChildCount() - 1);
+//
+                    int recyclerBottom = (int) (recyclerView.getBottom() - recyclerView.getPaddingBottom() - recyclerView.getTranslationY()) - recyclerView.getTop();
+                    int lastChildViewBottom = lastChildView.getBottom();
+
+                    if ((lastChildViewBottom == recyclerBottom || lastPosition == recyclerView.getAdapter().getItemCount() - 1) && (lastPosition == (layoutManager.getItemCount() - 1))) {
+
+                        TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOUBLE);
+                    }
+                }
                 if (newState == SCROLL_STATE_IDLE) {
                     //不滑动时
-                    int lastPosition = -1;
-                    int firstPosition = -1;
-                    boolean canPullUp = false;
-                    boolean canPullDown = false;
-                    boolean canDoublePull = false;
-                    RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
                     if (layoutManager instanceof LinearLayoutManager) {
                         lastPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
                         firstPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
-                        View firstChildView = layoutManager.getChildAt(firstPosition);
+//                        View firstChildView = layoutManager.getChildAt(firstPosition);
+                        View firstChildView = recyclerView.findViewHolderForAdapterPosition(firstPosition).itemView;
                         int firstChildViewTop = firstChildView.getTop();
                         if (firstChildViewTop == 0 && firstPosition == 0) {
                             //顶部
@@ -135,16 +118,16 @@ public class ShowThingsFragment extends BasePartenerFragment<ShowThingsVu> {
                             TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOWN);
                         }
                         View lastChildView = layoutManager.getChildAt(layoutManager.getChildCount() - 1);
+//                        View lastChildView = recyclerView.findViewHolderForAdapterPosition(layoutManager.getChildCount() - 1).itemView;
                         int recyclerBottom = (int) (recyclerView.getBottom() - recyclerView.getPaddingBottom() - recyclerView.getTranslationY()) - recyclerView.getTop();
                         int lastChildViewBottom = lastChildView.getBottom();
 
-                        if (lastChildViewBottom == recyclerBottom && (lastPosition == (layoutManager.getItemCount() - 1))) {
+                        if ((lastChildViewBottom == recyclerBottom || lastPosition == recyclerView.getAdapter().getItemCount() - 1) && (lastPosition == (layoutManager.getItemCount() - 1))) {
 //                            Toast.makeText(getActivity(), "到达尾点", Toast.LENGTH_SHORT).show();
                             canPullDown = true;
                             TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_UP);
                         }
                         if (canPullUp && canPullDown) {
-                            canDoublePull = true;
                             TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOUBLE);
                         }
                         if (!canPullUp && !canPullDown) {

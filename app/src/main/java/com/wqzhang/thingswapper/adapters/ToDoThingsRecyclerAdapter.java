@@ -61,7 +61,7 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         if (getItemViewType(position) == TYPE_EMPTY) {
-            //默认可以上拉
+            //如果为空 则可双向拖动
             TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOUBLE);
 
             return;
@@ -77,6 +77,7 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
 //                Toast.makeText(mContext, data[position] + " Click", Toast.LENGTH_SHORT).show();
                 }
             });
+
         }
 
     }

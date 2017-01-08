@@ -70,7 +70,7 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Log.d(TAG, "Touch " + event.getAction());
+//        Log.d(TAG, "Touch " + event.getAction());
         int X = 0, Y = 0;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -99,6 +99,8 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                             slideContentView = ((ToDoThingsRecyclerAdapter.SlideViewHolder) viewHolder).slide_content_view;
                         }
                     }
+                } else {
+                    slideContentView = null;
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -180,7 +182,11 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
             default:
                 break;
         }
-
+        if (slideContentView != null) {
+            slideContentView.onRequeirTouchEvent(event);
+        } else {
+            Log.d(TAG, "slideContentView == null");
+        }
         return super.onTouchEvent(event);
 
     }

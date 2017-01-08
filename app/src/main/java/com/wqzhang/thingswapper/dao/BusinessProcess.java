@@ -89,12 +89,12 @@ public class BusinessProcess implements BusinessProcessImpl {
     @Override
     public void addToDoThing(ToDoThing toDoThing, List<Notification> notificationList) {
         ArrayList<Connection_T_N> connection_t_nArrayList = new ArrayList<>();
+        toDoThing.setUser(readOrAddUserInfo());
+        toDoThingDao.insert(toDoThing);
+
         for (Notification notification : notificationList) {
             Connection_T_N connection_t_n = new Connection_T_N();
 
-            toDoThing.setUser(readOrAddUserInfo());
-
-            toDoThingDao.insert(toDoThing);
             connection_t_n.setToDoThing(toDoThing);
 
             notificationDao.insert(notification);

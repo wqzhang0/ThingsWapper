@@ -2,6 +2,7 @@ package com.wqzhang.thingswapper.activitys;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -15,6 +16,7 @@ import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.dao.AddThingOperationXMLData;
 import com.wqzhang.thingswapper.dao.BusinessProcess;
 import com.wqzhang.thingswapper.dao.SharedPreferencesControl;
+import com.wqzhang.thingswapper.events.ChangeAddThingSubmitStateEvent;
 import com.wqzhang.thingswapper.events.SaveChooseOperationEvent;
 import com.wqzhang.thingswapper.events.ShowMoreSetEvent;
 import com.wqzhang.thingswapper.exceptions.CustomerException;
@@ -66,6 +68,7 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
         vu.getTimeChooseCancel().setOnClickListener(this);
         vu.getTimeChooseSubmit().setOnClickListener(this);
         vu.getReminderSettingLayout().setOnClickListener(this);
+
 
     }
 
@@ -146,16 +149,34 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
             case R.id.time_choose_cancel:
                 bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE, new Date(), false));
                 bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.HIDE));
+                //将xml里存储的 是否提醒字段(IS_REMINDER) 值更改为false
+                bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_IS_REMINDER, false));
+
                 break;
             case R.id.time_choose_submit:
                 Date date = DateUtil.parseDate("2016年12月30日 " + newHourValue + " " + newMinuteValue, DateUtil.CHOICE_PATTERN);
-
+                //将xml里存储的 是否提醒字段(IS_REMINDER) 值更改为true
+                bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_IS_REMINDER, true));
                 bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE, date, true));
                 bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.HIDE));
                 break;
             default:
                 break;
         }
+    }
+
+    @Subscribe
+    public void clickAble(ChangeAddThingSubmitStateEvent changeAddThingSubmitStateEvent) {
+        if (changeAddThingSubmitStateEvent.getType() == ChangeAddThingSubmitStateEvent.TYPE_CAN_CLICK) {
+            vu.getAddSubmit().setClickable(true);
+            vu.getAddSubmit().setTextColor(Color.parseColor("#6AB344"));
+
+        }
+        if (changeAddThingSubmitStateEvent.getType() == ChangeAddThingSubmitStateEvent.TYPE_NOT_CLICK) {
+            vu.getAddSubmit().setClickable(false);
+            vu.getAddSubmit().setTextColor(Color.parseColor("#707070"));
+        }
+
     }
 
     @Subscribe
