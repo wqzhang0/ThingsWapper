@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 
 import com.wqzhang.thingswapper.adapters.ToDoThingsRecyclerAdapter;
 import com.wqzhang.thingswapper.events.PullFreshScrollingEvent;
@@ -67,17 +68,20 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
 
     int position = -1;
     int lastY = 0;
+    boolean isSlideContentView = false;
+    boolean allowCheckSlideContent = true;
+    int X = 0, Y = 0;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 //        Log.d(TAG, "Touch " + event.getAction());
-        int X = 0, Y = 0;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 X = (int) event.getX();
                 Y = (int) event.getY();
                 lastY = (int) event.getRawY();
-
+                isSlideContentView = false;
+                allowCheckSlideContent = true;
                 View targetItemView = this.findChildViewUnder(X, Y);
 
                 //先重置上一次的操作
@@ -97,6 +101,7 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                     if (viewHolder != null) {
                         if (viewHolder instanceof ToDoThingsRecyclerAdapter.SlideViewHolder) {
                             slideContentView = ((ToDoThingsRecyclerAdapter.SlideViewHolder) viewHolder).slide_content_view;
+                            slideContentView.onRequeirTouchEvent(event);
                         }
                     }
                 } else {
@@ -104,6 +109,28 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
+                if (allowCheckSlideContent) {
+                    int deltaY = (int) event.getY() - Y;
+                    int touchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
+                    if (deltaY == 0) deltaY = 1;
+                    if (Math.abs(deltaY) > touchSlop) {
+                        allowCheckSlideContent = false;
+                    } else {
+                        if (slideContentView != null) {
+                            if (slideContentView.onRequeirTouchEvent(event)) {
+                                isSlideContentView = true;
+                                allowCheckSlideContent = false;
+                            }
+                        }
+                    }
+                    return super.onTouchEvent(event);
+                }
+
+                if (isSlideContentView) {
+                    slideContentView.onRequeirTouchEvent(event);
+                    return super.onTouchEvent(event);
+                }
+
                 int scrollValue = (int) (event.getRawY() - lastY);
                 if ((scrolledState == PULL_DOWN || scrolledState == PULL_DOWN_COMPLETE || scrolledState == PULL_DOUBLE)) {
                     if (scrollValue <= 0) {
@@ -168,6 +195,16 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                 lastY = (int) event.getRawY();
                 break;
             case MotionEvent.ACTION_UP:
+                if (slideContentView != null) {
+                    if (slideContentView.onRequeirTouchEvent(event)) {
+                        isSlideContentView = true;
+                    }
+                }
+                if (isSlideContentView) {
+                    return super.onTouchEvent(event);
+                }
+
+
                 if (scrolledState == PULL_UP_COMPLETE) {
                     Log.d(TAG, "切换至下一页");
                     bus.post(new PullFreshScrollingEvent(PullFreshScrollingEvent.TYPE_CHANGE_VIEW));
@@ -182,11 +219,7 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
             default:
                 break;
         }
-        if (slideContentView != null) {
-            slideContentView.onRequeirTouchEvent(event);
-        } else {
-            Log.d(TAG, "slideContentView == null");
-        }
+
         return super.onTouchEvent(event);
 
     }

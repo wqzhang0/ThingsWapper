@@ -101,40 +101,36 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
 
     public boolean onRequeirTouchEvent(MotionEvent event) {
 //        Log.d(TAG, "onRequeirTouchEvent");
-        boolean result = false;
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 first_press_down = getScaleX();
                 first_press_down = event.getX();
-                X = (int) event.getX();
+                X = (int) event.getRawX();
                 Y = (int) event.getY();
-                result = false;
+                isScollerContentView = false;
                 break;
             case MotionEvent.ACTION_MOVE:
 
-                int deltaX = (int) event.getX() - X;
-                int deltaY = (int) event.getY() - Y;
+                int deltaX = (int) event.getRawX() - X;
 
                 int touchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
-//                if (Math.abs(deltaX) < 35 && Math.abs(deltaY) < 15) {
                 if (deltaX == 0) deltaX = 1;
-//
-//                if(Math.abs(deltaY)>touchSlop){
-//
-//                }
                 if (Math.abs(deltaX) > touchSlop) {
-                    result = true;
-                    if (Math.abs(deltaX) > 350) {
-                        deltaX = deltaX > 0 ? 350 : -350;
-                    }
-                    mContentView.scrollTo((int) (-deltaX), 0);
+                    isScollerContentView = true;
+                }
+                if (isScollerContentView) {
+                    int noTouchSlopScroll = 0;
+                    noTouchSlopScroll = deltaX - touchSlop;
+                    Log.d(TAG, "deltaX" + deltaX);
+                    Log.d(TAG, "touchSlop" + touchSlop);
+                    Log.d(TAG, "noTouchSlopScroll" + noTouchSlopScroll);
+                    mContentView.scrollTo(-noTouchSlopScroll, 0);
                 }
 
                 break;
             case MotionEvent.ACTION_UP:
                 int finalScrollX = mContentView.getScrollX();
-
                 //左移动
                 if (Math.abs(finalScrollX) > 350 * 2 / 3) {
                     if (finalScrollX > 0) {
@@ -151,7 +147,7 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
                 break;
         }
 
-        return result;
+        return isScollerContentView;
 
     }
 
