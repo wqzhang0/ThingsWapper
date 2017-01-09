@@ -50,4 +50,33 @@ public abstract class BasePartenerFragment<V extends Vu> extends Fragment {
 
     protected void onBind() {
     }
+
+    @Override
+    public void onStop() {
+        beforeOnStop();
+        super.onStop();
+    }
+
+    protected void beforeOnStop() {
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        afterOnResume();
+    }
+
+    protected void afterOnResume() {
+    }
+
+    @Override
+    public void onDestroy() {
+        beforOnDestory();
+        vu = null;
+        super.onDestroy();
+    }
+
+    protected void beforOnDestory() {
+    }
 }

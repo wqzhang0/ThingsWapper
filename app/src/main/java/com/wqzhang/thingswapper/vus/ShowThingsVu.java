@@ -36,13 +36,10 @@ public class ShowThingsVu implements Vu {
     private LinearLayout topLinearLayout, bottomLinearLayout;
     Scroller mScroller;
     View view;
-    private EventBus bus;
 
     @Override
     public void init(LayoutInflater inflater, ViewGroup container) {
         view = inflater.inflate(R.layout.show_all_reminders_fragment_main, container, false);
-        bus = EventBus.getDefault();
-        bus.register(this);
 
 //        线性布局
         mLayoutManager = new LinearLayoutManager(inflater.getContext());
@@ -64,7 +61,6 @@ public class ShowThingsVu implements Vu {
     }
 
 
-    @Subscribe
     public void onScrolling(PullFreshScrollingEvent event) {
         switch (event.getType()) {
             case PullFreshScrollingEvent.TYPE_SCROLL_TO:
@@ -78,12 +74,24 @@ public class ShowThingsVu implements Vu {
                 break;
             case PullFreshScrollingEvent.TYPE_CHANGE_VIEW:
                 mScroller.startScroll(0, -300, 0, 300, 600);
+                int type = (int) recyclerView.getTag(R.id.showThingType);
+                if (type == 0) {
+                    //当前显示的是已完成界面,需要切换至未完成界面
+                    ((ToDoThingsRecyclerAdapter) recyclerView.getAdapter()).setData(BusinessProcess.getInstance().readNotDoneThings());
+                    recyclerView.setTag(R.id.showThingType, 1);
+                } else {
+                    //已完成
+                    ((ToDoThingsRecyclerAdapter) recyclerView.getAdapter()).setData(BusinessProcess.getInstance().readFinshThings());
+                    recyclerView.setTag(R.id.showThingType, 0);
+                }
                 recyclerView.getAdapter().notifyDataSetChanged();
-                break;
 
+//                recyclerView.scrollToPosition(0);
+                break;
+            default:
+                break;
         }
         view.postInvalidate();
-
     }
 
     public TodoThingsRecyclerListView getRecyclerView() {

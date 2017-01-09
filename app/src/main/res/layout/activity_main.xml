@@ -9,7 +9,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="#e6e6e6"
+        android:background="#ffffff"
         android:elevation="5dp">
         <!--android:layout_height="?attr/actionBarSize"-->
 
@@ -31,11 +31,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="20dp"
+                android:layout_weight="1"
                 android:background="@drawable/search_bar"
                 android:gravity="center"
                 android:text="搜索事项"
                 android:textColor="#8a8a8a"
-                android:layout_weight="1"
                 android:textSize="18dp" />
 
             <ImageView
@@ -76,8 +76,8 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="1dp"
             android:id="@+id/show_things"
+            android:layout_width="1dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"

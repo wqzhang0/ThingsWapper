@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,10 +25,10 @@ import com.wqzhang.thingswapper.events.SaveChooseOperationEvent;
 import com.wqzhang.thingswapper.events.ShowMoreSetEvent;
 import com.wqzhang.thingswapper.model.HistoryData;
 import com.wqzhang.thingswapper.tools.Common;
-import com.wqzhang.thingswapper.tools.DateUtil;
+import com.wqzhang.thingswapper.tools.ShowOrHideView;
+
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,7 +54,6 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
 
     private Context mContext;
     private LayoutInflater inflater;
-    private EventBus bus;
 
     private RecyclerView.ViewHolder preHolder;
 
@@ -63,6 +61,8 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
 
     NotifyDateRecyclerAdapter notifyDateRecyclerAdapter;
     int[] date = new int[]{0, 1, 2, 3};
+
+    EventBus bus;
 
     private AddToDoThingRecyclerAdapter() {
         super();
@@ -72,7 +72,6 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
         this.mContext = context;
         inflater = LayoutInflater.from(context);
         bus = EventBus.getDefault();
-        bus.register(this);
     }
 
     @Override
@@ -207,7 +206,7 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                     @Override
                     public void onClick(View view) {
                         dateChoiceHolder.childLayout.setVisibility(View.VISIBLE);
-                        Animator startOpen = showChildView(dateChoiceHolder);
+                        Animator startOpen = ShowOrHideView.showChildView(dateChoiceHolder);
                         startOpen.start();
                         bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.SHOW_DATE));
                         currentOperation = OPERATION_CHOICE_DATE;
@@ -222,7 +221,7 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                         if (isChecked) {
                             //点击展开
                             dateChoiceHolder.childLayout.setVisibility(View.VISIBLE);
-                            Animator startOpen = showChildView(dateChoiceHolder);
+                            Animator startOpen = ShowOrHideView.showChildView(dateChoiceHolder);
                             startOpen.start();
                             if (AddThingOperationXMLData.getInstall().readNotifyTime().size() == 0) {
                                 bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.SHOW_DATE));
@@ -230,7 +229,7 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                         } else {
                             //点击折叠
 //                            dateChoiceHolder.childLayout.setVisibility(View.GONE);
-                            Animator startHide = hideChildView(dateChoiceHolder, dateChoiceHolder.childLayout);
+                            Animator startHide = ShowOrHideView.hideChildView(dateChoiceHolder, dateChoiceHolder.childLayout);
 
                             bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_IS_REMINDER, false));
 
@@ -272,7 +271,7 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                         if (isChecked) {
                             //点击展开
                             notifyCountHolder.childLayout.setVisibility(View.VISIBLE);
-                            Animator startOpen = showChildView(notifyCountHolder);
+                            Animator startOpen = ShowOrHideView.showChildView(notifyCountHolder);
                             startOpen.start();
                             if (notifyCountHolder.answerText.getText().toString().equals("不重复")) {
                                 bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.SHOW_COUNT));
@@ -282,7 +281,7 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
 
                         } else {
                             //点击折叠
-                            Animator startHide = hideChildView(notifyCountHolder, notifyCountHolder.childLayout);
+                            Animator startHide = ShowOrHideView.hideChildView(notifyCountHolder, notifyCountHolder.childLayout);
                             startHide.start();
 
                             //将xml里存储的 是否重复提醒字段(IS_REPEAT) 值更改为false
@@ -315,6 +314,53 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
     public void setDataAndFlushView(HistoryData historyData) {
         this.historyData = historyData;
         this.notifyDataSetChanged();
+    }
+
+
+    /**
+     * 根据操作的类型.保存各种数据
+     *
+     * @param saveChooseOperationEvent
+     */
+    public void save(SaveChooseOperationEvent saveChooseOperationEvent) {
+        switch (currentOperation) {
+            case OPERATION_CHOICE_DATE:
+                if (!(saveChooseOperationEvent.getType() == SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE))
+                    return;
+                if (saveChooseOperationEvent.isDetermine()) {
+                    ArrayList<Date> dateTmp = notifyDateRecyclerAdapter.getDateList();
+                    dateTmp.add(saveChooseOperationEvent.getDate());
+                    notifyDateRecyclerAdapter.setDateList(dateTmp);
+                    Animator startOpen = ShowOrHideView.showChildView(preHolder);
+                    startOpen.start();
+
+                } else {
+                    ArrayList<Date> dateTmp = notifyDateRecyclerAdapter.getDateList();
+                    if (dateTmp.size() == 0) {
+                        DateChoiceHolder dateChoiceHolder = ((DateChoiceHolder) preHolder);
+                        Animator startHide = ShowOrHideView.hideChildView(dateChoiceHolder, dateChoiceHolder.childLayout);
+                        startHide.start();
+                        dateChoiceHolder.dateSwitch.setChecked(false);
+                    }
+                }
+                break;
+            case OPERATION_CHOICE_COUNT:
+                if (!(saveChooseOperationEvent.getType() == SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_COUNTS))
+                    return;
+                NotifyCountHolder notifyCountHolder = (NotifyCountHolder) preHolder;
+                if (saveChooseOperationEvent.isDetermine()) {
+                    notifyCountHolder.answerText.setText(saveChooseOperationEvent.getNotifityCounts());
+                } else {
+                    if (notifyCountHolder.answerText.getText().equals("不重复")) {
+                        Animator startHide = ShowOrHideView.hideChildView(notifyCountHolder, notifyCountHolder.childLayout);
+                        startHide.start();
+                        notifyCountHolder.countSwitch.setChecked(false);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     //提醒内容展示Holder
@@ -371,102 +417,4 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
             answerText = (TextView) itemView.findViewById(R.id.answer_text);
         }
     }
-
-
-    /**
-     * 方法用于 switch 被选择时的动画效果
-     *
-     * @param parentHolder
-     * @return
-     */
-    public static Animator showChildView(RecyclerView.ViewHolder parentHolder) {
-        View parent = (View) parentHolder.itemView.getParent();
-        if (parent == null)
-            throw new IllegalStateException("Cannot animate the layout of a view that has no parent");
-        int start = parentHolder.itemView.getMeasuredHeight();
-        parentHolder.itemView.measure(View.MeasureSpec.makeMeasureSpec(parent.getMeasuredWidth(), View.MeasureSpec.AT_MOST), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        int end = parentHolder.itemView.getMeasuredHeight();
-        final Animator animator = LayoutAnimator.ofHeight(parentHolder.itemView, start, end);
-        return animator;
-    }
-
-    public static Animator hideChildView(RecyclerView.ViewHolder parentHolder, View childView) {
-        View parent = (View) parentHolder.itemView.getParent();
-        if (parent == null)
-            throw new IllegalStateException("Cannot animate the layout of a view that has no parent");
-        int start = parentHolder.itemView.getMeasuredHeight();
-        childView.measure(View.MeasureSpec.makeMeasureSpec(parent.getMeasuredWidth(), View.MeasureSpec.AT_MOST), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        int childHeght = childView.getHeight();
-        parentHolder.itemView.measure(View.MeasureSpec.makeMeasureSpec(parent.getMeasuredWidth(), View.MeasureSpec.AT_MOST), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        int end = start - childHeght;
-        final Animator animator = LayoutAnimator.ofHeight(parentHolder.itemView, start, end);
-        return animator;
-    }
-
-    /**
-     * 根据操作的类型.保存各种数据
-     *
-     * @param saveChooseOperationEvent
-     */
-    @Subscribe
-    public void save(SaveChooseOperationEvent saveChooseOperationEvent) {
-        switch (currentOperation) {
-            case OPERATION_CHOICE_DATE:
-                if (!(saveChooseOperationEvent.getType() == SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE))
-                    return;
-                if (saveChooseOperationEvent.isDetermine()) {
-                    ArrayList<Date> dateTmp = notifyDateRecyclerAdapter.getDateList();
-                    dateTmp.add(saveChooseOperationEvent.getDate());
-                    notifyDateRecyclerAdapter.setDateList(dateTmp);
-                    Animator startOpen = showChildView(preHolder);
-                    startOpen.start();
-
-                } else {
-                    ArrayList<Date> dateTmp = notifyDateRecyclerAdapter.getDateList();
-                    if (dateTmp.size() == 0) {
-                        DateChoiceHolder dateChoiceHolder = ((DateChoiceHolder) preHolder);
-                        Animator startHide = hideChildView(dateChoiceHolder, dateChoiceHolder.childLayout);
-                        startHide.start();
-                        dateChoiceHolder.dateSwitch.setChecked(false);
-                    }
-                }
-                break;
-            case OPERATION_CHOICE_COUNT:
-                if (!(saveChooseOperationEvent.getType() == SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_COUNTS))
-                    return;
-                NotifyCountHolder notifyCountHolder = (NotifyCountHolder) preHolder;
-                if (saveChooseOperationEvent.isDetermine()) {
-                    notifyCountHolder.answerText.setText(saveChooseOperationEvent.getNotifityCounts());
-                } else {
-                    if (notifyCountHolder.answerText.getText().equals("不重复")) {
-                        Animator startHide = hideChildView(notifyCountHolder, notifyCountHolder.childLayout);
-                        startHide.start();
-                        notifyCountHolder.countSwitch.setChecked(false);
-                    }
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-    //    public static Animator ofItemViewHeight(RecyclerView.ViewHolder holder) {
-//        View parent = (View) holder.itemView.getParent();
-//        if (parent == null)
-//            throw new IllegalStateException("Cannot animate the layout of a view that has no parent");
-//
-////        测量扩展动画的起始高度和结束高度
-//        int start = holder.itemView.getMeasuredHeight();
-//        holder.itemView.measure(View.MeasureSpec.makeMeasureSpec(parent.getMeasuredWidth(), View.MeasureSpec.AT_MOST), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-//        int end = holder.itemView.getMeasuredHeight();
-////  6
-//        final Animator animator = LayoutAnimator.ofHeight(holder.itemView, start, end);
-////        设定该item在动画开始结束和取消时能否被recycle
-////        animator.addListener(new ViewHolderAnimatorListener(holder));
-////        设定结束时这个item的宽高
-////        animator.addListener(new LayoutParamsAnimatorListener(holder.itemView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-//
-//        return animator;
-//    }
-
 }

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -50,13 +51,13 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
 
     private AbsListView.OnScrollListener mOnScrollListener;
 
-    private int mBottomRightHolderWidth = 120;
+    private int mBottomRightHolderWidth = 0;
     private int mBottomLeftHolderWidth = 120;
 
     private LinearLayout mContentView;
     private RelativeLayout mLeftRelativeView;
     private RelativeLayout mRightRelativeView;
-    private ImageButton mFinshImgBtn;
+    private ImageButton mFinshImgBtn, mDeleleImgBtn;
 
     public LinearLayout getmContentView() {
         return mContentView;
@@ -75,6 +76,9 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
         return mFinshImgBtn;
     }
 
+    public ImageButton getmDeleleImgBtn() {
+        return mDeleleImgBtn;
+    }
 
     private void initView() {
         mContext = getContext();
@@ -86,6 +90,17 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
         mLeftRelativeView = (RelativeLayout) findViewById(R.id.bottom_left);
         mRightRelativeView = (RelativeLayout) findViewById(R.id.bottom_right);
         mFinshImgBtn = (ImageButton) findViewById(R.id.finsh);
+        mDeleleImgBtn = (ImageButton) findViewById(R.id.trash);
+
+        ViewTreeObserver observer = mRightRelativeView.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mRightRelativeView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                mBottomRightHolderWidth = mRightRelativeView.getWidth();
+            }
+        });
+
     }
 
     public void setContentView(View view) {
@@ -125,18 +140,28 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
                     Log.d(TAG, "deltaX" + deltaX);
                     Log.d(TAG, "touchSlop" + touchSlop);
                     Log.d(TAG, "noTouchSlopScroll" + noTouchSlopScroll);
-                    mContentView.scrollTo(-noTouchSlopScroll, 0);
+                    if (Math.abs(noTouchSlopScroll) > mBottomRightHolderWidth) {
+                        if (noTouchSlopScroll > 0) {
+//                            mContentView.scrollTo(-mBottomRightHolderWidth, 0);
+                            smoothScrollTo(-mBottomRightHolderWidth);
+                        } else {
+                            smoothScrollTo(mBottomRightHolderWidth);
+//                            mContentView.scrollTo(mBottomRightHolderWidth, 0);
+                        }
+                    } else {
+                        mContentView.scrollTo(-noTouchSlopScroll, 0);
+                    }
                 }
 
                 break;
             case MotionEvent.ACTION_UP:
                 int finalScrollX = mContentView.getScrollX();
                 //左移动
-                if (Math.abs(finalScrollX) > 350 * 2 / 3) {
+                if (Math.abs(finalScrollX) > mBottomRightHolderWidth * 2 / 3) {
                     if (finalScrollX > 0) {
-                        smoothScrollTo(350);
+                        smoothScrollTo(mBottomRightHolderWidth);
                     } else {
-                        smoothScrollTo(-350);
+                        smoothScrollTo(-mBottomRightHolderWidth);
                     }
                 } else {
                     shrink();
@@ -161,7 +186,7 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
     private void smoothScrollTo(int destX) {
         int scrollX = mContentView.getScrollX();
         int delta = destX - scrollX;
-        mScroller.startScroll(scrollX, 0, delta, 0, 1000);
+        mScroller.startScroll(scrollX, 0, delta, 0, (1 - Math.abs(scrollX / mBottomRightHolderWidth)) * 1000);
         invalidate();
     }
 

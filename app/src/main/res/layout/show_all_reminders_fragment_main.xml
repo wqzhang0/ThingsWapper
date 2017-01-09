@@ -10,8 +10,10 @@
         android:id="@+id/topLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="100dp"
+        android:background="#F0EFF5"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
+        android:paddingBottom="20dp"
         android:visibility="invisible">
 
         <ImageView
@@ -34,7 +36,7 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#74b465"
+        android:background="#ffffff"
         android:orientation="vertical"
         android:overScrollMode="never">
 
@@ -43,7 +45,9 @@
     <LinearLayout
         android:id="@+id/bottomLinearLayout"
         android:layout_width="match_parent"
+        android:paddingTop="20dp"
         android:layout_height="100dp"
+        android:background="#F0EFF5"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:visibility="invisible">

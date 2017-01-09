@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.wqzhang.thingswapper.R;
+import com.wqzhang.thingswapper.dao.BusinessProcess;
 import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
+import com.wqzhang.thingswapper.tools.Common;
 import com.wqzhang.thingswapper.ui.SlideContentView;
 import com.wqzhang.thingswapper.ui.TodoThingsRecyclerListView;
 
@@ -67,20 +69,43 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
             return;
         } else {
             SlideViewHolder slideViewHolder = (SlideViewHolder) holder;
-            SlideContentView slideContentView = slideViewHolder.slide_content_view;
-            TextView textView = (TextView) slideContentView.findViewById(R.id.tittle);
+            final SlideContentView slideContentView = slideViewHolder.slide_content_view;
+            final TextView textView = (TextView) slideContentView.findViewById(R.id.tittle);
             textView.setText(toDoThings.get(position).getReminderContext());
-//            textView.setText(toDoThings.get(position - 1).getReminderContext());
+            textView.setTag(R.id.toDoThingId, toDoThings.get(position).getId());
             slideContentView.getmFinshImgBtn().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                Toast.makeText(mContext, data[position] + " Click", Toast.LENGTH_SHORT).show();
+                    Long toDoThingId = (Long) textView.getTag(R.id.toDoThingId);
+                    BusinessProcess.getInstance().changeToDoThingState(toDoThingId, Common.STATUS_FINSH);
+                    removeItem(toDoThingId);
+                    slideContentView.shrink();
+                }
+            });
+
+            slideContentView.getmDeleleImgBtn().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Long toDoThingId = (Long) textView.getTag(R.id.toDoThingId);
+                    BusinessProcess.getInstance().deleteToDoTingById(toDoThingId);
+                    removeItem(toDoThingId);
+                    slideContentView.shrink();
                 }
             });
 
         }
-
     }
+
+    private void removeItem(Long toDoThingId) {
+        for (int i = 0; i < toDoThings.size(); i++) {
+            if (toDoThings.get(i).getId() == toDoThingId) {
+                notifyItemRemoved(i);
+                toDoThings.remove(i);
+            }
+
+        }
+    }
+
 
     @Override
     public int getItemCount() {

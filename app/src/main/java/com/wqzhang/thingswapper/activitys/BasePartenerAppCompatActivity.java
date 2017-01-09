@@ -40,12 +40,32 @@ public abstract class BasePartenerAppCompatActivity<V extends Vu> extends AppCom
 
     @Override
     protected void onStop() {
+        beforeOnStop();
         super.onStop();
     }
 
+    protected void beforeOnStop() {
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
 
     @Override
     protected void onDestroy() {
+        beforeDestroy();
         onDestroyVu();
         vu = null;
         super.onDestroy();
@@ -53,12 +73,12 @@ public abstract class BasePartenerAppCompatActivity<V extends Vu> extends AppCom
 
     @Override
     public final void onBackPressed() {
-        if(!handleBackPressed()) {
+        if (!handleBackPressed()) {
             super.onBackPressed();
         }
     }
 
-    public boolean handleBackPressed(){
+    public boolean handleBackPressed() {
         return false;
     }
 
@@ -68,8 +88,12 @@ public abstract class BasePartenerAppCompatActivity<V extends Vu> extends AppCom
     protected void onBind() {
     }
 
+    protected void beforeDestroy() {
+    }
+
 
     protected void onDestroyVu() {
     }
+
 
 }

@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.adapters.AddToDoThingRecyclerAdapter;
 import com.wqzhang.thingswapper.adapters.RemindCountAdapter;
+import com.wqzhang.thingswapper.events.SaveChooseOperationEvent;
 import com.wqzhang.thingswapper.ui.wheelView.LoopView;
 import com.wqzhang.thingswapper.ui.wheelView.OnItemSelectedListener;
 
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 public class AddThingVu implements Vu {
     protected View view;
     TextView addCancel, addSubmit;
-    EditText reminderContent ;
+    EditText reminderContent;
     Button timeChooseCancel, timeChooseSubmit;
 
     FrameLayout reminderSettingLayout;
@@ -136,7 +137,6 @@ public class AddThingVu implements Vu {
         reminderDateMinuteLoopView.setInitPosition(0);
 
 
-
     }
 
     @Override
@@ -195,5 +195,9 @@ public class AddThingVu implements Vu {
 
     public EditText getReminderContent() {
         return reminderContent;
+    }
+
+    public void save(SaveChooseOperationEvent saveChooseOperationEvent) {
+        addToDoThingRecyclerAdapter.save(saveChooseOperationEvent);
     }
 }

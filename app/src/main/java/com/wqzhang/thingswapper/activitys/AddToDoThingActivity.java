@@ -201,5 +201,20 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
         }
     }
 
+    @Subscribe
+    public void save(SaveChooseOperationEvent saveChooseOperationEvent) {
+        vu.save(saveChooseOperationEvent);
+    }
 
+    @Override
+    protected void beforeOnStop() {
+        bus.unregister(this);
+        super.beforeOnStop();
+    }
+
+    @Override
+    protected void beforeDestroy() {
+        super.beforeDestroy();
+        bus.unregister(this);
+    }
 }

@@ -5,6 +5,7 @@ import android.util.Log;
 import com.wqzhang.thingswapper.MainApplication;
 import com.wqzhang.thingswapper.dao.greendao.*;
 import com.wqzhang.thingswapper.model.HistoryData;
+import com.wqzhang.thingswapper.tools.Common;
 
 import org.greenrobot.greendao.query.Query;
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -64,6 +65,25 @@ public class BusinessProcess implements BusinessProcessImpl {
     }
 
     @Override
+    public ArrayList<ToDoThing> readFinshThings() {
+        QueryBuilder<ToDoThing> finshQueryBuilder = toDoThingDao.queryBuilder();
+        ArrayList<ToDoThing> toDoThings = (ArrayList<ToDoThing>) finshQueryBuilder.where(ToDoThingDao.Properties.Status.eq(Common.STATUS_FINSH)).list();
+        return toDoThings;
+    }
+
+    @Override
+    public ArrayList<ToDoThing> readNotDoneThings() {
+        QueryBuilder<ToDoThing> notDoneQueryBuilder = toDoThingDao.queryBuilder();
+        ArrayList<ToDoThing> toDoThings = (ArrayList<ToDoThing>) notDoneQueryBuilder.where(ToDoThingDao.Properties.Status.eq(Common.STATUS_TO_BE_DONE)).list();
+        return toDoThings;
+    }
+
+    @Override
+    public User getOnlineUser() {
+        return null;
+    }
+
+    @Override
     public ArrayList<ToDoThing> readAllThingsByUser(User user) {
         return null;
     }
@@ -81,9 +101,35 @@ public class BusinessProcess implements BusinessProcessImpl {
     }
 
     @Override
+    public void deleteToDoTingById(Long id) {
+        ToDoThing toDoThing = readThingById(id);
+        if (toDoThing != null) {
+            toDoThingDao.delete(toDoThing);
+        }
+    }
+
+    @Override
+    public ToDoThing readThingById(Long id) {
+        ToDoThing toDoThing = null;
+        QueryBuilder<ToDoThing> toDoThingQueryBuilder = toDoThingDao.queryBuilder();
+        ArrayList<ToDoThing> toDoThings = (ArrayList<ToDoThing>) toDoThingQueryBuilder.where(ToDoThingDao.Properties.Id.eq(id)).list();
+        if (toDoThings != null || toDoThings.size() != 0) {
+            toDoThing = toDoThings.get(0);
+        }
+        return toDoThing;
+    }
+
+    @Override
     public void addToDoThing(ToDoThing toDoThing) {
         toDoThingDao.insert(toDoThing);
 
+    }
+
+    public void changeToDoThingState(Long id, int state) {
+        QueryBuilder<ToDoThing> toDoThingQueryBuilder = toDoThingDao.queryBuilder();
+        ToDoThing toDoThing = toDoThingQueryBuilder.where(ToDoThingDao.Properties.Id.eq(id)).list().get(0);
+        toDoThing.setStatus(state);
+        toDoThingDao.update(toDoThing);
     }
 
     @Override
@@ -106,19 +152,5 @@ public class BusinessProcess implements BusinessProcessImpl {
         connection_t_nDao.insertInTx(connection_t_nArrayList);
     }
 
-    @Override
-    public ArrayList<ToDoThing> readFinshThings() {
-        return null;
-    }
-
-    @Override
-    public ArrayList<ToDoThing> readNotDoneThings() {
-        return null;
-    }
-
-    @Override
-    public User getOnlineUser() {
-        return null;
-    }
 
 }
