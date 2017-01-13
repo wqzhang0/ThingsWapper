@@ -50,20 +50,25 @@ public class ShowThingsFragment extends BasePartenerFragment<ShowThingsVu> {
 
             //firstChildView getTop 为0   但是recyclerView.getTop() 会根据不同尺寸手机 多出不同像素
 //                Log.d("onScrollStateChanged", "onScrollStateChanged" + newState);
-            if (newState == SCROLL_STATE_TOUCH_SCROLL) {
-                lastPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
-                View lastChildView = layoutManager.getChildAt(layoutManager.getChildCount() - 1);
+//            if (newState == SCROLL_STATE_TOUCH_SCROLL) {
+//                lastPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
+//                View lastChildView = layoutManager.getChildAt(layoutManager.getChildCount() - 1);
+////e
+//                int recyclerBottom = (int) (recyclerView.getBottom() - recyclerView.getPaddingBottom() - recyclerView.getTranslationY()) - recyclerView.getTop();
+//                int lastChildViewBottom = lastChildView.getBottom();
 //
-                int recyclerBottom = (int) (recyclerView.getBottom() - recyclerView.getPaddingBottom() - recyclerView.getTranslationY()) - recyclerView.getTop();
-                int lastChildViewBottom = lastChildView.getBottom();
-
-                if ((lastChildViewBottom == recyclerBottom || lastPosition == recyclerView.getAdapter().getItemCount() - 1) && (lastPosition == (layoutManager.getItemCount() - 1))) {
-                    TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_UP);
-                }
-                if ((lastChildViewBottom < recyclerBottom || lastPosition == recyclerView.getAdapter().getItemCount() - 1) && (lastPosition == (layoutManager.getItemCount() - 1))) {
-                    TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOUBLE);
-                }
-            }
+//                //空数据时 会有一个空的Item页面 填充recyclerView  大小相等,
+//
+//                //为了解决默认可以上拉
+////                if (lastChildViewBottom == recyclerBottom || lastPosition == recyclerView.getAdapter().getItemCount() - 1) {
+////                    TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_UP);
+////                }
+//
+//                //为了解决 当item 不能铺满整个RecyclerView 时  也允许上下拖动
+//                if (lastChildViewBottom < recyclerBottom || lastPosition == recyclerView.getAdapter().getItemCount() - 1) {
+//                    TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOUBLE);
+//                }
+//            }
             if (newState == SCROLL_STATE_IDLE) {
                 //不滑动时
                 if (layoutManager instanceof LinearLayoutManager) {

@@ -25,9 +25,53 @@ import com.wqzhang.thingswapper.R;
 public class SlideContentView extends LinearLayout implements View.OnClickListener {
     private final String TAG = "SlideContentView";
 
-    public SlideContentView(Context context) {
+    private Context mContext;
+
+    private LinearLayout contentLinearLayout;
+
+    private Scroller mScroller;
+
+    private AbsListView.OnScrollListener mOnScrollListener;
+
+    private int mBottomRightHolderWidth = 0;
+    private int mBottomLeftHolderWidth = 0;
+
+    private LinearLayout mContentView;
+    private RelativeLayout mLeftRelativeView;
+    private RelativeLayout mRightRelativeView;
+
+    public SlideContentView(Context context, View contentView, int bottomLayoutId) {
         super(context);
-        initView();
+
+        mContext = getContext();
+        mScroller = new Scroller(mContext);
+
+        setOrientation(LinearLayout.HORIZONTAL);
+        View.inflate(mContext, R.layout.show_finsh_reminder_item_slide_view_merge, this);
+        mContentView = (LinearLayout) findViewById(R.id.view_content);
+        mLeftRelativeView = (RelativeLayout) findViewById(R.id.bottom_left);
+        mRightRelativeView = (RelativeLayout) findViewById(R.id.bottom_right);
+
+        ViewTreeObserver observerRight = mRightRelativeView.getViewTreeObserver();
+        observerRight.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mRightRelativeView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                mBottomRightHolderWidth = mRightRelativeView.getWidth();
+            }
+        });
+
+        ViewTreeObserver observerLeft = mLeftRelativeView.getViewTreeObserver();
+        observerLeft.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mLeftRelativeView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                mBottomLeftHolderWidth = mLeftRelativeView.getWidth();
+            }
+        });
+
+        setContentView(contentView);
+
     }
 
     public SlideContentView(Context context, AttributeSet attrs) {
@@ -43,21 +87,6 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    private Context mContext;
-
-    private LinearLayout contentLinearLayout;
-
-    private Scroller mScroller;
-
-    private AbsListView.OnScrollListener mOnScrollListener;
-
-    private int mBottomRightHolderWidth = 0;
-    private int mBottomLeftHolderWidth = 120;
-
-    private LinearLayout mContentView;
-    private RelativeLayout mLeftRelativeView;
-    private RelativeLayout mRightRelativeView;
-    private ImageButton mFinshImgBtn, mDeleleImgBtn;
 
     public LinearLayout getmContentView() {
         return mContentView;
@@ -72,36 +101,6 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
         return mRightRelativeView;
     }
 
-    public ImageButton getmFinshImgBtn() {
-        return mFinshImgBtn;
-    }
-
-    public ImageButton getmDeleleImgBtn() {
-        return mDeleleImgBtn;
-    }
-
-    private void initView() {
-        mContext = getContext();
-        mScroller = new Scroller(mContext);
-
-        setOrientation(LinearLayout.HORIZONTAL);
-        View.inflate(mContext, R.layout.show_reminder_item_slide_view_merge, this);
-        mContentView = (LinearLayout) findViewById(R.id.view_content);
-        mLeftRelativeView = (RelativeLayout) findViewById(R.id.bottom_left);
-        mRightRelativeView = (RelativeLayout) findViewById(R.id.bottom_right);
-        mFinshImgBtn = (ImageButton) findViewById(R.id.finsh);
-        mDeleleImgBtn = (ImageButton) findViewById(R.id.trash);
-
-        ViewTreeObserver observer = mRightRelativeView.getViewTreeObserver();
-        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                mRightRelativeView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                mBottomRightHolderWidth = mRightRelativeView.getWidth();
-            }
-        });
-
-    }
 
     public void setContentView(View view) {
         mContentView.addView(view);

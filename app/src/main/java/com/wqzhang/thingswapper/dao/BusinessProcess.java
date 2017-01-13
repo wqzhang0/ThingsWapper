@@ -80,7 +80,10 @@ public class BusinessProcess implements BusinessProcessImpl {
 
     @Override
     public User getOnlineUser() {
-        return null;
+        QueryBuilder<User> userQueryBuilder = userDao.queryBuilder();
+        userQueryBuilder.where(UserDao.Properties.DefaultLoginAccount.eq(true));
+        ArrayList<User> userArrayList = (ArrayList<User>) userQueryBuilder.list();
+        return userArrayList.get(0);
     }
 
     @Override

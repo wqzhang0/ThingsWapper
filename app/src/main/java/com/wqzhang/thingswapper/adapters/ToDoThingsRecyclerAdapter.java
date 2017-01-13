@@ -25,7 +25,8 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
 
     private final String TAG = "RecyclerAdapter";
     public static final int TYPE_EMPTY = 0;
-    public static final int TYPE_NORMAL = 1;
+    public static final int TYPE_NORMAL_FINSH = 1;
+    public static final int TYPE_NORMAL_TO_BE_DONE = 2;
 
     private LayoutInflater inflater = null;
     private Context mContext = null;
@@ -48,15 +49,20 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
             View emptyView = inflater.inflate(R.layout.empty_fullscreen_view, parent, false);
             EmptyViewHolder emptyViewHolder = new EmptyViewHolder(emptyView);
             return emptyViewHolder;
-        } else {
-            parent = new SlideContentView(mContext);
+        } else if(viewType == TYPE_NORMAL_FINSH){
             View view = inflater.inflate(R.layout.show_reminder_item, parent, false);
-            SlideContentView slideContentView = new SlideContentView(mContext);
-            slideContentView.setContentView(view);
+            SlideContentView slideContentView = new SlideContentView(mContext,view,R.layout.show_finsh_reminder_item_slide_view_merge);
 
             SlideViewHolder slideViewHolder = new SlideViewHolder(slideContentView);
             return slideViewHolder;
+        }else if (viewType == TYPE_NORMAL_TO_BE_DONE){
+            View view = inflater.inflate(R.layout.show_reminder_item, parent, false);
+
+            SlideContentView slideContentView = new SlideContentView(mContext,view,R.layout.show_tobedone_reminder_item_slide_view_merge);
+            SlideViewHolder slideViewHolder = new SlideViewHolder(slideContentView);
+            return slideViewHolder;
         }
+        return null;
 
     }
 
@@ -67,13 +73,13 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
             TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOUBLE);
 
             return;
-        } else {
+        } else if (getItemViewType(position) == TYPE_NORMAL_FINSH) {
             SlideViewHolder slideViewHolder = (SlideViewHolder) holder;
             final SlideContentView slideContentView = slideViewHolder.slide_content_view;
             final TextView textView = (TextView) slideContentView.findViewById(R.id.tittle);
             textView.setText(toDoThings.get(position).getReminderContext());
             textView.setTag(R.id.toDoThingId, toDoThings.get(position).getId());
-            slideContentView.getmFinshImgBtn().setOnClickListener(new View.OnClickListener() {
+            slideContentView.findViewById(R.id.finsh).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Long toDoThingId = (Long) textView.getTag(R.id.toDoThingId);
@@ -83,7 +89,7 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
                 }
             });
 
-            slideContentView.getmDeleleImgBtn().setOnClickListener(new View.OnClickListener() {
+            slideContentView.findViewById(R.id.trash).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Long toDoThingId = (Long) textView.getTag(R.id.toDoThingId);
@@ -93,6 +99,31 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
                 }
             });
 
+        } else if (getItemViewType(position) == TYPE_NORMAL_TO_BE_DONE) {
+            SlideViewHolder slideViewHolder = (SlideViewHolder) holder;
+            final SlideContentView slideContentView = slideViewHolder.slide_content_view;
+            final TextView textView = (TextView) slideContentView.findViewById(R.id.tittle);
+            textView.setText(toDoThings.get(position).getReminderContext());
+            textView.setTag(R.id.toDoThingId, toDoThings.get(position).getId());
+            slideContentView.findViewById(R.id.finsh).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Long toDoThingId = (Long) textView.getTag(R.id.toDoThingId);
+                    BusinessProcess.getInstance().changeToDoThingState(toDoThingId, Common.STATUS_FINSH);
+                    removeItem(toDoThingId);
+                    slideContentView.shrink();
+                }
+            });
+
+            slideContentView.findViewById(R.id.trash).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Long toDoThingId = (Long) textView.getTag(R.id.toDoThingId);
+                    BusinessProcess.getInstance().deleteToDoTingById(toDoThingId);
+                    removeItem(toDoThingId);
+                    slideContentView.shrink();
+                }
+            });
         }
     }
 
@@ -114,7 +145,15 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        return (toDoThings == null || toDoThings.size() == 0) ? TYPE_EMPTY : TYPE_NORMAL;
+        if (toDoThings == null || toDoThings.size() == 0) {
+            return TYPE_EMPTY;
+        } else {
+            if (toDoThings.get(position).getStatus() == Common.STATUS_FINSH) {
+                return TYPE_NORMAL_FINSH;
+            } else {
+                return TYPE_NORMAL_TO_BE_DONE;
+            }
+        }
     }
 
 

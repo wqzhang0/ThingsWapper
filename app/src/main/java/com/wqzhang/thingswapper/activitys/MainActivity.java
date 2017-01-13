@@ -22,7 +22,6 @@ public class MainActivity extends BasePartenerAppCompatActivity<MainVu> implemen
         super.onBind();
 
 
-        BusinessProcess.getInstance().readOrAddUserInfo();
         setSupportActionBar(vu.getToolBar());
         fragmentManager.beginTransaction().replace(vu.getContainerId(), ShowThingsFragment.newInstance()).commit();
         vu.getPoolTextView().setOnClickListener(this);

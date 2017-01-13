@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/slide_content_view"
+        android:layout_width="600dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+
+        <RelativeLayout
+            android:id="@+id/bottom_left"
+            android:layout_width="112dp"
+            android:layout_height="56dp"
+            android:layout_gravity="left"
+            android:background="#111111">
+
+            <ImageButton
+                android:id="@+id/trash"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:background="@drawable/trash" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/bottom_right"
+            android:layout_width="112dp"
+            android:layout_height="56dp"
+            android:layout_gravity="right"
+            android:background="#c8c7cd">
+
+            <ImageButton
+                android:id="@+id/finsh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@drawable/finsh_light" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/view_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+
+</merge>

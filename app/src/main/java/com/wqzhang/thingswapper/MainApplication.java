@@ -36,6 +36,9 @@ public class MainApplication extends Application {
         AddThingOperationXMLData.getInstall().init();
 
 
+        BusinessProcess.getInstance().readOrAddUserInfo();
+
+
 //        DevOpenHelper helper = new DevOpenHelper(this, "notes-db");
 //        Database db = helper.getWritableDb();
 //        daoSession = new DaoMaster(db).newSession();
