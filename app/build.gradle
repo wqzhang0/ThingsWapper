@@ -5,6 +5,9 @@ buildscript {
     repositories {
         jcenter()
         mavenCentral()
+        flatDir {
+            dirs 'libs'   // aar目录
+        }
     }
 
     dependencies {
@@ -47,6 +50,7 @@ android {
 //    schemaVersion 1000
 //}
 dependencies {
+    // compile fileTree(dir: 'libs', include: '*.aar')
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -55,8 +59,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.github.Aspsine:SwipeToLoadLayout:1.0.3'
     testCompile 'junit:junit:4.12'
-    //    compile 'org.greenrobot:greendao:3.2.0'
     compile project(':daoexamplegenerator')
     compile files('libs/greendao-api-3.2.0.jar')
     compile files('libs/eventbus-3.0.0.jar')
+    compile project(':MPChartLib')
 }
