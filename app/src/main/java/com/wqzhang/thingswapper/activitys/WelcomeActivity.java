@@ -23,6 +23,9 @@ public class WelcomeActivity extends BasePartenerActivity<WelcomeVu> implements 
     protected void onBind() {
         super.onBind();
         User user = BusinessProcess.getInstance().getOnlineUser();
+        Intent intent = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
+        startActivity(intent);
+
         if (user.getId() == 1) {
             //无用户自己账号登录
             //引导用户进入注册界面
@@ -30,7 +33,7 @@ public class WelcomeActivity extends BasePartenerActivity<WelcomeVu> implements 
             vu.showFramelayouy(vu.TYPE_REGISTER);
         } else {
             //直接进入用户代做事项界面
-            Intent intent = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
+            Intent intent1 = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
             startActivity(intent);
         }
         vu.getRegisterToLogin().setOnClickListener(this);

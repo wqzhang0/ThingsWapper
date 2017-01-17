@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
@@ -47,7 +46,7 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
         mScroller = new Scroller(mContext);
 
         setOrientation(LinearLayout.HORIZONTAL);
-        View.inflate(mContext, R.layout.show_finsh_reminder_item_slide_view_merge, this);
+        View.inflate(mContext, R.layout.list_item_show_finsh_reminder_slide_view_merge, this);
         mContentView = (LinearLayout) findViewById(R.id.view_content);
         mLeftRelativeView = (RelativeLayout) findViewById(R.id.bottom_left);
         mRightRelativeView = (RelativeLayout) findViewById(R.id.bottom_right);

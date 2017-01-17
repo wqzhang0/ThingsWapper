@@ -46,19 +46,19 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_EMPTY) {
-            View emptyView = inflater.inflate(R.layout.empty_fullscreen_view, parent, false);
+            View emptyView = inflater.inflate(R.layout.list_item_empty_fullscreen_view, parent, false);
             EmptyViewHolder emptyViewHolder = new EmptyViewHolder(emptyView);
             return emptyViewHolder;
         } else if(viewType == TYPE_NORMAL_FINSH){
-            View view = inflater.inflate(R.layout.show_reminder_item, parent, false);
-            SlideContentView slideContentView = new SlideContentView(mContext,view,R.layout.show_finsh_reminder_item_slide_view_merge);
+            View view = inflater.inflate(R.layout.list_item_show_reminder, parent, false);
+            SlideContentView slideContentView = new SlideContentView(mContext,view,R.layout.list_item_show_finsh_reminder_slide_view_merge);
 
             SlideViewHolder slideViewHolder = new SlideViewHolder(slideContentView);
             return slideViewHolder;
         }else if (viewType == TYPE_NORMAL_TO_BE_DONE){
-            View view = inflater.inflate(R.layout.show_reminder_item, parent, false);
+            View view = inflater.inflate(R.layout.list_item_show_reminder, parent, false);
 
-            SlideContentView slideContentView = new SlideContentView(mContext,view,R.layout.show_tobedone_reminder_item_slide_view_merge);
+            SlideContentView slideContentView = new SlideContentView(mContext,view,R.layout.list_item_show_tobedone_reminder_slide_view_merge);
             SlideViewHolder slideViewHolder = new SlideViewHolder(slideContentView);
             return slideViewHolder;
         }

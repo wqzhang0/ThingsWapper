@@ -33,7 +33,7 @@ public class NotifyDateRecyclerAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.notify_date_item, parent, false);
+        View view = inflater.inflate(R.layout.list_item_notify_date, parent, false);
         DefaultHolder defaultHolder = new DefaultHolder(view);
         return defaultHolder;
     }

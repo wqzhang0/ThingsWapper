@@ -79,16 +79,16 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
         View view = null;
         switch (viewType) {
             case TYPE_EDIT:
-                view = inflater.inflate(R.layout.edit_nofity_content_item, parent, false);
+                view = inflater.inflate(R.layout.list_item_edit_nofity_content, parent, false);
                 return new EditHolder(view);
             case TYPE_NOTIFY_TYPE:
-                view = inflater.inflate(R.layout.choice_notify_type_item, parent, false);
+                view = inflater.inflate(R.layout.list_item_choice_notify_type, parent, false);
                 return new NotifyTypeHolder(view);
             case TYPE_NOTIFY_DATE:
-                view = inflater.inflate(R.layout.choice_notify_date_and_time_item, parent, false);
+                view = inflater.inflate(R.layout.list_item_choice_notify_date_and_time, parent, false);
                 return new DateChoiceHolder(view);
             case TYPE_NOTIFY_COUNT:
-                view = inflater.inflate(R.layout.choice_notify_counts_item, parent, false);
+                view = inflater.inflate(R.layout.list_item_choice_notify_counts, parent, false);
                 return new NotifyCountHolder(view);
         }
         return null;

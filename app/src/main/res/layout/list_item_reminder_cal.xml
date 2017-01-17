@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#ffffff">
+    android:layout_height="match_parent">
+
     <TextView
         android:id="@+id/remind_content"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:textColor="#d4237a"
-        android:textSize="20dp"
         android:gravity="center"
+        android:text="周一"
+        android:textColor="#d4237a"
         android:textDirection="anyRtl"
-        android:text="周一"/>
+        android:textSize="20dp" />
 
 </LinearLayout>

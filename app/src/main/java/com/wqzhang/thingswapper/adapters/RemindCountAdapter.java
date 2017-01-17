@@ -85,7 +85,7 @@ public class RemindCountAdapter implements ListAdapter {
     public View getView(final int i, View view, ViewGroup viewGroup) {
         if (view == null || choicesHolder == null) {
             choicesHolder = new ChoicesHolder();
-            view = inflater.inflate(R.layout.reminder_cal_list_item, null);
+            view = inflater.inflate(R.layout.list_item_reminder_cal, null);
             choicesHolder.textView = (TextView) view.findViewById(R.id.remind_content);
             view.setTag(choicesHolder);
         } else {
