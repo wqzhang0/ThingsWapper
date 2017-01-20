@@ -51,14 +51,15 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right" />
 
-        <Button
+        <TextView
             android:id="@+id/choose_notify_date_and_time"
-            style="@style/AddThingsTextStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="点击新增提醒时间" />
-
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:gravity="center_horizontal|right"
+            android:paddingRight="36dp"
+            android:text="新增提醒时间"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="14dp" />
 
     </LinearLayout>
 

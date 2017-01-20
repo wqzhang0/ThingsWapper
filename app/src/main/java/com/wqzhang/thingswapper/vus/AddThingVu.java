@@ -20,10 +20,12 @@ import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.adapters.AddToDoThingRecyclerAdapter;
 import com.wqzhang.thingswapper.adapters.RemindCountAdapter;
 import com.wqzhang.thingswapper.events.SaveChooseOperationEvent;
+import com.wqzhang.thingswapper.tools.DateUtil;
 import com.wqzhang.thingswapper.ui.wheelView.LoopView;
 import com.wqzhang.thingswapper.ui.wheelView.OnItemSelectedListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by wqzhang on 17-1-5.
@@ -33,7 +35,7 @@ public class AddThingVu implements Vu {
     protected View view;
     TextView addCancel, addSubmit;
     EditText reminderContent;
-    Button timeChooseCancel, timeChooseSubmit;
+    TextView timeChooseCancel, timeChooseSubmit;
 
     FrameLayout reminderSettingLayout;
     ListView reminderCountChoicesListView;
@@ -47,6 +49,7 @@ public class AddThingVu implements Vu {
     Toolbar toolbar;
 
     int newHourValue, newMinuteValue;
+    String newYMDValue;
 
     @Override
     public void init(LayoutInflater inflater, ViewGroup container) {
@@ -63,8 +66,8 @@ public class AddThingVu implements Vu {
         reminderDateMinuteLoopView = (LoopView) view.findViewById(R.id.minute_loop_view);
         reminderDateChoicesLinearLayout = (LinearLayout) view.findViewById(R.id.date_choices);
 
-        timeChooseCancel = (Button) view.findViewById(R.id.time_choose_cancel);
-        timeChooseSubmit = (Button) view.findViewById(R.id.time_choose_submit);
+        timeChooseCancel = (TextView) view.findViewById(R.id.time_choose_cancel);
+        timeChooseSubmit = (TextView) view.findViewById(R.id.time_choose_submit);
 
         RecyclerView fillInformationLayout = (RecyclerView) view.findViewById(R.id.fill_information_layout);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(inflater.getContext());
@@ -103,6 +106,7 @@ public class AddThingVu implements Vu {
                 newHourValue = Integer.valueOf(hoursList.get(index));
             }
         });
+        newHourValue = Integer.valueOf(hoursList.get(8));
 
 
         final ArrayList<String> minuteList = new ArrayList<>();
@@ -125,6 +129,7 @@ public class AddThingVu implements Vu {
                 newMinuteValue = Integer.valueOf(minuteList.get(index));
             }
         });
+        newMinuteValue = Integer.valueOf(minuteList.get(0));
 
 
         final ArrayList<String> calList = new ArrayList<>();
@@ -133,9 +138,15 @@ public class AddThingVu implements Vu {
             calList.add(tmpString + i + "日");
         }
         reminderDateCalLoopView.setItems(calList);
-        reminderDateMinuteLoopView.setTextSize(15);
-        reminderDateMinuteLoopView.setInitPosition(0);
-
+        reminderDateCalLoopView.setTextSize(15);
+        reminderDateCalLoopView.setInitPosition(0);
+        reminderDateCalLoopView.setListener(new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(int index) {
+                newYMDValue = calList.get(index);
+            }
+        });
+        newYMDValue = calList.get(0);
 
     }
 
@@ -149,11 +160,11 @@ public class AddThingVu implements Vu {
     }
 
 
-    public Button getTimeChooseCancel() {
+    public TextView getTimeChooseCancel() {
         return timeChooseCancel;
     }
 
-    public Button getTimeChooseSubmit() {
+    public TextView getTimeChooseSubmit() {
         return timeChooseSubmit;
     }
 
@@ -199,5 +210,11 @@ public class AddThingVu implements Vu {
 
     public void save(SaveChooseOperationEvent saveChooseOperationEvent) {
         addToDoThingRecyclerAdapter.save(saveChooseOperationEvent);
+    }
+
+    public Date getNotifyDate() {
+        String dataChooseResult = newYMDValue + " " + newHourValue + " " + newMinuteValue;
+        Date date = DateUtil.parseDate(dataChooseResult, DateUtil.CHOICE_PATTERN);
+        return date;
     }
 }

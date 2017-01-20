@@ -139,20 +139,25 @@ public class BusinessProcess implements BusinessProcessImpl {
     public void addToDoThing(ToDoThing toDoThing, List<Notification> notificationList) {
         ArrayList<Connection_T_N> connection_t_nArrayList = new ArrayList<>();
         toDoThing.setUser(readOrAddUserInfo());
-        toDoThingDao.insert(toDoThing);
+        try {
+            toDoThingDao.insert(toDoThing);
 
-        for (Notification notification : notificationList) {
-            Connection_T_N connection_t_n = new Connection_T_N();
+            for (Notification notification : notificationList) {
+                Connection_T_N connection_t_n = new Connection_T_N();
 
-            connection_t_n.setToDoThing(toDoThing);
+                connection_t_n.setToDoThing(toDoThing);
 
-            notificationDao.insert(notification);
-            connection_t_n.setNotification(notification);
+                notificationDao.insert(notification);
+                connection_t_n.setNotification(notification);
 
-            connection_t_nArrayList.add(connection_t_n);
+                connection_t_nArrayList.add(connection_t_n);
+            }
+
+            connection_t_nDao.insertInTx(connection_t_nArrayList);
+        } catch (Exception e) {
+            Log.e("SQL", "添加失败");
         }
 
-        connection_t_nDao.insertInTx(connection_t_nArrayList);
     }
 
 

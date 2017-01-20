@@ -24,6 +24,7 @@ public class WelcomeActivity extends BasePartenerActivity<WelcomeVu> implements 
         super.onBind();
         User user = BusinessProcess.getInstance().getOnlineUser();
         Intent intent = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
 
         if (user.getId() == 1) {

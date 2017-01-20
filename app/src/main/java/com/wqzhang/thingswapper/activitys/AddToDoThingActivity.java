@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.dao.AddThingOperationXMLData;
@@ -26,6 +27,7 @@ import com.wqzhang.thingswapper.vus.AddThingVu;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -34,10 +36,6 @@ import java.util.Date;
 
 public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThingVu> implements View.OnClickListener {
 
-
-    //新设置的时间
-    private int newHourValue = 8;
-    private int newMinuteValue = 0;
 
     SharedPreferencesControl sharedPreferencesControl;
 
@@ -127,12 +125,12 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.add_cancel:
-                bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_CONTEXT, ((EditText) findViewById(R.id.remind_content)).getText().toString()));
+//                bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_CONTEXT, ((EditText) findViewById(R.id.remind_content)).getText().toString()));
                 Intent intent = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
                 startActivity(intent);
                 break;
             case R.id.add_submit:
-                bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_CONTEXT, ((EditText) findViewById(R.id.remind_content)).getText().toString()));
+//                bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_CONTEXT, ((EditText) findViewById(R.id.remind_content)).getText().toString()));
                 BusinessProcess.getInstance().addToDoThing(AddThingOperationXMLData.getInstall().getToDothing(),
                         AddThingOperationXMLData.getInstall().getNotifycation());
 
@@ -154,10 +152,22 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
 
                 break;
             case R.id.time_choose_submit:
-                Date date = DateUtil.parseDate("2016年12月30日 " + newHourValue + " " + newMinuteValue, DateUtil.CHOICE_PATTERN);
+
+                Date date = vu.getNotifyDate();
                 //将xml里存储的 是否提醒字段(IS_REMINDER) 值更改为true
-                bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_IS_REMINDER, true));
-                bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE, date, true));
+                boolean alreadyExists = false;
+                ArrayList<Date> dateArrayList = AddThingOperationXMLData.getInstall().readNotifyTime();
+                for (Date _tmpDate : dateArrayList) {
+                    if (_tmpDate.equals(date)) {
+                        alreadyExists = true;
+                    }
+                }
+                if (alreadyExists) {
+                    Toast.makeText(this, "提醒时间已存在", Toast.LENGTH_SHORT).show();
+                } else {
+                    bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_IS_REMINDER, true));
+                    bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE, date, true));
+                }
                 bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.HIDE));
                 break;
             default:

@@ -36,10 +36,9 @@
 
         </activity>
 
+        <!--android:windowSoftInputMode="stateAlwaysHidden|adjustResize"-->
 
-        <activity
-            android:name=".activitys.AddToDoThingActivity"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
+        <activity android:name=".activitys.AddToDoThingActivity">
             <intent-filter>
                 <action android:name="com.wqzhang.thingswapper.activity.AddToDoThingActivity" />
                 <category android:name="android.intent.category.DEFAULT" />

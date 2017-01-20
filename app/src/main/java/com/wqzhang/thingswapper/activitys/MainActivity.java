@@ -23,8 +23,8 @@ public class MainActivity extends BasePartenerAppCompatActivity<MainVu> implemen
 
 
         setSupportActionBar(vu.getToolBar());
-//        fragmentManager.beginTransaction().replace(vu.getContainerId(), ShowThingsFragment.newInstance()).commit();
-        fragmentManager.beginTransaction().replace(vu.getContainerId(), PoolFragment.newInstance()).commit();
+        fragmentManager.beginTransaction().replace(vu.getContainerId(), ShowThingsFragment.newInstance()).commit();
+//        fragmentManager.beginTransaction().replace(vu.getContainerId(), PoolFragment.newInstance()).commit();
         vu.getPoolTextView().setOnClickListener(this);
         vu.getSettingTextView().setOnClickListener(this);
         vu.getShowThingsTextView().setOnClickListener(this);

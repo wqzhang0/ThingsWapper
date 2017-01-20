@@ -46,7 +46,7 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
         mScroller = new Scroller(mContext);
 
         setOrientation(LinearLayout.HORIZONTAL);
-        View.inflate(mContext, R.layout.list_item_show_finsh_reminder_slide_view_merge, this);
+        View.inflate(mContext, bottomLayoutId, this);
         mContentView = (LinearLayout) findViewById(R.id.view_content);
         mLeftRelativeView = (RelativeLayout) findViewById(R.id.bottom_left);
         mRightRelativeView = (RelativeLayout) findViewById(R.id.bottom_right);
@@ -184,7 +184,9 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
     private void smoothScrollTo(int destX) {
         int scrollX = mContentView.getScrollX();
         int delta = destX - scrollX;
-        mScroller.startScroll(scrollX, 0, delta, 0, (1 - Math.abs(scrollX / mBottomRightHolderWidth)) * 1000);
+        if (mBottomRightHolderWidth != 0) {
+            mScroller.startScroll(scrollX, 0, delta, 0, (1 - Math.abs(scrollX / mBottomRightHolderWidth)) * 1000);
+        }
         invalidate();
     }
 
