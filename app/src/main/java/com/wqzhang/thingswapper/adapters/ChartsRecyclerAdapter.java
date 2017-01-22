@@ -53,7 +53,6 @@ public class ChartsRecyclerAdapter extends RecyclerView.Adapter {
     private ArrayList<ChartDataModel> toDayResultData;
     private ArrayList<ChartDataModel> weekNewThings;
     private ArrayList<ChartDataModel> weekFinshThings;
-    private ArrayList<ChartDataModel> weekResultThings;
 
     private ChartsRecyclerAdapter() {
     }
@@ -118,7 +117,7 @@ public class ChartsRecyclerAdapter extends RecyclerView.Adapter {
                 break;
             case TYPE_WEEK_RESULTS:
                 linechartHolder = (LinechartHolder) holder;
-                if (weekResultThings != null) {
+                if (weekNewThings != null && weekFinshThings != null) {
                     linechartHolder.setData(weekNewThings, weekFinshThings, "新建数目", "完成数目");
                 }
                 break;
@@ -158,10 +157,6 @@ public class ChartsRecyclerAdapter extends RecyclerView.Adapter {
         notifyItemChanged(TYPE_WEEK_FINSH_LINECHART);
     }
 
-    public void setWeekResultThings(ArrayList<ChartDataModel> weekResultThings) {
-        this.weekResultThings = weekResultThings;
-        notifyItemChanged(TYPE_WEEK_RESULTS);
-    }
 
     private class PiechartHolder extends RecyclerView.ViewHolder {
 
@@ -178,7 +173,7 @@ public class ChartsRecyclerAdapter extends RecyclerView.Adapter {
                 values.add(new Entry(i, (float) chartDataModelSparseArray.get(i).getCount()));
             }
             ArrayList<PieEntry> entries = new ArrayList<>();
-            entries.add(new PieEntry(chartDataModelSparseArray.get(0).getCount(), "未做"));
+//            entries.add(new PieEntry(chartDataModelSparseArray.get(0).getCount(), "未做"));
             entries.add(new PieEntry(chartDataModelSparseArray.get(1).getCount(), "新增"));
             entries.add(new PieEntry(chartDataModelSparseArray.get(2).getCount(), "完成"));
 
@@ -188,7 +183,7 @@ public class ChartsRecyclerAdapter extends RecyclerView.Adapter {
 
             pieChart.setDragDecelerationFrictionCoef(0.95f);
 
-            pieChart.setCenterText("今日事项统计\n共计24件事项");
+            pieChart.setCenterText("今日事项统计\n还有" + chartDataModelSparseArray.get(0).getCount() + "件事项未做");
 
             pieChart.setDrawHoleEnabled(true);
             pieChart.setHoleColor(Color.WHITE);

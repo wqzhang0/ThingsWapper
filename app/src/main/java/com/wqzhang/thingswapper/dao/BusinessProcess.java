@@ -241,6 +241,39 @@ public class BusinessProcess implements BusinessProcessImpl {
     }
 
     @Override
+    public ArrayList<ChartDataModel> readTodayThings() {
+
+        ArrayList<ChartDataModel> arrayList = new ArrayList<>();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
+        Date dayStart = calendar.getTime();
+        calendar.add(calendar.DATE, +1);
+        Date dayEnd = calendar.getTime();
+
+        QueryBuilder<ToDoThing> toDoThingQueryBuilder = toDoThingDao.queryBuilder();
+
+        int todayNewThingsCounts = toDoThingQueryBuilder
+                .where(ToDoThingDao.Properties.CreateDate.ge(dayStart), ToDoThingDao.Properties.CreateDate.lt(dayEnd))
+                .list().size();
+
+        int todayFinshThingsCounts = toDoThingQueryBuilder
+                .where(ToDoThingDao.Properties.FinshDate.ge(dayStart), ToDoThingDao.Properties.FinshDate.lt(dayEnd))
+                .list().size();
+
+        int toBeDoneThingsCounts = readNotDoneThings().size();
+
+        //依次添加顺序 未做,新增,完成
+        arrayList.add(new ChartDataModel(new Date(), toBeDoneThingsCounts));
+        arrayList.add(new ChartDataModel(new Date(), todayNewThingsCounts));
+        arrayList.add(new ChartDataModel(new Date(), todayFinshThingsCounts));
+        return arrayList;
+    }
+
+    @Override
     public void addToDoThing(ToDoThing toDoThing, List<Notification> notificationList) {
         ArrayList<Connection_T_N> connection_t_nArrayList = new ArrayList<>();
         toDoThing.setUser(readOrAddUserInfo());

@@ -47,10 +47,7 @@ public class PoolVu implements Vu {
         ((ChartsRecyclerAdapter) recyclerView.getAdapter()).setWeekFinshThings(weekFinshThings);
     }
 
-    public void setWeekResultThings(ArrayList<ChartDataModel> weekResultThings) {
-        ((ChartsRecyclerAdapter) recyclerView.getAdapter()).setWeekResultThings(weekResultThings);
-    }
- 
+
 
     public RecyclerView getRecyclerView() {
         return recyclerView;

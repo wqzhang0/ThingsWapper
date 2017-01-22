@@ -48,14 +48,9 @@ public class PoolFragment extends BasePartenerFragment<PoolVu> {
 
         vu.getRecyclerView().setAdapter(chartsRecyclerAdapter);
 
-        ArrayList<ChartDataModel> arrayList = new ArrayList<>();
-        arrayList.add(new ChartDataModel(new Date(), 2));
-        arrayList.add(new ChartDataModel(new Date(), 2));
-        arrayList.add(new ChartDataModel(new Date(), 2));
-        vu.setToDayResultData(arrayList);
+        vu.setToDayResultData(BusinessProcess.getInstance().readTodayThings());
         vu.setWeekNewThings(BusinessProcess.getInstance().readRecentWeekNewThings());
         vu.setWeekFinshThings(BusinessProcess.getInstance().readRecentWeekFinshThings());
-        vu.setWeekResultThings(BusinessProcess.getInstance().readRecentWeekNewThings());
         super.onBind();
     }
 }

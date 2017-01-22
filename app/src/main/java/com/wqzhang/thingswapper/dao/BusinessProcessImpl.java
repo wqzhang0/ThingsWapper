@@ -62,4 +62,8 @@ public interface BusinessProcessImpl {
     //获取最近七日完成的事件  date-counts
     ArrayList<ChartDataModel> readRecentWeekFinshThings();
 
+    //获得今天添加的事项 和 已完成的事情
+    ArrayList<ChartDataModel> readTodayThings();
+
+
 }
