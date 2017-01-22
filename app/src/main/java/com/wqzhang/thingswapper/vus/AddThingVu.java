@@ -133,8 +133,8 @@ public class AddThingVu implements Vu {
 
 
         final ArrayList<String> calList = new ArrayList<>();
-        String tmpString = "2016年12月";
-        for (int i = 2; i < 15; i++) {
+        String tmpString = "2017年1月";
+        for (int i = 2; i <= 30; i++) {
             calList.add(tmpString + i + "日");
         }
         reminderDateCalLoopView.setItems(calList);

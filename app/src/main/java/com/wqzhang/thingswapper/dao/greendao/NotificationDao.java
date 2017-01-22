@@ -23,13 +23,14 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
      */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property IsNotify = new Property(1, Boolean.class, "isNotify", false, "IS_NOTIFY");
+        public final static Property NotifyType = new Property(1, Integer.class, "notifyType", false, "NOTIFY_TYPE");
         public final static Property ReminderDate = new Property(2, java.util.Date.class, "reminderDate", false, "REMINDER_DATE");
         public final static Property RemindFrequency = new Property(3, Integer.class, "remindFrequency", false, "REMIND_FREQUENCY");
         public final static Property RemindFrequencyInterval = new Property(4, Integer.class, "remindFrequencyInterval", false, "REMIND_FREQUENCY_INTERVAL");
         public final static Property RemindCount = new Property(5, Integer.class, "remindCount", false, "REMIND_COUNT");
         public final static Property EndDate = new Property(6, java.util.Date.class, "endDate", false, "END_DATE");
         public final static Property IsSynchronize = new Property(7, Boolean.class, "isSynchronize", false, "IS_SYNCHRONIZE");
+        public final static Property PreNotifyDate = new Property(8, java.util.Date.class, "preNotifyDate", false, "PRE_NOTIFY_DATE");
     }
 
     private DaoSession daoSession;
@@ -49,13 +50,14 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"NOTIFICATION\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
-                "\"IS_NOTIFY\" INTEGER," + // 1: isNotify
+                "\"NOTIFY_TYPE\" INTEGER," + // 1: notifyType
                 "\"REMINDER_DATE\" INTEGER," + // 2: reminderDate
                 "\"REMIND_FREQUENCY\" INTEGER," + // 3: remindFrequency
                 "\"REMIND_FREQUENCY_INTERVAL\" INTEGER," + // 4: remindFrequencyInterval
                 "\"REMIND_COUNT\" INTEGER," + // 5: remindCount
                 "\"END_DATE\" INTEGER," + // 6: endDate
-                "\"IS_SYNCHRONIZE\" INTEGER);"); // 7: isSynchronize
+                "\"IS_SYNCHRONIZE\" INTEGER," + // 7: isSynchronize
+                "\"PRE_NOTIFY_DATE\" INTEGER);"); // 8: preNotifyDate
     }
 
     /** Drops the underlying database table. */
@@ -73,9 +75,9 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
             stmt.bindLong(1, id);
         }
  
-        Boolean isNotify = entity.getIsNotify();
-        if (isNotify != null) {
-            stmt.bindLong(2, isNotify ? 1L: 0L);
+        Integer notifyType = entity.getNotifyType();
+        if (notifyType != null) {
+            stmt.bindLong(2, notifyType);
         }
  
         java.util.Date reminderDate = entity.getReminderDate();
@@ -106,6 +108,11 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
         Boolean isSynchronize = entity.getIsSynchronize();
         if (isSynchronize != null) {
             stmt.bindLong(8, isSynchronize ? 1L: 0L);
+        }
+ 
+        java.util.Date preNotifyDate = entity.getPreNotifyDate();
+        if (preNotifyDate != null) {
+            stmt.bindLong(9, preNotifyDate.getTime());
         }
     }
 
@@ -118,9 +125,9 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
             stmt.bindLong(1, id);
         }
  
-        Boolean isNotify = entity.getIsNotify();
-        if (isNotify != null) {
-            stmt.bindLong(2, isNotify ? 1L: 0L);
+        Integer notifyType = entity.getNotifyType();
+        if (notifyType != null) {
+            stmt.bindLong(2, notifyType);
         }
  
         java.util.Date reminderDate = entity.getReminderDate();
@@ -151,6 +158,11 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
         Boolean isSynchronize = entity.getIsSynchronize();
         if (isSynchronize != null) {
             stmt.bindLong(8, isSynchronize ? 1L: 0L);
+        }
+ 
+        java.util.Date preNotifyDate = entity.getPreNotifyDate();
+        if (preNotifyDate != null) {
+            stmt.bindLong(9, preNotifyDate.getTime());
         }
     }
 
@@ -169,13 +181,14 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
     public Notification readEntity(Cursor cursor, int offset) {
         Notification entity = new Notification( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getShort(offset + 1) != 0, // isNotify
+            cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1), // notifyType
             cursor.isNull(offset + 2) ? null : new java.util.Date(cursor.getLong(offset + 2)), // reminderDate
             cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // remindFrequency
             cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4), // remindFrequencyInterval
             cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5), // remindCount
             cursor.isNull(offset + 6) ? null : new java.util.Date(cursor.getLong(offset + 6)), // endDate
-            cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0 // isSynchronize
+            cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0, // isSynchronize
+            cursor.isNull(offset + 8) ? null : new java.util.Date(cursor.getLong(offset + 8)) // preNotifyDate
         );
         return entity;
     }
@@ -183,13 +196,14 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
     @Override
     public void readEntity(Cursor cursor, Notification entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setIsNotify(cursor.isNull(offset + 1) ? null : cursor.getShort(offset + 1) != 0);
+        entity.setNotifyType(cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1));
         entity.setReminderDate(cursor.isNull(offset + 2) ? null : new java.util.Date(cursor.getLong(offset + 2)));
         entity.setRemindFrequency(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
         entity.setRemindFrequencyInterval(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
         entity.setRemindCount(cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5));
         entity.setEndDate(cursor.isNull(offset + 6) ? null : new java.util.Date(cursor.getLong(offset + 6)));
         entity.setIsSynchronize(cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0);
+        entity.setPreNotifyDate(cursor.isNull(offset + 8) ? null : new java.util.Date(cursor.getLong(offset + 8)));
      }
     
     @Override

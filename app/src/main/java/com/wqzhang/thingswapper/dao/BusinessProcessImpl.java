@@ -4,6 +4,7 @@ package com.wqzhang.thingswapper.dao;
 import com.wqzhang.thingswapper.dao.greendao.Notification;
 import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
 import com.wqzhang.thingswapper.dao.greendao.User;
+import com.wqzhang.thingswapper.model.ChartDataModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,8 +53,13 @@ public interface BusinessProcessImpl {
     //查找距离此时最近的一次提醒
     ArrayList<ToDoThing> readRecentToDoThings();
 
-    //获取到已经过期但是还未提醒的事项
+    //获取到已经过期但是还未提醒的事项 Expired
+    ArrayList<ToDoThing> readExpiredToDoThing();
 
-    //
+    //获取最近七日内增加的事件数量 date-counts
+    ArrayList<ChartDataModel> readRecentWeekNewThings();
+
+    //获取最近七日完成的事件  date-counts
+    ArrayList<ChartDataModel> readRecentWeekFinshThings();
 
 }

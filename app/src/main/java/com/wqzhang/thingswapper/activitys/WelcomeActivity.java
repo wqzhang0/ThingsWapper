@@ -1,12 +1,18 @@
 package com.wqzhang.thingswapper.activitys;
 
+import android.app.AlarmManager;
 import android.content.Intent;
+import android.os.SystemClock;
 import android.view.View;
 
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.dao.BusinessProcess;
+import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
 import com.wqzhang.thingswapper.dao.greendao.User;
+import com.wqzhang.thingswapper.tools.AlarmTimer;
 import com.wqzhang.thingswapper.vus.WelcomeVu;
+
+import java.util.ArrayList;
 
 /**
  * Created by wqzhang on 17-1-11.
@@ -23,18 +29,24 @@ public class WelcomeActivity extends BasePartenerActivity<WelcomeVu> implements 
     protected void onBind() {
         super.onBind();
         User user = BusinessProcess.getInstance().getOnlineUser();
-        Intent intent = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        ArrayList<ToDoThing> needNotifyThings = BusinessProcess.getInstance().readRecentToDoThings();
+        AlarmTimer.setAlarmTimer(getApplicationContext(), SystemClock.elapsedRealtime() + 5 * 1000, AlarmManager.ELAPSED_REALTIME, needNotifyThings);
+
+//        Intent intent = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
+//        startActivity(intent);
 
         if (user.getId() == 1) {
             //无用户自己账号登录
             //引导用户进入注册界面
-
-            vu.showFramelayouy(vu.TYPE_REGISTER);
+            Intent intent = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+//            vu.showFramelayouy(vu.TYPE_REGISTER);
         } else {
             //直接进入用户代做事项界面
-            Intent intent1 = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
+            Intent intent = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+
             startActivity(intent);
         }
         vu.getRegisterToLogin().setOnClickListener(this);

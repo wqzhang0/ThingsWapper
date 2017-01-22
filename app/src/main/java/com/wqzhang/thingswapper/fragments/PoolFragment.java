@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.adapters.ChartsRecyclerAdapter;
+import com.wqzhang.thingswapper.dao.BusinessProcess;
 import com.wqzhang.thingswapper.model.ChartDataModel;
 import com.wqzhang.thingswapper.vus.PoolVu;
 
@@ -52,6 +53,9 @@ public class PoolFragment extends BasePartenerFragment<PoolVu> {
         arrayList.add(new ChartDataModel(new Date(), 2));
         arrayList.add(new ChartDataModel(new Date(), 2));
         vu.setToDayResultData(arrayList);
+        vu.setWeekNewThings(BusinessProcess.getInstance().readRecentWeekNewThings());
+        vu.setWeekFinshThings(BusinessProcess.getInstance().readRecentWeekFinshThings());
+        vu.setWeekResultThings(BusinessProcess.getInstance().readRecentWeekNewThings());
         super.onBind();
     }
 }

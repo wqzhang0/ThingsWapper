@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class daoexamplegenerator {
     public static void main(String[] args) throws Exception {
-        Schema schema = new Schema(6, "com.wqzhang.thingswapper.dao.greendao");
+        Schema schema = new Schema(9, "com.wqzhang.thingswapper.dao.greendao");
         schema.enableKeepSectionsByDefault();
         initDatabase(schema);
         new DaoGenerator().generateAll(schema, "/home/wqzhang/GraduationProjectCode/ThingsWapper/app/src/main/java");
@@ -35,19 +35,21 @@ public class daoexamplegenerator {
         toDoThing.addStringProperty("reminderContext");
         toDoThing.addIntProperty("reminderType");
         toDoThing.addDateProperty("createDate");
+        toDoThing.addDateProperty("finshDate");
         toDoThing.addIntProperty("Status");
         toDoThing.addBooleanProperty("isSynchronize");
 
         Entity notification = schema.addEntity("Notification");
 
         notification.addIdProperty();
-        notification.addBooleanProperty("isNotify");
+        notification.addIntProperty("notifyType");
         notification.addDateProperty("reminderDate");
         notification.addIntProperty("remindFrequency");
         notification.addIntProperty("remindFrequencyInterval");
         notification.addIntProperty("remindCount");
         notification.addDateProperty("endDate");
         notification.addBooleanProperty("isSynchronize");
+        notification.addDateProperty("preNotifyDate");
 
         Entity connection_T_N = schema.addEntity("Connection_T_N");
         connection_T_N.addIdProperty();

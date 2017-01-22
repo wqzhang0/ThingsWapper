@@ -4,11 +4,13 @@ import android.os.Bundle;
 import android.util.SparseArray;
 import android.util.SparseLongArray;
 
+import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
 import com.wqzhang.thingswapper.exceptions.CustomerException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -57,6 +59,14 @@ public class NotifyParseUtil {
             contents.add(entry.getValue());
         }
         return parseDoubleListToBundle(ids, contents);
+    }
+
+    static Bundle parseTodoThingToBundle(List<ToDoThing> toDoThings) throws CustomerException {
+        Map<Long, String> map = new HashMap<>();
+        for (ToDoThing thing : toDoThings) {
+            map.put(thing.getId(), thing.getReminderContext());
+        }
+        return parseMapToBundle(map);
     }
 
     static Map<Long, String> parseNotifyContents(Bundle bundle) {

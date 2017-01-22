@@ -31,9 +31,10 @@ public class ToDoThingDao extends AbstractDao<ToDoThing, Long> {
         public final static Property ReminderContext = new Property(1, String.class, "reminderContext", false, "REMINDER_CONTEXT");
         public final static Property ReminderType = new Property(2, Integer.class, "reminderType", false, "REMINDER_TYPE");
         public final static Property CreateDate = new Property(3, java.util.Date.class, "createDate", false, "CREATE_DATE");
-        public final static Property Status = new Property(4, Integer.class, "Status", false, "STATUS");
-        public final static Property IsSynchronize = new Property(5, Boolean.class, "isSynchronize", false, "IS_SYNCHRONIZE");
-        public final static Property UserId = new Property(6, Long.class, "userId", false, "USER_ID");
+        public final static Property FinshDate = new Property(4, java.util.Date.class, "finshDate", false, "FINSH_DATE");
+        public final static Property Status = new Property(5, Integer.class, "Status", false, "STATUS");
+        public final static Property IsSynchronize = new Property(6, Boolean.class, "isSynchronize", false, "IS_SYNCHRONIZE");
+        public final static Property UserId = new Property(7, Long.class, "userId", false, "USER_ID");
     }
 
     private DaoSession daoSession;
@@ -57,9 +58,10 @@ public class ToDoThingDao extends AbstractDao<ToDoThing, Long> {
                 "\"REMINDER_CONTEXT\" TEXT," + // 1: reminderContext
                 "\"REMINDER_TYPE\" INTEGER," + // 2: reminderType
                 "\"CREATE_DATE\" INTEGER," + // 3: createDate
-                "\"STATUS\" INTEGER," + // 4: Status
-                "\"IS_SYNCHRONIZE\" INTEGER," + // 5: isSynchronize
-                "\"USER_ID\" INTEGER);"); // 6: userId
+                "\"FINSH_DATE\" INTEGER," + // 4: finshDate
+                "\"STATUS\" INTEGER," + // 5: Status
+                "\"IS_SYNCHRONIZE\" INTEGER," + // 6: isSynchronize
+                "\"USER_ID\" INTEGER);"); // 7: userId
     }
 
     /** Drops the underlying database table. */
@@ -92,19 +94,24 @@ public class ToDoThingDao extends AbstractDao<ToDoThing, Long> {
             stmt.bindLong(4, createDate.getTime());
         }
  
+        java.util.Date finshDate = entity.getFinshDate();
+        if (finshDate != null) {
+            stmt.bindLong(5, finshDate.getTime());
+        }
+ 
         Integer Status = entity.getStatus();
         if (Status != null) {
-            stmt.bindLong(5, Status);
+            stmt.bindLong(6, Status);
         }
  
         Boolean isSynchronize = entity.getIsSynchronize();
         if (isSynchronize != null) {
-            stmt.bindLong(6, isSynchronize ? 1L: 0L);
+            stmt.bindLong(7, isSynchronize ? 1L: 0L);
         }
  
         Long userId = entity.getUserId();
         if (userId != null) {
-            stmt.bindLong(7, userId);
+            stmt.bindLong(8, userId);
         }
     }
 
@@ -132,19 +139,24 @@ public class ToDoThingDao extends AbstractDao<ToDoThing, Long> {
             stmt.bindLong(4, createDate.getTime());
         }
  
+        java.util.Date finshDate = entity.getFinshDate();
+        if (finshDate != null) {
+            stmt.bindLong(5, finshDate.getTime());
+        }
+ 
         Integer Status = entity.getStatus();
         if (Status != null) {
-            stmt.bindLong(5, Status);
+            stmt.bindLong(6, Status);
         }
  
         Boolean isSynchronize = entity.getIsSynchronize();
         if (isSynchronize != null) {
-            stmt.bindLong(6, isSynchronize ? 1L: 0L);
+            stmt.bindLong(7, isSynchronize ? 1L: 0L);
         }
  
         Long userId = entity.getUserId();
         if (userId != null) {
-            stmt.bindLong(7, userId);
+            stmt.bindLong(8, userId);
         }
     }
 
@@ -166,9 +178,10 @@ public class ToDoThingDao extends AbstractDao<ToDoThing, Long> {
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // reminderContext
             cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2), // reminderType
             cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)), // createDate
-            cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4), // Status
-            cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5) != 0, // isSynchronize
-            cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6) // userId
+            cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)), // finshDate
+            cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5), // Status
+            cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0, // isSynchronize
+            cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7) // userId
         );
         return entity;
     }
@@ -179,9 +192,10 @@ public class ToDoThingDao extends AbstractDao<ToDoThing, Long> {
         entity.setReminderContext(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setReminderType(cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2));
         entity.setCreateDate(cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)));
-        entity.setStatus(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
-        entity.setIsSynchronize(cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5) != 0);
-        entity.setUserId(cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6));
+        entity.setFinshDate(cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)));
+        entity.setStatus(cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5));
+        entity.setIsSynchronize(cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0);
+        entity.setUserId(cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7));
      }
     
     @Override

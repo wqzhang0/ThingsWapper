@@ -14,13 +14,16 @@ import android.widget.TextView;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
@@ -28,6 +31,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.model.ChartDataModel;
+import com.wqzhang.thingswapper.tools.DateUtil;
 
 import java.util.ArrayList;
 
@@ -48,6 +52,9 @@ public class ChartsRecyclerAdapter extends RecyclerView.Adapter {
 
 
     private ArrayList<ChartDataModel> toDayResultData;
+    private ArrayList<ChartDataModel> weekNewThings;
+    private ArrayList<ChartDataModel> weekFinshThings;
+    private ArrayList<ChartDataModel> weekResultThings;
 
     private ChartsRecyclerAdapter() {
     }
@@ -86,6 +93,7 @@ public class ChartsRecyclerAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        LinechartHolder linechartHolder;
         switch (getItemViewType(position)) {
             case TYPE_TODAY_TITTLE:
                 break;
@@ -98,10 +106,22 @@ public class ChartsRecyclerAdapter extends RecyclerView.Adapter {
             case TYPE_WEEK_TITTLE:
                 break;
             case TYPE_WEEK_NEW_LINECHART:
+                linechartHolder = (LinechartHolder) holder;
+                if (weekNewThings != null) {
+                    linechartHolder.setData(weekNewThings);
+                }
                 break;
             case TYPE_WEEK_FINSH_LINECHART:
+                linechartHolder = (LinechartHolder) holder;
+                if (weekFinshThings != null) {
+                    linechartHolder.setData(weekFinshThings);
+                }
                 break;
             case TYPE_WEEK_RESULTS:
+                linechartHolder = (LinechartHolder) holder;
+                if (weekResultThings != null) {
+                    linechartHolder.setData(weekResultThings);
+                }
                 break;
             default:
                 break;
@@ -127,6 +147,21 @@ public class ChartsRecyclerAdapter extends RecyclerView.Adapter {
     public void setToDayResultData(ArrayList<ChartDataModel> toDayResultData) {
         this.toDayResultData = toDayResultData;
         notifyItemChanged(TYPE_TODAY_PIECHART);
+    }
+
+    public void setWeekNewThings(ArrayList<ChartDataModel> weekNewThings) {
+        this.weekNewThings = weekNewThings;
+        notifyItemChanged(TYPE_WEEK_NEW_LINECHART);
+    }
+
+    public void setWeekFinshThings(ArrayList<ChartDataModel> weekFinshThings) {
+        this.weekFinshThings = weekFinshThings;
+        notifyItemChanged(TYPE_WEEK_FINSH_LINECHART);
+    }
+
+    public void setWeekResultThings(ArrayList<ChartDataModel> weekResultThings) {
+        this.weekResultThings = weekResultThings;
+        notifyItemChanged(TYPE_WEEK_RESULTS);
     }
 
     private class PiechartHolder extends RecyclerView.ViewHolder {
@@ -239,23 +274,26 @@ public class ChartsRecyclerAdapter extends RecyclerView.Adapter {
             lineChart = (LineChart) itemView.findViewById(R.id.chart);
         }
 
-        public void setData(SparseArray<ChartDataModel> chartDataModelSparseArray) {
+        public void setData(final ArrayList<ChartDataModel> chartDataModelSparseArray) {
             ArrayList<Entry> values = new ArrayList<>();
             for (int i = 0; i < chartDataModelSparseArray.size(); i++) {
+//                values.add(new Entry(DateUtil.getWeek(chartDataModelSparseArray.get(i).getDate()), (float) chartDataModelSparseArray.get(i).getCount()));
                 values.add(new Entry(i, (float) chartDataModelSparseArray.get(i).getCount()));
             }
 
-            LineDataSet lineDataSet = new LineDataSet(values, "今日");
+            LineDataSet lineDataSet = new LineDataSet(values, "每日新建事项");
             lineDataSet.enableDashedLine(10f, 5f, 0f);
             lineDataSet.enableDashedHighlightLine(10f, 5f, 0f);
             lineDataSet.setColor(Color.WHITE);
-            lineDataSet.setCircleColor(Color.WHITE);
+            lineDataSet.setCircleColor(Color.GREEN);
             lineDataSet.setLineWidth(1f);
             lineDataSet.setCircleRadius(2f);
+            //线是否穿过点 中心
             lineDataSet.setDrawCircleHole(false);
             lineDataSet.setValueTextSize(9f);
-            lineDataSet.setDrawFilled(true);
-            lineDataSet.setFormLineWidth(1f);
+            //向下包含阴影
+            lineDataSet.setDrawFilled(false);
+            lineDataSet.setFormLineWidth(2f);
             lineDataSet.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
             lineDataSet.setFormSize(15.f);
 
@@ -270,7 +308,10 @@ public class ChartsRecyclerAdapter extends RecyclerView.Adapter {
             lineChart.setDrawGridBackground(false); // 是否显示表格颜色
             lineChart.setGridBackgroundColor(Color.WHITE & 0x70FFFFFF); // 表格的的颜色，在这里是是给颜色设置一个透明度
             lineChart.setDoubleTapToZoomEnabled(false);//禁止双击
-            lineChart.getAxisLeft().setEnabled(false);//隐藏左侧坐标轴
+            lineChart.getAxisRight().setEnabled(false);//隐藏左侧坐标轴
+            YAxis leftAxis = lineChart.getAxisLeft();
+            leftAxis.setDrawZeroLine(false);
+            leftAxis.setEnabled(false);
 
 
             ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
@@ -284,11 +325,42 @@ public class ChartsRecyclerAdapter extends RecyclerView.Adapter {
             xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
             xAxis.setDrawGridLines(false);
 
+            xAxis.setValueFormatter(new IAxisValueFormatter() {
+                @Override
+                public String getFormattedValue(float value, AxisBase axis) {
+                    if (value < 5) {
+                        int week = DateUtil.getWeek(chartDataModelSparseArray.get((int) value).getDate()) - 1;
+                        if (week == 0) {
+                            week = 7;
+                        }
+                        if (week == 1) {
+                            return "周一";
+                        } else if (week == 2) {
+                            return "周二";
+                        } else if (week == 3) {
+                            return "周三";
+                        } else if (week == 4) {
+                            return "周四";
+                        } else if (week == 5) {
+                            return "周五";
+                        } else if (week == 6) {
+                            return "周六";
+                        } else if (week == 7) {
+                            return "周日";
+                        }
+                    } else if (value == 5) {
+                        return "昨天";
+                    } else if (value == 6) {
+                        return "今天";
+                    }
+                    return "";
+                }
+            });
 
             lineChart.getDescription().setEnabled(false);
             // set data
             lineChart.setData(data);
-            lineChart.animateX(600);
+            lineChart.animateY(600);
         }
 
     }
@@ -298,4 +370,6 @@ public class ChartsRecyclerAdapter extends RecyclerView.Adapter {
             super(itemView);
         }
     }
+
+//    private void setChartStyle()
 }

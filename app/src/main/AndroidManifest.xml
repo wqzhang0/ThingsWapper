@@ -43,9 +43,21 @@
                 <action android:name="com.wqzhang.thingswapper.activity.AddToDoThingActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
-
         </activity>
+
+        <service android:name=".services.NotifyService">
+            <intent-filter>
+                <action android:name="com.wqzhang.thingswapper.services.NotifyService" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
+        <receiver android:name=".Receivers.NotifyReceiver">
+
+            <intent-filter>
+                <action android:name="com.wqzhang.thingswapper.Receivers.NotifyReceiver" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

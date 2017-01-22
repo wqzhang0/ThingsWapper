@@ -22,6 +22,7 @@ public class ToDoThing {
     private String reminderContext;
     private Integer reminderType;
     private java.util.Date createDate;
+    private java.util.Date finshDate;
     private Integer Status;
     private Boolean isSynchronize;
     private Long userId;
@@ -57,11 +58,12 @@ public class ToDoThing {
     }
 
     @Generated
-    public ToDoThing(Long id, String reminderContext, Integer reminderType, java.util.Date createDate, Integer Status, Boolean isSynchronize, Long userId) {
+    public ToDoThing(Long id, String reminderContext, Integer reminderType, java.util.Date createDate, java.util.Date finshDate, Integer Status, Boolean isSynchronize, Long userId) {
         this.id = id;
         this.reminderContext = reminderContext;
         this.reminderType = reminderType;
         this.createDate = createDate;
+        this.finshDate = finshDate;
         this.Status = Status;
         this.isSynchronize = isSynchronize;
         this.userId = userId;
@@ -104,6 +106,14 @@ public class ToDoThing {
 
     public void setCreateDate(java.util.Date createDate) {
         this.createDate = createDate;
+    }
+
+    public java.util.Date getFinshDate() {
+        return finshDate;
+    }
+
+    public void setFinshDate(java.util.Date finshDate) {
+        this.finshDate = finshDate;
     }
 
     public Integer getStatus() {

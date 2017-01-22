@@ -146,16 +146,17 @@ public class AddThingOperationXMLData {
         ArrayList<Notification> notificationArrayList = new ArrayList<>();
 
         ArrayList<Date> dates = readNotifyTime();
+        int notifyType = readNotifyType();
         if (dates.size() == 0) {
             Notification notification = new Notification();
-            notification.setIsNotify(false);
+            notification.setNotifyType(Common.REMINDER_TYPE_NONE);
             notification.setIsSynchronize(false);
             notificationArrayList.add(notification);
         } else if (dates.size() == 1) {
             //只有一个时间
             //现在版本 只有提醒时间  无其他
             Notification notification = new Notification();
-            notification.setIsNotify(false);
+            notification.setNotifyType(notifyType);
             notification.setIsSynchronize(false);
             notification.setReminderDate(dates.get(0));
 
@@ -165,7 +166,7 @@ public class AddThingOperationXMLData {
             //多个时间提醒
             for (Date _date : dates) {
                 Notification notification = new Notification();
-                notification.setIsNotify(false);
+                notification.setNotifyType(notifyType);
                 notification.setIsSynchronize(false);
                 notification.setReminderDate(_date);
                 notificationArrayList.add(notification);

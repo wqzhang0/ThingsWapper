@@ -19,13 +19,14 @@ public class Notification {
 
     @Id
     private Long id;
-    private Boolean isNotify;
+    private Integer notifyType;
     private java.util.Date reminderDate;
     private Integer remindFrequency;
     private Integer remindFrequencyInterval;
     private Integer remindCount;
     private java.util.Date endDate;
     private Boolean isSynchronize;
+    private java.util.Date preNotifyDate;
 
     /** Used to resolve relations */
     @Generated
@@ -52,15 +53,16 @@ public class Notification {
     }
 
     @Generated
-    public Notification(Long id, Boolean isNotify, java.util.Date reminderDate, Integer remindFrequency, Integer remindFrequencyInterval, Integer remindCount, java.util.Date endDate, Boolean isSynchronize) {
+    public Notification(Long id, Integer notifyType, java.util.Date reminderDate, Integer remindFrequency, Integer remindFrequencyInterval, Integer remindCount, java.util.Date endDate, Boolean isSynchronize, java.util.Date preNotifyDate) {
         this.id = id;
-        this.isNotify = isNotify;
+        this.notifyType = notifyType;
         this.reminderDate = reminderDate;
         this.remindFrequency = remindFrequency;
         this.remindFrequencyInterval = remindFrequencyInterval;
         this.remindCount = remindCount;
         this.endDate = endDate;
         this.isSynchronize = isSynchronize;
+        this.preNotifyDate = preNotifyDate;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -78,12 +80,12 @@ public class Notification {
         this.id = id;
     }
 
-    public Boolean getIsNotify() {
-        return isNotify;
+    public Integer getNotifyType() {
+        return notifyType;
     }
 
-    public void setIsNotify(Boolean isNotify) {
-        this.isNotify = isNotify;
+    public void setNotifyType(Integer notifyType) {
+        this.notifyType = notifyType;
     }
 
     public java.util.Date getReminderDate() {
@@ -132,6 +134,14 @@ public class Notification {
 
     public void setIsSynchronize(Boolean isSynchronize) {
         this.isSynchronize = isSynchronize;
+    }
+
+    public java.util.Date getPreNotifyDate() {
+        return preNotifyDate;
+    }
+
+    public void setPreNotifyDate(java.util.Date preNotifyDate) {
+        this.preNotifyDate = preNotifyDate;
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
