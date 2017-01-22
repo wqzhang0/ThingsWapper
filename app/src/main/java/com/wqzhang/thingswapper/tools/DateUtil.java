@@ -23,7 +23,7 @@ public class DateUtil {
     /**
      * 获取当前时间戳
      *
-     * @param date
+     * @param
      * @return
      */
     public static String formatDefaultFileName() {
@@ -210,6 +210,34 @@ public class DateUtil {
         }
         return dayOfWeek;
     }
+
+    /**
+     * 获取星期 返回结果 带 今天和昨天
+     *
+     * @param date
+     * @return
+     */
+    public static int getWeekHasToday(Date date) {
+        Calendar c = Calendar.getInstance();
+
+        c.setTime(date);
+
+        c.add(Calendar.DATE, -1);
+
+        int result = diffDate(new Date(), c.getTime());
+        if (result == 0) {
+            return -2;
+        } else if (result == 1) {
+            return -1;
+        }
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+        dayOfWeek = dayOfWeek - 1;
+        if (dayOfWeek == 0) {
+            dayOfWeek = 7;
+        }
+        return dayOfWeek;
+    }
+
 
     /**
      * 获取日期(多少号)

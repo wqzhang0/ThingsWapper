@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -192,19 +194,29 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
     @Subscribe
     public void showMoreSet(ShowMoreSetEvent showMoreSetEvent) {
         int showType = showMoreSetEvent.getShowType();
+        Animation animation;
         switch (showType) {
             case ShowMoreSetEvent.HIDE:
+                animation = AnimationUtils.loadAnimation(this, R.anim.abc_shrink_fade_out_from_bottom);
+
+                vu.getReminderSettingLayout().startAnimation(animation);
                 vu.getReminderSettingLayout().setVisibility(View.GONE);
                 break;
             case ShowMoreSetEvent.SHOW_DATE:
                 vu.getReminderCountChoicesListView().setVisibility(View.GONE);
                 vu.getReminderDateChoicesLinearLayout().setVisibility(View.VISIBLE);
+                animation = AnimationUtils.loadAnimation(this, R.anim.abc_grow_fade_in_from_bottom);
+
                 vu.getReminderSettingLayout().setVisibility(View.VISIBLE);
+                vu.getReminderSettingLayout().startAnimation(animation);
                 break;
             case ShowMoreSetEvent.SHOW_COUNT:
                 vu.getReminderDateChoicesLinearLayout().setVisibility(View.GONE);
                 vu.getReminderCountChoicesListView().setVisibility(View.VISIBLE);
                 vu.getReminderSettingLayout().setVisibility(View.VISIBLE);
+
+                animation = AnimationUtils.loadAnimation(this, R.anim.abc_grow_fade_in_from_bottom);
+                vu.getReminderSettingLayout().startAnimation(animation);
                 break;
             default:
                 break;
