@@ -5,10 +5,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wqzhang.thingswapper.R;
+import com.wqzhang.thingswapper.dao.AddThingOperationXMLDataCache;
+import com.wqzhang.thingswapper.events.SaveChooseOperationEvent;
+import com.wqzhang.thingswapper.events.ShowMoreSetEvent;
 import com.wqzhang.thingswapper.tools.DateUtil;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +27,7 @@ public class NotifyDateRecyclerAdapter extends RecyclerView.Adapter {
     private ArrayList<Date> dateList = new ArrayList<>();
     private Context mContext;
     private LayoutInflater inflater;
+    EventBus bus;
 
     private NotifyDateRecyclerAdapter() {
     }
@@ -28,6 +35,7 @@ public class NotifyDateRecyclerAdapter extends RecyclerView.Adapter {
     public NotifyDateRecyclerAdapter(Context context) {
         mContext = context;
         inflater = LayoutInflater.from(context);
+        bus = EventBus.getDefault();
     }
 
 
@@ -40,9 +48,22 @@ public class NotifyDateRecyclerAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        DefaultHolder defaultHolder = (DefaultHolder) holder;
+        final DefaultHolder defaultHolder = (DefaultHolder) holder;
         defaultHolder.textView = (TextView) defaultHolder.itemView.findViewById(R.id.date);
-        defaultHolder.textView.setText(DateUtil.formatDateByFormat(dateList.get(position),DateUtil.TIMESTAMP_PATTERN));
+        defaultHolder.textView.setText(DateUtil.formatDateByFormat(dateList.get(position), DateUtil.TIMESTAMP_PATTERN));
+
+        defaultHolder.delete = (ImageView) defaultHolder.itemView.findViewById(R.id.delete);
+        defaultHolder.delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bus.post(new SaveChooseOperationEvent(
+                        SaveChooseOperationEvent.TYPE_REMOVE_NOTIFY_DATE,
+                        DateUtil.parseDate(defaultHolder.textView.getText().toString(), DateUtil.TIMESTAMP_PATTERN),
+                        true));
+                dateList = AddThingOperationXMLDataCache.getDates();
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -62,6 +83,7 @@ public class NotifyDateRecyclerAdapter extends RecyclerView.Adapter {
     class DefaultHolder extends RecyclerView.ViewHolder {
 
         public TextView textView;
+        ImageView delete;
 
         public DefaultHolder(View itemView) {
             super(itemView);

@@ -54,7 +54,7 @@ public class ShowThingsVu implements Vu {
     public void onScrolling(PullFreshScrollingEvent event) {
         switch (event.getType()) {
             case PullFreshScrollingEvent.TYPE_SCROLL_TO:
-                Log.d("Slide ListView", "TYPE_SCROLL_TO");
+//                Log.d("Slide ListView", "TYPE_SCROLL_TO");
                 view.scrollTo(event.getEndX(), event.getEndY());
                 break;
             case PullFreshScrollingEvent.TYPE_START_SCROLL:
@@ -64,7 +64,7 @@ public class ShowThingsVu implements Vu {
                 mScroller.startScroll(event.getStartX(), event.getStartY(), event.getEndX(), event.getEndY(), event.getDuration());
                 break;
             case PullFreshScrollingEvent.TYPE_CHANGE_VIEW:
-                Log.d("Slide ListView", "TYPE_CHANGE_VIEW");
+//                Log.d("Slide ListView", "TYPE_CHANGE_VIEW");
                 mScroller.startScroll(0, -300, 0, 300, 600);
                 int type = (int) recyclerView.getTag(R.id.showThingType);
                 if (type == 0) {

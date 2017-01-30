@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.adapters.AddToDoThingRecyclerAdapter;
 import com.wqzhang.thingswapper.adapters.RemindCountAdapter;
+import com.wqzhang.thingswapper.events.DataCacheChange;
 import com.wqzhang.thingswapper.events.SaveChooseOperationEvent;
 import com.wqzhang.thingswapper.tools.DateUtil;
 import com.wqzhang.thingswapper.ui.wheelView.LoopView;
@@ -208,8 +209,8 @@ public class AddThingVu implements Vu {
         return reminderContent;
     }
 
-    public void save(SaveChooseOperationEvent saveChooseOperationEvent) {
-        addToDoThingRecyclerAdapter.save(saveChooseOperationEvent);
+    public void save(DataCacheChange dataCacheChange) {
+        addToDoThingRecyclerAdapter.save(dataCacheChange);
     }
 
     public Date getNotifyDate() {

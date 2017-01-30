@@ -11,12 +11,12 @@ public class SaveChooseOperationEvent {
     public final static int TYPE_SAVE_NOTIFY_TYPE = 2;
     public final static int TYPE_SAVE_NOTYFLY_COUNTS = 3;
     public final static int TYPE_SAVE_NOTYFLY_DATE = 4;
+    public final static int TYPE_REMOVE_NOTIFY_DATE = 5;
     //是否提醒  根据时间选择开关进行判断
-    public final static int TYPE_IS_REMINDER = 5;
+    public final static int TYPE_IS_REMINDER = 6;
 
     //是否重复  根据重复选择开关 进行判断
-    public final static int TYPE_IS_REPEAT = 6;
-
+    public final static int TYPE_IS_REPEAT = 7;
 
     private int type;
     private Date date;

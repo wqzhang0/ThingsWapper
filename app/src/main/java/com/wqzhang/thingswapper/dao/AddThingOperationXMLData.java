@@ -2,9 +2,9 @@ package com.wqzhang.thingswapper.dao;
 
 import com.wqzhang.thingswapper.dao.greendao.Notification;
 import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
+import com.wqzhang.thingswapper.events.DataCacheChange;
 import com.wqzhang.thingswapper.events.SaveChooseOperationEvent;
 import com.wqzhang.thingswapper.exceptions.CustomerException;
-import com.wqzhang.thingswapper.model.HistoryData;
 import com.wqzhang.thingswapper.tools.Common;
 
 import org.greenrobot.eventbus.EventBus;
@@ -15,11 +15,16 @@ import java.util.Date;
 
 /**
  * Created by wqzhang on 17-1-7.
+ * 存储用户未保存的数据   在执行保存操作的时候,顺便将数据保存进DateCache中,
  */
 
 public class AddThingOperationXMLData {
     private static EventBus bus;
     static SharedPreferencesControl sharedPreferencesControl;
+
+
+    ArrayList<Date> dates;
+    StringBuilder sb;
 
     private AddThingOperationXMLData() {
     }
@@ -50,6 +55,7 @@ public class AddThingOperationXMLData {
         switch (saveChooseOperationEvent.getType()) {
             case SaveChooseOperationEvent.TYPE_SAVE_CONTEXT:
                 sharedPreferencesControl.getEditor().putString("NOTIFY_CONTENT", saveChooseOperationEvent.getContent()).commit();
+                AddThingOperationXMLDataCache.setContent(saveChooseOperationEvent.getContent());
                 break;
             case SaveChooseOperationEvent.TYPE_SAVE_NOTIFY_TYPE:
                 int notifyType = sharedPreferencesControl.getSharedPreferences().getInt("NOTIFY_TYPE", 0);
@@ -58,20 +64,25 @@ public class AddThingOperationXMLData {
                 if ((notifyType & Math.abs(tmpType)) > 0) {
                     if (tmpType < 0) {
                         sharedPreferencesControl.getEditor().putInt("NOTIFY_TYPE", (notifyType + tmpType)).commit();
+                        AddThingOperationXMLDataCache.setNotifyType(notifyType + tmpType);
                     }
                 } else {
                     sharedPreferencesControl.getEditor().putInt("NOTIFY_TYPE", (notifyType + tmpType)).commit();
+                    AddThingOperationXMLDataCache.setNotifyType(notifyType + tmpType);
                 }
 
                 break;
             case SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_COUNTS:
                 sharedPreferencesControl.getEditor().putString("NOTIFY_COUNTS", saveChooseOperationEvent.getNotifityCounts()).commit();
+                AddThingOperationXMLDataCache.setNotifyCounts(saveChooseOperationEvent.getNotifityCounts());
+                //发送 改变视图的消息
+                bus.post(new DataCacheChange(DataCacheChange.TYPE_NOTYFLY_COUNTS_CHANGE, true));
                 break;
             case SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE:
                 if (!saveChooseOperationEvent.isDetermine()) return;
-                ArrayList<Date> dates = readNotifyTime();
+                dates = readNotifyTime();
                 dates.add(saveChooseOperationEvent.getDate());
-                StringBuilder sb = new StringBuilder();
+                sb = new StringBuilder();
                 for (int i = 0; i < dates.size(); i++) {
                     if (i == 0) {
                         sb.append(dates.get(i).toString());
@@ -80,14 +91,40 @@ public class AddThingOperationXMLData {
                     }
                 }
                 sharedPreferencesControl.getEditor().putString("NOTIFY_DATES", sb.toString()).commit();
+                AddThingOperationXMLDataCache.setDates(dates);
+                bus.post(new DataCacheChange(DataCacheChange.TYPE_NOTYFLY_DATE_CHANGE, true));
                 break;
+            case SaveChooseOperationEvent.TYPE_REMOVE_NOTIFY_DATE:
+                if (!saveChooseOperationEvent.isDetermine()) return;
+                dates = readNotifyTime();
+                for (int i = 0; i < dates.size(); i++) {
+                    if (dates.get(i).equals(saveChooseOperationEvent.getDate())) {
+                        dates.remove(i);
+                        sb = new StringBuilder();
+                        for (int j = 0; j < dates.size(); j++) {
+                            if (j == 0) {
+                                sb.append(dates.get(j).toString());
+                            } else {
+                                sb.append("&&" + dates.get(j).toString());
+                            }
+                        }
+                        sharedPreferencesControl.getEditor().putString("NOTIFY_DATES", sb.toString()).commit();
+                        AddThingOperationXMLDataCache.setDates(dates);
+                        bus.post(new DataCacheChange(DataCacheChange.TYPE_REMOVE_NOTIFY_DATE_CHANGE, true));
+                        return;
+                    }
+                }
+
+                break;
+
+
             case SaveChooseOperationEvent.TYPE_IS_REPEAT:
                 sharedPreferencesControl.getEditor().putBoolean("IS_REPEAT", saveChooseOperationEvent.isDetermine()).commit();
-
+                AddThingOperationXMLDataCache.setIsRepeat(saveChooseOperationEvent.isDetermine());
                 break;
             case SaveChooseOperationEvent.TYPE_IS_REMINDER:
                 sharedPreferencesControl.getEditor().putBoolean("IS_REMINDER", saveChooseOperationEvent.isDetermine()).commit();
-
+                AddThingOperationXMLDataCache.setIsReminder(saveChooseOperationEvent.isDetermine());
                 break;
             default:
                 break;
@@ -202,12 +239,4 @@ public class AddThingOperationXMLData {
         return sharedPreferencesControl.getSharedPreferences().getString("NOTIFY_COUNTS", "不重复");
     }
 
-    public HistoryData readHistoryData() {
-        String content = readContent();
-        int notifyType = readNotifyType();
-        ArrayList<Date> dates = readNotifyTime();
-        String notifyCount = readNotifyCounts();
-        HistoryData historyData = new HistoryData(content, notifyType, dates, notifyCount);
-        return historyData;
-    }
 }

@@ -113,20 +113,20 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                     slideContentView = null;
                 }
 
-                //判断是否能上下滑
-                if (ViewCompat.canScrollVertically(this, 1)) {
-                    //可以 下滑
-                    Log.d("canScrollVertically", "可以下滑");
-                } else {
-                    Log.d("canScrollVertically", "不可以下滑");
-                }
-
-                if (ViewCompat.canScrollVertically(this, -1)) {
-                    //可以 上滑
-                    Log.d("canScrollVertically", "可以上滑");
-                } else {
-                    Log.d("canScrollVertically", "不可以上滑");
-                }
+//                //判断是否能上下滑
+//                if (ViewCompat.canScrollVertically(this, 1)) {
+//                    //可以 下滑
+//                    Log.d("canScrollVertically", "可以下滑");
+//                } else {
+//                    Log.d("canScrollVertically", "不可以下滑");
+//                }
+//
+//                if (ViewCompat.canScrollVertically(this, -1)) {
+//                    //可以 上滑
+//                    Log.d("canScrollVertically", "可以上滑");
+//                } else {
+//                    Log.d("canScrollVertically", "不可以上滑");
+//                }
 
                 //如果能下滑 不能上滑
                 if (ViewCompat.canScrollVertically(this, 1) && !ViewCompat.canScrollVertically(this, -1)) {

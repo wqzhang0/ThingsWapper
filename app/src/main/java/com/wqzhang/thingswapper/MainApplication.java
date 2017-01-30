@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.wqzhang.thingswapper.dao.AddThingOperationXMLData;
+import com.wqzhang.thingswapper.dao.AddThingOperationXMLDataCache;
 import com.wqzhang.thingswapper.dao.BusinessProcess;
 import com.wqzhang.thingswapper.dao.SharedPreferencesControl;
 import com.wqzhang.thingswapper.dao.greendao.DaoMaster;
@@ -37,6 +38,8 @@ public class MainApplication extends Application {
 
 
         BusinessProcess.getInstance().readOrAddUserInfo();
+        //初始化未保存事项 的历史数据 作为缓存
+        AddThingOperationXMLDataCache.readHistory();
 
 
 //        DevOpenHelper helper = new DevOpenHelper(this, "notes-db");

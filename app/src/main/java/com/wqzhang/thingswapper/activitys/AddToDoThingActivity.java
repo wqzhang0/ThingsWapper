@@ -17,9 +17,11 @@ import android.widget.Toast;
 
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.dao.AddThingOperationXMLData;
+import com.wqzhang.thingswapper.dao.AddThingOperationXMLDataCache;
 import com.wqzhang.thingswapper.dao.BusinessProcess;
 import com.wqzhang.thingswapper.dao.SharedPreferencesControl;
 import com.wqzhang.thingswapper.events.ChangeAddThingSubmitStateEvent;
+import com.wqzhang.thingswapper.events.DataCacheChange;
 import com.wqzhang.thingswapper.events.SaveChooseOperationEvent;
 import com.wqzhang.thingswapper.events.ShowMoreSetEvent;
 import com.wqzhang.thingswapper.exceptions.CustomerException;
@@ -51,7 +53,6 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
         bus.register(this);
         try {
             sharedPreferencesControl = SharedPreferencesControl.getInstanll();
-            vu.getAddToDoThingRecyclerAdapter().setDataAndFlushView(AddThingOperationXMLData.getInstall().readHistoryData());
         } catch (CustomerException e) {
             e.printStackTrace();
         }
@@ -150,15 +151,14 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
                 bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE, new Date(), false));
                 bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.HIDE));
                 //将xml里存储的 是否提醒字段(IS_REMINDER) 值更改为false
-                bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_IS_REMINDER, false));
-
+                bus.post(new DataCacheChange(DataCacheChange.TYPE_NOTIFLY_DATE_CANCEL));
                 break;
             case R.id.time_choose_submit:
 
                 Date date = vu.getNotifyDate();
                 //将xml里存储的 是否提醒字段(IS_REMINDER) 值更改为true
                 boolean alreadyExists = false;
-                ArrayList<Date> dateArrayList = AddThingOperationXMLData.getInstall().readNotifyTime();
+                ArrayList<Date> dateArrayList = AddThingOperationXMLDataCache.getDates();
                 for (Date _tmpDate : dateArrayList) {
                     if (_tmpDate.equals(date)) {
                         alreadyExists = true;
@@ -224,8 +224,8 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
     }
 
     @Subscribe
-    public void save(SaveChooseOperationEvent saveChooseOperationEvent) {
-        vu.save(saveChooseOperationEvent);
+    public void save(DataCacheChange dataCacheChange) {
+        vu.save(dataCacheChange);
     }
 
     @Override

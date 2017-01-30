@@ -10,8 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -21,13 +19,13 @@ import android.widget.TextView;
 
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.dao.AddThingOperationXMLData;
+import com.wqzhang.thingswapper.dao.AddThingOperationXMLDataCache;
 import com.wqzhang.thingswapper.events.ChangeAddThingSubmitStateEvent;
+import com.wqzhang.thingswapper.events.DataCacheChange;
 import com.wqzhang.thingswapper.events.SaveChooseOperationEvent;
 import com.wqzhang.thingswapper.events.ShowMoreSetEvent;
-import com.wqzhang.thingswapper.model.HistoryData;
 import com.wqzhang.thingswapper.tools.Common;
 import com.wqzhang.thingswapper.tools.ShowOrHideView;
-
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -58,13 +56,11 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
 
     private RecyclerView.ViewHolder preHolder;
 
-    private HistoryData historyData;
-
     private DateChoiceHolder dateChoiceHolder;
     private NotifyCountHolder notifyCountHolder;
 
     NotifyDateRecyclerAdapter notifyDateRecyclerAdapter;
-    int[] date = new int[]{0, 1, 2, 3};
+    int[] ViewType = new int[]{0, 1, 2, 3};
 
     EventBus bus;
 
@@ -105,15 +101,16 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
         switch (getItemViewType(position)) {
             case TYPE_EDIT:
                 final EditHolder editHolder = (EditHolder) holder;
-                if (historyData != null && historyData.getContent() != null) {
-                    if (historyData.getContent().equals("")) {
+                String _content = AddThingOperationXMLDataCache.getContent();
+                if (_content != null) {
+                    if (_content.equals("")) {
                         bus.post(new ChangeAddThingSubmitStateEvent(ChangeAddThingSubmitStateEvent.TYPE_NOT_CLICK));
                     } else {
-                        editHolder.editText.setText(historyData.getContent());
+                        editHolder.editText.setText(_content);
                         bus.post(new ChangeAddThingSubmitStateEvent(ChangeAddThingSubmitStateEvent.TYPE_CAN_CLICK));
                     }
                 }
-                 
+
                 editHolder.editText.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -141,11 +138,7 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                 break;
             case TYPE_NOTIFY_TYPE:
                 final NotifyTypeHolder notifyTypeHolder = (NotifyTypeHolder) holder;
-                int notifyType = 0;
-                if (historyData != null) {
-                    notifyType = historyData.getNotifyType();
-
-                }
+                int notifyType = AddThingOperationXMLDataCache.getNotifyType();
                 if ((notifyType & Common.REMINDER_TYPE_ALARM) > 0) {
                     notifyTypeHolder.alarmCheckbox.setChecked(true);
                 }
@@ -199,13 +192,12 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                 dateChoiceHolder.recyclerView.setAdapter(notifyDateRecyclerAdapter);
 
                 //检查历史是否有数据,并判断上次是否设置了允许提醒
-                if (historyData != null) {
-                    if (historyData.getDates().size() != 0) {
-                        notifyDateRecyclerAdapter.setDateList(historyData.getDates());
-                        if (AddThingOperationXMLData.getInstall().isReminder()) {
-                            dateChoiceHolder.childLayout.setVisibility(View.VISIBLE);
-                            dateChoiceHolder.dateSwitch.setChecked(true);
-                        }
+                ArrayList<Date> dates = AddThingOperationXMLDataCache.getDates();
+                if (dates.size() != 0) {
+                    notifyDateRecyclerAdapter.setDateList(dates);
+                    if (AddThingOperationXMLData.getInstall().isReminder()) {
+                        dateChoiceHolder.childLayout.setVisibility(View.VISIBLE);
+                        dateChoiceHolder.dateSwitch.setChecked(true);
                     }
                 }
 
@@ -230,7 +222,7 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                             dateChoiceHolder.childLayout.setVisibility(View.VISIBLE);
                             Animator startOpen = ShowOrHideView.showChildView(dateChoiceHolder);
                             startOpen.start();
-                            if (AddThingOperationXMLData.getInstall().readNotifyTime().size() == 0) {
+                            if (AddThingOperationXMLDataCache.getDates().size() == 0) {
                                 bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.SHOW_DATE));
                             }
                             bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_IS_REMINDER, true));
@@ -261,19 +253,18 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                 final NotifyCountHolder notifyCountHolder = (NotifyCountHolder) holder;
 
                 //检验是否有上一次没操作完的数据  并展示
-                if (historyData != null && !historyData.getNotifyCounts().equals("不重复")) {
-                    String notifyCounts = historyData.getNotifyCounts();
+                String notifyCounts = AddThingOperationXMLDataCache.getNotifyCounts();
+                if (!notifyCounts.equals("不重复")) {
                     notifyCountHolder.answerText.setText(notifyCounts);
 
                     if (AddThingOperationXMLData.getInstall().isRepeat()) {
                         notifyCountHolder.countSwitch.setChecked(true);
                         notifyCountHolder.childLayout.setVisibility(View.VISIBLE);
                     }
-
                 }
 
                 //如果提醒时间 条数> 1  不允许重复
-                if (historyData.getDates().size() > 1 && AddThingOperationXMLData.getInstall().isReminder()) {
+                if (AddThingOperationXMLDataCache.getDates().size() > 1 && AddThingOperationXMLData.getInstall().isReminder()) {
                     hideCountView();
                 }
 
@@ -323,7 +314,7 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return date.length;
+        return ViewType.length;
     }
 
     @Override
@@ -331,20 +322,10 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
         return position;
     }
 
-    /**
-     * 设置历史数据
-     *
-     * @param historyData
-     */
-    public void setDataAndFlushView(HistoryData historyData) {
-        this.historyData = historyData;
-        this.notifyDataSetChanged();
-    }
-
 
     public void hideCountView() {
         //如果设置的提醒次数大于1   则设置为不重复
-        if (AddThingOperationXMLData.getInstall().readHistoryData().getDates().size() > 1 && AddThingOperationXMLData.getInstall().isReminder()) {
+        if (AddThingOperationXMLDataCache.getDates().size() > 1 && AddThingOperationXMLData.getInstall().isReminder()) {
             notifyCountHolder.countSwitch.setChecked(false);
             notifyCountHolder.itemView.setVisibility(View.INVISIBLE);
             //将xml里存储的 是否重复提醒字段(IS_REPEAT) 值更改为false
@@ -354,7 +335,7 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
 
     public void initAndShowCountView() {
         //如果设置的提醒次数大于1   则设置为不重复
-        if (AddThingOperationXMLData.getInstall().readHistoryData().getDates().size() > 1) {
+        if (AddThingOperationXMLDataCache.getDates().size() > 1) {
             notifyCountHolder.countSwitch.setChecked(false);
             notifyCountHolder.itemView.setVisibility(View.VISIBLE);
 
@@ -366,23 +347,29 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
     /**
      * 根据操作的类型.保存各种数据
      *
-     * @param saveChooseOperationEvent
+     * @param dataCacheChange
      */
-    public void save(SaveChooseOperationEvent saveChooseOperationEvent) {
-        switch (currentOperation) {
-            case OPERATION_CHOICE_DATE:
-                if (!(saveChooseOperationEvent.getType() == SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE))
+    public void save(DataCacheChange dataCacheChange) {
+        //如果是删除事件  此处做处理
+        if (dataCacheChange.getType() == DataCacheChange.TYPE_REMOVE_NOTIFY_DATE_CHANGE) {
+            if (dataCacheChange.isDetermine()) {
+                ArrayList<Date> dateTmp = AddThingOperationXMLDataCache.getDates();
+                if (dateTmp.size() == 0) {
+                    dateChoiceHolder.dateSwitch.setChecked(false);
+                }
+                Animator startHide = ShowOrHideView.hideChildView(dateChoiceHolder, dateChoiceHolder.childLayout);
+                startHide.start();
+            }
+        } else if (dataCacheChange.getType() == DataCacheChange.TYPE_CANCEL) {
+            //取消事件
+            if (currentOperation == OPERATION_CHOICE_DATE) {
+                if (!(dataCacheChange.getType() == DataCacheChange.TYPE_NOTYFLY_DATE_CHANGE))
                     return;
-                if (saveChooseOperationEvent.isDetermine()) {
-                    ArrayList<Date> dateTmp = notifyDateRecyclerAdapter.getDateList();
-                    dateTmp.add(saveChooseOperationEvent.getDate());
-                    notifyDateRecyclerAdapter.setDateList(dateTmp);
+                if (dataCacheChange.isDetermine()) {
                     //如果设置的提醒次数大于1   则设置为不重复
                     hideCountView();
-
                     Animator startOpen = ShowOrHideView.showChildView(preHolder);
                     startOpen.start();
-
                 } else {
                     ArrayList<Date> dateTmp = notifyDateRecyclerAdapter.getDateList();
                     if (dateTmp.size() == 0) {
@@ -392,13 +379,12 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                         dateChoiceHolder.dateSwitch.setChecked(false);
                     }
                 }
-                break;
-            case OPERATION_CHOICE_COUNT:
-                if (!(saveChooseOperationEvent.getType() == SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_COUNTS))
+            } else if (currentOperation == OPERATION_CHOICE_COUNT) {
+                if (!(dataCacheChange.getType() == SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_COUNTS))
                     return;
                 NotifyCountHolder notifyCountHolder = (NotifyCountHolder) preHolder;
-                if (saveChooseOperationEvent.isDetermine()) {
-                    notifyCountHolder.answerText.setText(saveChooseOperationEvent.getNotifityCounts());
+                if (dataCacheChange.isDetermine()) {
+                    notifyCountHolder.answerText.setText(AddThingOperationXMLDataCache.getNotifyCounts());
                 } else {
                     if (notifyCountHolder.answerText.getText().equals("不重复")) {
                         Animator startHide = ShowOrHideView.hideChildView(notifyCountHolder, notifyCountHolder.childLayout);
@@ -406,9 +392,7 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
                         notifyCountHolder.countSwitch.setChecked(false);
                     }
                 }
-                break;
-            default:
-                break;
+            }
         }
     }
 
