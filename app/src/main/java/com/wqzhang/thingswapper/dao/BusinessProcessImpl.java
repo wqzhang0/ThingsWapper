@@ -39,10 +39,10 @@ public interface BusinessProcessImpl {
     void addToDoThing(ToDoThing toDoThing, List<Notification> notificationList);
 
     //查找已经完成的事情
-    ArrayList<ToDoThing> readFinshThings();
+    ArrayList<ToDoThing> readFinshThingsFinshTimeDesc();
 
     //查找还未做的事情
-    ArrayList<ToDoThing> readNotDoneThings();
+    ArrayList<ToDoThing> readNotDoneThingsCreateTimeDesc();
 
     //获取默认登录的用户
     User getOnlineUser();

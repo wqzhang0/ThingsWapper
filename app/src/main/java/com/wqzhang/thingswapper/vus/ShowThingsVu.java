@@ -1,8 +1,7 @@
 package com.wqzhang.thingswapper.vus;
 
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,18 +11,9 @@ import android.widget.Scroller;
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.adapters.ToDoThingsRecyclerAdapter;
 import com.wqzhang.thingswapper.dao.BusinessProcess;
-import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
 import com.wqzhang.thingswapper.events.PullFreshScrollingEvent;
-import com.wqzhang.thingswapper.listener.BottomLayoutOnScrolledListener;
-import com.wqzhang.thingswapper.listener.TopLayoutOnScrolledListener;
-import com.wqzhang.thingswapper.listener.impl.OnScrollingListenerImpl;
 import com.wqzhang.thingswapper.ui.SlidePullLinearLayout;
 import com.wqzhang.thingswapper.ui.TodoThingsRecyclerListView;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
-import java.util.ArrayList;
 
 /**
  * Created by wqzhang on 17-1-5.
@@ -64,6 +54,7 @@ public class ShowThingsVu implements Vu {
     public void onScrolling(PullFreshScrollingEvent event) {
         switch (event.getType()) {
             case PullFreshScrollingEvent.TYPE_SCROLL_TO:
+                Log.d("Slide ListView", "TYPE_SCROLL_TO");
                 view.scrollTo(event.getEndX(), event.getEndY());
                 break;
             case PullFreshScrollingEvent.TYPE_START_SCROLL:
@@ -73,18 +64,21 @@ public class ShowThingsVu implements Vu {
                 mScroller.startScroll(event.getStartX(), event.getStartY(), event.getEndX(), event.getEndY(), event.getDuration());
                 break;
             case PullFreshScrollingEvent.TYPE_CHANGE_VIEW:
+                Log.d("Slide ListView", "TYPE_CHANGE_VIEW");
                 mScroller.startScroll(0, -300, 0, 300, 600);
                 int type = (int) recyclerView.getTag(R.id.showThingType);
                 if (type == 0) {
                     //当前显示的是已完成界面,需要切换至未完成界面
-                    ((ToDoThingsRecyclerAdapter) recyclerView.getAdapter()).setData(BusinessProcess.getInstance().readNotDoneThings());
+                    ((ToDoThingsRecyclerAdapter) recyclerView.getAdapter()).setData(BusinessProcess.getInstance().readNotDoneThingsCreateTimeDesc());
                     recyclerView.setTag(R.id.showThingType, 1);
                 } else {
                     //已完成
-                    ((ToDoThingsRecyclerAdapter) recyclerView.getAdapter()).setData(BusinessProcess.getInstance().readFinshThings());
+                    ((ToDoThingsRecyclerAdapter) recyclerView.getAdapter()).setData(BusinessProcess.getInstance().readFinshThingsFinshTimeDesc());
                     recyclerView.setTag(R.id.showThingType, 0);
                 }
                 recyclerView.getAdapter().notifyDataSetChanged();
+                //定位到第一条, 防止滑动过快 导致切换后继续滑动
+                recyclerView.smoothScrollToPosition(0);
 
 //                recyclerView.scrollToPosition(0);
                 break;
@@ -113,4 +107,5 @@ public class ShowThingsVu implements Vu {
     public Scroller getmScroller() {
         return mScroller;
     }
+
 }

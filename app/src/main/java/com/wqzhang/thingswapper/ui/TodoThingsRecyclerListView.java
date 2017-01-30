@@ -3,6 +3,7 @@ package com.wqzhang.thingswapper.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -29,6 +30,9 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
     private Context mContext;
     SlideContentView slideContentView = null;
     private EventBus bus;
+
+    //滑动是否有效  在按下时设置为true 在up时设置为false  防止 切换代做事项时  遗留的滑动事件再次被处理
+    private boolean slideValid = false;
 
 
     public final static int NOT_ALLOW_PULL = -1;
@@ -82,6 +86,7 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                 lastY = (int) event.getRawY();
                 isSlideContentView = false;
                 allowCheckSlideContent = true;
+                slideValid = true;
                 View targetItemView = this.findChildViewUnder(X, Y);
 
                 //先重置上一次的操作
@@ -107,8 +112,43 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                 } else {
                     slideContentView = null;
                 }
+
+                //判断是否能上下滑
+                if (ViewCompat.canScrollVertically(this, 1)) {
+                    //可以 下滑
+                    Log.d("canScrollVertically", "可以下滑");
+                } else {
+                    Log.d("canScrollVertically", "不可以下滑");
+                }
+
+                if (ViewCompat.canScrollVertically(this, -1)) {
+                    //可以 上滑
+                    Log.d("canScrollVertically", "可以上滑");
+                } else {
+                    Log.d("canScrollVertically", "不可以上滑");
+                }
+
+                //如果能下滑 不能上滑
+                if (ViewCompat.canScrollVertically(this, 1) && !ViewCompat.canScrollVertically(this, -1)) {
+                    setScrolledState(TodoThingsRecyclerListView.PULL_DOWN);
+                }
+                //如果能上滑 不能下滑
+                if (!ViewCompat.canScrollVertically(this, 1) && ViewCompat.canScrollVertically(this, -1)) {
+                    setScrolledState(TodoThingsRecyclerListView.PULL_UP);
+                }
+                //如果都上下都不能滑动
+                if (!ViewCompat.canScrollVertically(this, 1) && !ViewCompat.canScrollVertically(this, -1)) {
+                    setScrolledState(TodoThingsRecyclerListView.PULL_DOUBLE);
+                }
+                //可以上下滑动
+                if (ViewCompat.canScrollVertically(this, 1) && ViewCompat.canScrollVertically(this, -1)) {
+                    setScrolledState(TodoThingsRecyclerListView.NOT_ALLOW_PULL);
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
+                if (!slideValid) {
+                    return true;
+                }
                 if (allowCheckSlideContent) {
                     int deltaY = (int) event.getY() - Y;
                     int touchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
@@ -142,14 +182,14 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                         }
                     } else {
                         //可以下滑
-                        if (scrollValue <= 200) {
-                            bus.post(new PullFreshScrollingEvent(0, -scrollValue));
+                        if (scrollValue <= 400) {
+                            bus.post(new PullFreshScrollingEvent(0, -scrollValue / 2));
                         } else if (scrollValue <= 1000) {
-                            bus.post(new PullFreshScrollingEvent(0, -scrollValue / 5 - 160));
+                            bus.post(new PullFreshScrollingEvent(0, -scrollValue / 5 - 120));
                         } else {
-                            bus.post(new PullFreshScrollingEvent(0, -360));
+                            bus.post(new PullFreshScrollingEvent(0, -320));
                         }
-                        if (scrollValue > 200) {
+                        if (scrollValue > 400) {
                             OnScrolledToDownComplete();
                             scrolledState = PULL_DOWN_COMPLETE;
                         } else {
@@ -171,14 +211,14 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                         }
                     } else {
                         //可以上滑
-                        if (scrollValue >= -200) {
-                            bus.post(new PullFreshScrollingEvent(0, -scrollValue));
+                        if (scrollValue >= -400) {
+                            bus.post(new PullFreshScrollingEvent(0, -scrollValue / 2));
                         } else if (scrollValue >= -1000) {
-                            bus.post(new PullFreshScrollingEvent(0, -scrollValue / 5 + 160));
+                            bus.post(new PullFreshScrollingEvent(0, -scrollValue / 5 + 120));
                         } else {
-                            bus.post(new PullFreshScrollingEvent(0, 360));
+                            bus.post(new PullFreshScrollingEvent(0, 320));
                         }
-                        if (scrollValue > -200) {
+                        if (scrollValue > -400) {
                             if (scrolledState != PULL_DOUBLE) {
                                 scrolledState = PULL_UP;
                             }
@@ -195,6 +235,7 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                 lastY = (int) event.getRawY();
                 break;
             case MotionEvent.ACTION_UP:
+                slideValid = false;
                 if (slideContentView != null) {
                     if (slideContentView.onRequeirTouchEvent(event)) {
                         isSlideContentView = true;

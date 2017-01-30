@@ -67,6 +67,15 @@ public abstract class BasePartenerFragment<V extends Vu> extends Fragment {
         afterOnResume();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        afterOnStart();
+    }
+
+    protected void afterOnStart(){
+
+    }
     protected void afterOnResume() {
     }
 

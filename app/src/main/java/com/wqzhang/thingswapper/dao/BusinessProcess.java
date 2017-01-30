@@ -2,10 +2,16 @@ package com.wqzhang.thingswapper.dao;
 
 import android.util.Log;
 
-import com.wqzhang.thingswapper.MainApplication;
-import com.wqzhang.thingswapper.dao.greendao.*;
+import com.wqzhang.thingswapper.dao.greendao.Connection_T_N;
+import com.wqzhang.thingswapper.dao.greendao.Connection_T_NDao;
+import com.wqzhang.thingswapper.dao.greendao.DaoSession;
+import com.wqzhang.thingswapper.dao.greendao.Notification;
+import com.wqzhang.thingswapper.dao.greendao.NotificationDao;
+import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
+import com.wqzhang.thingswapper.dao.greendao.ToDoThingDao;
+import com.wqzhang.thingswapper.dao.greendao.User;
+import com.wqzhang.thingswapper.dao.greendao.UserDao;
 import com.wqzhang.thingswapper.model.ChartDataModel;
-import com.wqzhang.thingswapper.model.HistoryData;
 import com.wqzhang.thingswapper.tools.Common;
 import com.wqzhang.thingswapper.tools.DateUtil;
 
@@ -15,9 +21,7 @@ import org.greenrobot.greendao.query.QueryBuilder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by wqzhang on 16-12-28.
@@ -70,16 +74,16 @@ public class BusinessProcess implements BusinessProcessImpl {
     }
 
     @Override
-    public ArrayList<ToDoThing> readFinshThings() {
+    public ArrayList<ToDoThing> readFinshThingsFinshTimeDesc() {
         QueryBuilder<ToDoThing> finshQueryBuilder = toDoThingDao.queryBuilder();
-        ArrayList<ToDoThing> toDoThings = (ArrayList<ToDoThing>) finshQueryBuilder.where(ToDoThingDao.Properties.Status.eq(Common.STATUS_FINSH)).list();
+        ArrayList<ToDoThing> toDoThings = (ArrayList<ToDoThing>) finshQueryBuilder.where(ToDoThingDao.Properties.Status.eq(Common.STATUS_FINSH)).orderDesc(ToDoThingDao.Properties.FinshDate).list();
         return toDoThings;
     }
 
     @Override
-    public ArrayList<ToDoThing> readNotDoneThings() {
+    public ArrayList<ToDoThing> readNotDoneThingsCreateTimeDesc() {
         QueryBuilder<ToDoThing> notDoneQueryBuilder = toDoThingDao.queryBuilder();
-        ArrayList<ToDoThing> toDoThings = (ArrayList<ToDoThing>) notDoneQueryBuilder.where(ToDoThingDao.Properties.Status.eq(Common.STATUS_TO_BE_DONE)).list();
+        ArrayList<ToDoThing> toDoThings = (ArrayList<ToDoThing>) notDoneQueryBuilder.where(ToDoThingDao.Properties.Status.eq(Common.STATUS_TO_BE_DONE)).orderDesc(ToDoThingDao.Properties.CreateDate).list();
         return toDoThings;
     }
 
@@ -264,7 +268,7 @@ public class BusinessProcess implements BusinessProcessImpl {
                 .where(ToDoThingDao.Properties.FinshDate.ge(dayStart), ToDoThingDao.Properties.FinshDate.lt(dayEnd))
                 .list().size();
 
-        int toBeDoneThingsCounts = readNotDoneThings().size();
+        int toBeDoneThingsCounts = readNotDoneThingsCreateTimeDesc().size();
 
         //依次添加顺序 未做,新增,完成
         arrayList.add(new ChartDataModel(new Date(), toBeDoneThingsCounts));

@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.dao.BusinessProcess;
+import com.wqzhang.thingswapper.fragments.PersonSetFragment;
 import com.wqzhang.thingswapper.fragments.PoolFragment;
 import com.wqzhang.thingswapper.fragments.ShowThingsFragment;
 import com.wqzhang.thingswapper.vus.MainVu;
@@ -40,17 +41,13 @@ public class MainActivity extends BasePartenerAppCompatActivity<MainVu> implemen
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.setting:
-                Intent intent = new Intent("com.wqzhang.thingswapper.activity.AddToDoThingActivity");
-                startActivity(intent);
+                fragmentManager.beginTransaction().replace(vu.getContainerId(), PersonSetFragment.newInstance()).addToBackStack(null).commit();
                 break;
             case R.id.pool:
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                Fragment f = new PoolFragment();
-                fragmentTransaction.replace(R.id.main_content, f);
-                fragmentTransaction.commit();
+                fragmentManager.beginTransaction().replace(vu.getContainerId(), PoolFragment.newInstance()).addToBackStack(null).commit();
                 break;
             case R.id.show_things:
-                fragmentManager.beginTransaction().replace(vu.getContainerId(), ShowThingsFragment.newInstance()).commit();
+                fragmentManager.beginTransaction().replace(vu.getContainerId(), ShowThingsFragment.newInstance()).addToBackStack(null).commit();
                 break;
             default:
                 break;

@@ -1,8 +1,8 @@
 package com.wqzhang.thingswapper.fragments;
 
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.wqzhang.thingswapper.R;
@@ -21,7 +21,6 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
 
 import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE;
-import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL;
 
 /**
  * Created by wqzhang on 16-12-1.
@@ -75,29 +74,33 @@ public class ShowThingsFragment extends BasePartenerFragment<ShowThingsVu> {
                     lastPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
                     firstPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
 //                        View firstChildView = layoutManager.getChildAt(firstPosition);
-                    View firstChildView = recyclerView.findViewHolderForAdapterPosition(firstPosition).itemView;
-                    int firstChildViewTop = firstChildView.getTop();
-                    if (firstChildViewTop == 0 && firstPosition == 0) {
-                        //顶部
-                        canPullUp = true;
-                        TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOWN);
-                    }
-                    View lastChildView = layoutManager.getChildAt(layoutManager.getChildCount() - 1);
+                    RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(firstPosition);
+                    if (viewHolder != null) {
+                        View firstChildView = viewHolder.itemView;
+                        int firstChildViewTop = firstChildView.getTop();
+                        if (firstChildViewTop == 0 && firstPosition == 0) {
+                            //顶部
+                            canPullUp = true;
+                            TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOWN);
+                        }
+                        View lastChildView = layoutManager.getChildAt(layoutManager.getChildCount() - 1);
 //                        View lastChildView = recyclerView.findViewHolderForAdapterPosition(layoutManager.getChildCount() - 1).itemView;
-                    int recyclerBottom = (int) (recyclerView.getBottom() - recyclerView.getPaddingBottom() - recyclerView.getTranslationY()) - recyclerView.getTop();
-                    int lastChildViewBottom = lastChildView.getBottom();
+                        int recyclerBottom = (int) (recyclerView.getBottom() - recyclerView.getPaddingBottom() - recyclerView.getTranslationY()) - recyclerView.getTop();
+                        int lastChildViewBottom = lastChildView.getBottom();
 
-                    if ((lastChildViewBottom == recyclerBottom || lastPosition == recyclerView.getAdapter().getItemCount() - 1) && (lastPosition == (layoutManager.getItemCount() - 1))) {
+                        if ((lastChildViewBottom == recyclerBottom || lastPosition == recyclerView.getAdapter().getItemCount() - 1) && (lastPosition == (layoutManager.getItemCount() - 1))) {
 //                            Toast.makeText(getActivity(), "到达尾点", Toast.LENGTH_SHORT).show();
-                        canPullDown = true;
-                        TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_UP);
+                            canPullDown = true;
+                            TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_UP);
+                        }
+                        if (canPullUp && canPullDown) {
+                            TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOUBLE);
+                        }
+                        if (!canPullUp && !canPullDown) {
+                            TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.NOT_ALLOW_PULL);
+                        }
                     }
-                    if (canPullUp && canPullDown) {
-                        TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOUBLE);
-                    }
-                    if (!canPullUp && !canPullDown) {
-                        TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.NOT_ALLOW_PULL);
-                    }
+
                 }
             }
         }
@@ -121,7 +124,7 @@ public class ShowThingsFragment extends BasePartenerFragment<ShowThingsVu> {
         ToDoThingsRecyclerAdapter toDoThingsRecyclerAdapter = new ToDoThingsRecyclerAdapter(getActivity());
 
         bus.register(this);
-        ArrayList<ToDoThing> toDoThings = BusinessProcess.getInstance().readNotDoneThings();
+        ArrayList<ToDoThing> toDoThings = BusinessProcess.getInstance().readNotDoneThingsCreateTimeDesc();
         toDoThingsRecyclerAdapter.setData(toDoThings);
         vu.getRecyclerView().setTag(R.id.showThingType, 1);
         vu.getRecyclerView().setAdapter(toDoThingsRecyclerAdapter);
@@ -130,22 +133,23 @@ public class ShowThingsFragment extends BasePartenerFragment<ShowThingsVu> {
 
         //默认可以上拉
         TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOWN);
-
         int lastPosition = ((LinearLayoutManager) vu.getRecyclerView().getLayoutManager()).findLastVisibleItemPosition();
         if (lastPosition == vu.getRecyclerView().getAdapter().getItemCount() - 1) {
             TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOUBLE);
         }
-
+//        if (!ViewCompat.canScrollVertically(vu.getRecyclerView(), 1)) {
+//            TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOUBLE);
+//        }
         vu.getRecyclerView().addOnScrollListener(onScrollListener);
 
         TopLayoutOnScrolledListener topLayoutOnScrolledListener = new TopLayoutOnScrolledListener(vu.getTopLinearLayout());
         BottomLayoutOnScrolledListener bottomLayoutOnScrolledListener = new BottomLayoutOnScrolledListener(vu.getBottomLinearLayout());
 
-
         vu.getRecyclerView().addOnScrolledListener(topLayoutOnScrolledListener);
         vu.getRecyclerView().addOnScrolledListener(bottomLayoutOnScrolledListener);
 
     }
+
 
     @Override
     protected Class<ShowThingsVu> getVuClass() {
@@ -161,10 +165,7 @@ public class ShowThingsFragment extends BasePartenerFragment<ShowThingsVu> {
         vu.onScrolling(event);
     }
 
-    @Override
-    protected void afterOnResume() {
-        super.afterOnResume();
-    }
+
 
     @Override
     protected void beforeOnStop() {
