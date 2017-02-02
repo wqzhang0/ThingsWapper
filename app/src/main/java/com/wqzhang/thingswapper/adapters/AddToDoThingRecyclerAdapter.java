@@ -323,6 +323,9 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
     }
 
 
+    /**
+     * 判断 是否提醒时间 的数量大于2  如果大于2  则隐藏重复选择条目
+     */
     public void hideCountView() {
         //如果设置的提醒次数大于1   则设置为不重复
         if (AddThingOperationXMLDataCache.getDates().size() > 1 && AddThingOperationXMLData.getInstall().isReminder()) {
@@ -333,6 +336,18 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
         }
     }
 
+    public void showCountView() {
+        if (!(AddThingOperationXMLDataCache.getDates().size() > 1 && AddThingOperationXMLData.getInstall().isReminder())) {
+            notifyCountHolder.countSwitch.setChecked(false);
+            notifyCountHolder.itemView.setVisibility(View.VISIBLE);
+            //将xml里存储的 是否重复提醒字段(IS_REPEAT) 值更改为false
+            bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_IS_REPEAT, false));
+        }
+    }
+
+    /**
+     * 当折叠时.初始化并且显示  提醒重复 条目
+     */
     public void initAndShowCountView() {
         //如果设置的提醒次数大于1   则设置为不重复
         if (AddThingOperationXMLDataCache.getDates().size() > 1) {
@@ -354,45 +369,61 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
         if (dataCacheChange.getType() == DataCacheChange.TYPE_REMOVE_NOTIFY_DATE_CHANGE) {
             if (dataCacheChange.isDetermine()) {
                 ArrayList<Date> dateTmp = AddThingOperationXMLDataCache.getDates();
+                notifyDateRecyclerAdapter.setDateList(AddThingOperationXMLDataCache.getDates());
                 if (dateTmp.size() == 0) {
+                    Animator startHide = ShowOrHideView.hideChildView(dateChoiceHolder, dateChoiceHolder.childLayout);
                     dateChoiceHolder.dateSwitch.setChecked(false);
+                    startHide.start();
+
+                } else if (dateTmp.size() == 1) {
+                    //将 重复提醒次数  条目展示出来
+                    showCountView();
+                    Animator startOpen = ShowOrHideView.showChildView(dateChoiceHolder);
+                    startOpen.start();
+                } else if (dateTmp.size() > 1) {
+                    Animator startOpen = ShowOrHideView.showChildView(dateChoiceHolder);
+                    startOpen.start();
                 }
+            }
+        } else if (dataCacheChange.getType() == DataCacheChange.TYPE_NOTYFLY_DATE_CHANGE) {
+            //提醒时间改变 增加事件
+            notifyDateRecyclerAdapter.setDateList(AddThingOperationXMLDataCache.getDates());
+            Animator startOpen = ShowOrHideView.showChildView(dateChoiceHolder);
+            startOpen.start();
+            //如果设置的提醒次数大于1   则设置为不重复
+            hideCountView();
+
+        } else if (dataCacheChange.getType() == DataCacheChange.TYPE_NOTIFLY_DATE_CANCEL) {
+            //时间选择  点击了取消按钮
+            ArrayList<Date> dateTmp = notifyDateRecyclerAdapter.getDateList();
+            if (dateTmp.size() == 0) {
+                DateChoiceHolder dateChoiceHolder = ((DateChoiceHolder) preHolder);
                 Animator startHide = ShowOrHideView.hideChildView(dateChoiceHolder, dateChoiceHolder.childLayout);
                 startHide.start();
+                dateChoiceHolder.dateSwitch.setChecked(false);
             }
         } else if (dataCacheChange.getType() == DataCacheChange.TYPE_CANCEL) {
             //取消事件
             if (currentOperation == OPERATION_CHOICE_DATE) {
-                if (!(dataCacheChange.getType() == DataCacheChange.TYPE_NOTYFLY_DATE_CHANGE))
-                    return;
-                if (dataCacheChange.isDetermine()) {
-                    //如果设置的提醒次数大于1   则设置为不重复
-                    hideCountView();
-                    Animator startOpen = ShowOrHideView.showChildView(preHolder);
-                    startOpen.start();
-                } else {
-                    ArrayList<Date> dateTmp = notifyDateRecyclerAdapter.getDateList();
-                    if (dateTmp.size() == 0) {
-                        DateChoiceHolder dateChoiceHolder = ((DateChoiceHolder) preHolder);
-                        Animator startHide = ShowOrHideView.hideChildView(dateChoiceHolder, dateChoiceHolder.childLayout);
-                        startHide.start();
-                        dateChoiceHolder.dateSwitch.setChecked(false);
-                    }
+                ArrayList<Date> dateTmp = notifyDateRecyclerAdapter.getDateList();
+                if (dateTmp.size() == 0) {
+                    DateChoiceHolder dateChoiceHolder = ((DateChoiceHolder) preHolder);
+                    Animator startHide = ShowOrHideView.hideChildView(dateChoiceHolder, dateChoiceHolder.childLayout);
+                    startHide.start();
+                    dateChoiceHolder.dateSwitch.setChecked(false);
                 }
             } else if (currentOperation == OPERATION_CHOICE_COUNT) {
-                if (!(dataCacheChange.getType() == SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_COUNTS))
-                    return;
+                //如果上一次的操作是 提醒次数按钮 则 此时隐藏 次数选择的子视图
                 NotifyCountHolder notifyCountHolder = (NotifyCountHolder) preHolder;
-                if (dataCacheChange.isDetermine()) {
-                    notifyCountHolder.answerText.setText(AddThingOperationXMLDataCache.getNotifyCounts());
-                } else {
-                    if (notifyCountHolder.answerText.getText().equals("不重复")) {
-                        Animator startHide = ShowOrHideView.hideChildView(notifyCountHolder, notifyCountHolder.childLayout);
-                        startHide.start();
-                        notifyCountHolder.countSwitch.setChecked(false);
-                    }
+
+                if (notifyCountHolder.answerText.getText().equals("不重复")) {
+                    Animator startHide = ShowOrHideView.hideChildView(notifyCountHolder, notifyCountHolder.childLayout);
+                    startHide.start();
+                    notifyCountHolder.countSwitch.setChecked(false);
                 }
             }
+        } else if (dataCacheChange.getType() == DataCacheChange.TYPE_NOTYFLY_COUNTS_CHANGE) {
+            notifyCountHolder.answerText.setText(dataCacheChange.getNotifityCounts());
         }
     }
 

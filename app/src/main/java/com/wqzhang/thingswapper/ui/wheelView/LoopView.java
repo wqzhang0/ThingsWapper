@@ -2,6 +2,7 @@ package com.wqzhang.thingswapper.ui.wheelView;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -34,6 +35,7 @@ public class LoopView extends View {
     Handler handler;
     private GestureDetector gestureDetector;
     OnItemSelectedListener onItemSelectedListener;
+    OnScrollEndListener onScrollEndListener;
 
     // Timer mTimer;
     ScheduledExecutorService mExecutor = Executors.newSingleThreadScheduledExecutor();
@@ -56,6 +58,8 @@ public class LoopView extends View {
     // 条目间距倍数
     float lineSpacingMultiplier;
     boolean isLoop;
+
+    boolean isAdd;
 
     // 第一条线Y坐标值
     int firstLineY;
@@ -109,7 +113,8 @@ public class LoopView extends View {
 
         lineSpacingMultiplier = 2.0F;
         isLoop = true;
-        itemsVisible = 9;
+        //原本是9
+        itemsVisible = 7;
         textSize = 0;
         colorGray = 0xffafafaf;
         colorBlack = 0xff313131;
@@ -126,12 +131,14 @@ public class LoopView extends View {
     private void initPaints() {
         paintOuterText = new Paint();
         paintOuterText.setColor(colorGray);
+        paintOuterText.setColor(Color.parseColor("#828282"));
         paintOuterText.setAntiAlias(true);
         paintOuterText.setTypeface(Typeface.MONOSPACE);
         paintOuterText.setTextSize(textSize);
 
         paintCenterText = new Paint();
         paintCenterText.setColor(colorBlack);
+        paintCenterText.setColor(Color.parseColor("#d81e06"));
         paintCenterText.setAntiAlias(true);
         paintCenterText.setTextScaleX(scaleX);
         paintCenterText.setTypeface(Typeface.MONOSPACE);
@@ -139,6 +146,7 @@ public class LoopView extends View {
 
         paintIndicator = new Paint();
         paintIndicator.setColor(colorLightGray);
+//        paintIndicator.setColor(Color.parseColor("#d81e06"));
         paintIndicator.setAntiAlias(true);
 
         if (android.os.Build.VERSION.SDK_INT >= 11) {
@@ -343,6 +351,20 @@ public class LoopView extends View {
             } else {
                 as[k1] = items.get(l1);
             }
+
+            //-------------------------
+            if (isAdd && (l1 > items.size() - 1)) {
+                if (onScrollEndListener != null) {
+                    List<String> moreList = onScrollEndListener.getMoreList(items);
+                    if (moreList != null && moreList.size() != 0) {
+                        items.addAll(moreList);
+                        as[k1] = items.get(l1);
+                    } else {
+                        as[k1] = "";
+                    }
+                }
+            }
+            //-----------------------
             k1++;
         }
         canvas.drawLine(0.0F, firstLineY, measuredWidth, firstLineY, paintIndicator);
@@ -469,5 +491,13 @@ public class LoopView extends View {
 
         invalidate();
         return true;
+    }
+
+    public void setAdd() {
+        isAdd = true;
+    }
+
+    public void setOnScrollEndListener(OnScrollEndListener onScrollEndListener) {
+        this.onScrollEndListener = onScrollEndListener;
     }
 }

@@ -66,7 +66,7 @@
 
 
         <FrameLayout
-            android:id="@+id/setting_layout"
+            android:id="@+id/add_thing_more_choice_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#65000000"
@@ -136,25 +136,26 @@
                         android:background="#8E8E8E" />
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:padding="8dp">
 
                         <com.wqzhang.thingswapper.ui.wheelView.LoopView
                             android:id="@+id/cal_loop_view"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="left"
+                            android:layout_marginLeft="16dp">
 
                         </com.wqzhang.thingswapper.ui.wheelView.LoopView>
 
 
                         <com.wqzhang.thingswapper.ui.wheelView.LoopView
                             android:id="@+id/hour_loop_view"
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginRight="50dp"
-                            android:layout_weight="1">
+                            android:layout_marginLeft="16dp">
 
                         </com.wqzhang.thingswapper.ui.wheelView.LoopView>
 
@@ -162,6 +163,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="8dp"
                             android:orientation="vertical">
 
                             <ImageView
@@ -172,17 +174,16 @@
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="30dp"
+                                android:layout_marginTop="6dp"
                                 android:background="@drawable/point" />
 
                         </LinearLayout>
 
                         <com.wqzhang.thingswapper.ui.wheelView.LoopView
                             android:id="@+id/minute_loop_view"
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="50dp"
-                            android:layout_weight="1">
+                            android:layout_marginLeft="8dp">
 
                         </com.wqzhang.thingswapper.ui.wheelView.LoopView>
                     </LinearLayout>

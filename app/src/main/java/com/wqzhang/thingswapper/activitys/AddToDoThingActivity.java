@@ -4,15 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wqzhang.thingswapper.R;
@@ -25,7 +23,6 @@ import com.wqzhang.thingswapper.events.DataCacheChange;
 import com.wqzhang.thingswapper.events.SaveChooseOperationEvent;
 import com.wqzhang.thingswapper.events.ShowMoreSetEvent;
 import com.wqzhang.thingswapper.exceptions.CustomerException;
-import com.wqzhang.thingswapper.tools.DateUtil;
 import com.wqzhang.thingswapper.vus.AddThingVu;
 
 import org.greenrobot.eventbus.EventBus;
@@ -126,6 +123,8 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
 
     @Override
     public void onClick(View view) {
+        //取消类指令   可以直接发送到Adapter 或者各个位置直接进行处理,
+        //保存或者更改类的指令   统一发送到AddThingOperationXMLData 里面进行处理, 然后在里面抛出 UI事件的处理指令
         switch (view.getId()) {
             case R.id.add_cancel:
 //                bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_CONTEXT, ((EditText) findViewById(R.id.remind_content)).getText().toString()));
@@ -134,18 +133,23 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
                 break;
             case R.id.add_submit:
 //                bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_CONTEXT, ((EditText) findViewById(R.id.remind_content)).getText().toString()));
-                BusinessProcess.getInstance().addToDoThing(AddThingOperationXMLData.getInstall().getToDothing(),
-                        AddThingOperationXMLData.getInstall().getNotifycation());
+                //先去除 内容的前后空格  然后判断是否为空   不为空则添加事件
+                if (TextUtils.isEmpty(AddThingOperationXMLDataCache.getContent().trim())) {
+                    Toast.makeText(this, "内容为空,添加失败", Toast.LENGTH_LONG).show();
+                } else {
+                    BusinessProcess.getInstance().addToDoThing(AddThingOperationXMLData.getInstall().getToDothing(),
+                            AddThingOperationXMLData.getInstall().getNotifycation());
 
-                AddThingOperationXMLData.getInstall().clearHistory();
+                    AddThingOperationXMLData.getInstall().clearHistory();
+                    Intent intent2 = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
+                    startActivity(intent2);
+                }
 
-                Intent intent2 = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
-                startActivity(intent2);
                 break;
-            case R.id.setting_layout:
+            case R.id.add_thing_more_choice_frame:
                 bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.HIDE));
-                bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE, new Date(), false));
-                bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_COUNTS, new Date(), false));
+                //发送  已取消的事件   具体操作在 AddToDoThingRecyclerAdapter 里面 做收缩的动画效果
+                bus.post(new DataCacheChange(DataCacheChange.TYPE_CANCEL));
                 break;
             case R.id.time_choose_cancel:
                 bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE, new Date(), false));
@@ -156,7 +160,7 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
             case R.id.time_choose_submit:
 
                 Date date = vu.getNotifyDate();
-                //将xml里存储的 是否提醒字段(IS_REMINDER) 值更改为true
+
                 boolean alreadyExists = false;
                 ArrayList<Date> dateArrayList = AddThingOperationXMLDataCache.getDates();
                 for (Date _tmpDate : dateArrayList) {
@@ -167,6 +171,7 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
                 if (alreadyExists) {
                     Toast.makeText(this, "提醒时间已存在", Toast.LENGTH_SHORT).show();
                 } else {
+                    //将xml里存储的 是否提醒字段(IS_REMINDER) 值更改为true
                     bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_IS_REMINDER, true));
                     bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE, date, true));
                 }

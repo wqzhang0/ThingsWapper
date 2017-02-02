@@ -19,6 +19,7 @@ public class DateUtil {
     public static String TIMES_PATTERN = "HH:mm:ss";
     public static String NOCHAR_PATTERN = "yyyyMMddHHmmss";
     public static String CHOICE_PATTERN = "yyyy年MM月dd日 HH mm";
+    public static String LOOPVIEW_PATTERN = "yyyy年MM月dd日";
 
     /**
      * 获取当前时间戳
@@ -210,6 +211,45 @@ public class DateUtil {
         }
         return dayOfWeek;
     }
+
+    /**
+     * 获取星期
+     *
+     * @param date
+     * @return
+     */
+    public static String getWeekChina(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+        dayOfWeek = dayOfWeek - 1;
+        if (dayOfWeek == 0) {
+            dayOfWeek = 7;
+        }
+        if (dayOfWeek == 1) {
+            return "星期一";
+        }
+        if (dayOfWeek == 2) {
+            return "星期二";
+        }
+        if (dayOfWeek == 3) {
+            return "星期三";
+        }
+        if (dayOfWeek == 4) {
+            return "星期四";
+        }
+        if (dayOfWeek == 5) {
+            return "星期五";
+        }
+        if (dayOfWeek == 6) {
+            return "星期六";
+        }
+        if (dayOfWeek == 7) {
+            return "星期日";
+        }
+        return "";
+    }
+
 
     /**
      * 获取星期 返回结果 带 今天和昨天

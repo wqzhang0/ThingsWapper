@@ -73,10 +73,11 @@ public class AddThingOperationXMLData {
 
                 break;
             case SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_COUNTS:
+                if (!saveChooseOperationEvent.isDetermine()) return;
                 sharedPreferencesControl.getEditor().putString("NOTIFY_COUNTS", saveChooseOperationEvent.getNotifityCounts()).commit();
                 AddThingOperationXMLDataCache.setNotifyCounts(saveChooseOperationEvent.getNotifityCounts());
                 //发送 改变视图的消息
-                bus.post(new DataCacheChange(DataCacheChange.TYPE_NOTYFLY_COUNTS_CHANGE, true));
+                bus.post(new DataCacheChange(DataCacheChange.TYPE_NOTYFLY_COUNTS_CHANGE, saveChooseOperationEvent.getNotifityCounts()));
                 break;
             case SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE:
                 if (!saveChooseOperationEvent.isDetermine()) return;
@@ -156,6 +157,7 @@ public class AddThingOperationXMLData {
      */
     public void clearHistory() {
         sharedPreferencesControl.getEditor().clear().commit();
+        AddThingOperationXMLDataCache.readHistory();
     }
 
 

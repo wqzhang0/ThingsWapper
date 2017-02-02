@@ -8,8 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -20,13 +18,14 @@ import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.adapters.AddToDoThingRecyclerAdapter;
 import com.wqzhang.thingswapper.adapters.RemindCountAdapter;
 import com.wqzhang.thingswapper.events.DataCacheChange;
-import com.wqzhang.thingswapper.events.SaveChooseOperationEvent;
 import com.wqzhang.thingswapper.tools.DateUtil;
 import com.wqzhang.thingswapper.ui.wheelView.LoopView;
 import com.wqzhang.thingswapper.ui.wheelView.OnItemSelectedListener;
+import com.wqzhang.thingswapper.ui.wheelView.OnScrollEndListener;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by wqzhang on 17-1-5.
@@ -60,7 +59,7 @@ public class AddThingVu implements Vu {
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         addCancel = (TextView) view.findViewById(R.id.add_cancel);
         addSubmit = (TextView) view.findViewById(R.id.add_submit);
-        reminderSettingLayout = (FrameLayout) view.findViewById(R.id.setting_layout);
+        reminderSettingLayout = (FrameLayout) view.findViewById(R.id.add_thing_more_choice_frame);
         reminderCountChoicesListView = (ListView) view.findViewById(R.id.count_choices);
         reminderDateCalLoopView = (LoopView) view.findViewById(R.id.cal_loop_view);
         reminderDateHourLoopView = (LoopView) view.findViewById(R.id.hour_loop_view);
@@ -111,7 +110,7 @@ public class AddThingVu implements Vu {
 
 
         final ArrayList<String> minuteList = new ArrayList<>();
-        for (int i = 0; i < 60; i++) {
+        for (int i = 0; i < 60; i += 5) {
             if (i < 10) {
                 minuteList.add("0" + String.valueOf(i));
             } else {
@@ -130,24 +129,44 @@ public class AddThingVu implements Vu {
                 newMinuteValue = Integer.valueOf(minuteList.get(index));
             }
         });
+//        reminderDateCalLoopView.setNotLoop();
         newMinuteValue = Integer.valueOf(minuteList.get(0));
 
 
         final ArrayList<String> calList = new ArrayList<>();
-        String tmpString = "2017年1月";
-        for (int i = 2; i <= 30; i++) {
-            calList.add(tmpString + i + "日");
+        Date todayDate = new Date();
+        for (int i = 0; i <= 30; i++) {
+            Date _tmpDate = DateUtil.addDate(todayDate, i);
+            String _total = DateUtil.formatDateByFormat(_tmpDate, DateUtil.LOOPVIEW_PATTERN) + " " + DateUtil.getWeekChina(_tmpDate);
+            calList.add(_total);
         }
+
+        reminderDateCalLoopView.setNotLoop();
+        reminderDateCalLoopView.setAdd();
         reminderDateCalLoopView.setItems(calList);
         reminderDateCalLoopView.setTextSize(15);
         reminderDateCalLoopView.setInitPosition(0);
         reminderDateCalLoopView.setListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(int index) {
-                newYMDValue = calList.get(index);
+                newYMDValue = calList.get(index).split(" ")[0];
             }
         });
-        newYMDValue = calList.get(0);
+        reminderDateCalLoopView.setOnScrollEndListener(new OnScrollEndListener() {
+            @Override
+            public List<String> getMoreList(List<String> historyData) {
+                List<String> newDates = new ArrayList<String>();
+                String lastData = historyData.get(historyData.size() - 1);
+                Date lastDate = DateUtil.parseDate(lastData, DateUtil.LOOPVIEW_PATTERN);
+                for (int i = 0; i < 30; i++) {
+                    Date _tmpDate = DateUtil.addDate(lastDate, i);
+                    String _total = DateUtil.formatDateByFormat(_tmpDate, DateUtil.LOOPVIEW_PATTERN) + " " + DateUtil.getWeekChina(_tmpDate);
+                    newDates.add(_total);
+                }
+                return newDates;
+            }
+        });
+        newYMDValue = calList.get(0).split(" ")[0];
 
     }
 

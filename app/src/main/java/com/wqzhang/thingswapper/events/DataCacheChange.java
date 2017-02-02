@@ -29,6 +29,9 @@ public class DataCacheChange {
 
     private int type;
 
+    private String notifityCounts;
+
+
     public DataCacheChange(int type) {
         this.type = type;
     }
@@ -36,6 +39,11 @@ public class DataCacheChange {
     public DataCacheChange(int type, boolean determine) {
         this.type = type;
         this.isDetermine = determine;
+    }
+
+    public DataCacheChange(int type, String notifityCounts) {
+        this.type = type;
+        this.notifityCounts = notifityCounts;
     }
 
     public int getType() {
@@ -52,5 +60,13 @@ public class DataCacheChange {
 
     public void setDetermine(boolean determine) {
         isDetermine = determine;
+    }
+
+    public String getNotifityCounts() {
+        return notifityCounts;
+    }
+
+    public void setNotifityCounts(String notifityCounts) {
+        this.notifityCounts = notifityCounts;
     }
 }
