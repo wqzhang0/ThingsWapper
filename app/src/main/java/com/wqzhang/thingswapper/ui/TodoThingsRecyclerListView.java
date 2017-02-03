@@ -34,6 +34,7 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
     //滑动是否有效  在按下时设置为true 在up时设置为false  防止 切换代做事项时  遗留的滑动事件再次被处理
     private boolean slideValid = false;
 
+    private boolean isEmpty = false;
 
     public final static int NOT_ALLOW_PULL = -1;
     public final static int PULL_UP = Integer.parseInt("000001", 2);
@@ -107,6 +108,8 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                         if (viewHolder instanceof ToDoThingsRecyclerAdapter.SlideViewHolder) {
                             slideContentView = ((ToDoThingsRecyclerAdapter.SlideViewHolder) viewHolder).slide_content_view;
                             slideContentView.onRequeirTouchEvent(event);
+                        } else {
+                            isEmpty = true;
                         }
                     }
                 } else {
@@ -157,13 +160,14 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                         allowCheckSlideContent = false;
                     } else {
                         if (slideContentView != null) {
-                            if (slideContentView.onRequeirTouchEvent(event)) {
+                            //如果是空数据  不进行此处的判断
+                            if (slideContentView.onRequeirTouchEvent(event) && !isEmpty) {
                                 isSlideContentView = true;
                                 allowCheckSlideContent = false;
                             }
                         }
                     }
-                    return super.onTouchEvent(event);
+//                    return super.onTouchEvent(event);
                 }
 
                 if (isSlideContentView) {
@@ -236,11 +240,14 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                 break;
             case MotionEvent.ACTION_UP:
                 slideValid = false;
+                //重置判断
                 if (slideContentView != null) {
-                    if (slideContentView.onRequeirTouchEvent(event)) {
+                    if (slideContentView.onRequeirTouchEvent(event) && !isEmpty) {
                         isSlideContentView = true;
                     }
                 }
+                isEmpty = false;
+
                 if (isSlideContentView) {
                     return super.onTouchEvent(event);
                 }

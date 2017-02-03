@@ -4,7 +4,9 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
+import com.wqzhang.thingswapper.Receivers.NotifyReceiver;
 import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
 import com.wqzhang.thingswapper.exceptions.CustomerException;
 import com.wqzhang.thingswapper.services.NotifyService;
@@ -18,6 +20,8 @@ import java.util.List;
  */
 
 public class AlarmTimer {
+
+    private final static String TAG = "AlarmTimer";
 
     /**
      * 设置周期性提醒闹铃
@@ -62,7 +66,7 @@ public class AlarmTimer {
 //        alarmManager.setRepeating(AlarmManagerType, System.currentTimeMillis(), 1000 * 5, sender);
 
 
-        Intent intent = new Intent(context, NotifyService.class);
+        Intent intent = new Intent(context, NotifyReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
         Calendar calendar = Calendar.getInstance();
@@ -71,6 +75,7 @@ public class AlarmTimer {
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000 * 1, pendingIntent);
+        Log.d(TAG, "设置一分钟之后提醒");
     }
 
     public static void cancelAlarmTimer(Context context) {

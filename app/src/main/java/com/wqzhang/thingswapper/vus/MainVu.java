@@ -50,6 +50,49 @@ public class MainVu implements Vu {
         return view;
     }
 
+    //第一次初始化fragmenmt的时候调用,否则会造成switchContent 方法nullPoint
+    public void initFragment(Fragment initFragment, FragmentManager fm) {
+        fm.beginTransaction().replace(getContainerId(), initFragment).commit();
+        currentFragment = initFragment;
+        setToolbarTittle("事项清单");
+        navigationShowThingsImage.setBackgroundResource(R.drawable.navigation_list_selected_icon);
+    }
+
+    public void switchContent(Fragment to, FragmentManager fm) {
+
+        if (currentFragment != to) {
+            //添加渐隐渐现的动画
+            android.app.FragmentTransaction ft = fm.beginTransaction();
+            if (!to.isAdded()) {    // 先判断是否被add过
+                ft.hide(currentFragment).add(containerView.getId(), to).commit(); // 隐藏当前的fragment，add下一个到Activity中
+            } else {
+                ft.hide(currentFragment).show(to).commit(); // 隐藏当前的fragment，显示下一个
+            }
+
+            //设置跳转后 条目的提示语和图标
+            if (to instanceof ShowThingsFragment) {
+                setToolbarTittle("事项清单");
+                navigationShowThingsImage.setBackgroundResource(R.drawable.navigation_list_selected_icon);
+            } else if (to instanceof PoolFragment) {
+                setToolbarTittle("汇总");
+                navigationChartImage.setBackgroundResource(R.drawable.navigation_chart_selected_icon);
+            } else if (to instanceof PersonSetFragment) {
+                setToolbarTittle("个性化设置");
+                navigationSettingImage.setBackgroundResource(R.drawable.navigation_set_selected_icon);
+            }
+
+            //修改之前 所在 条目 的图标
+            if (currentFragment instanceof ShowThingsFragment) {
+                navigationShowThingsImage.setBackgroundResource(R.drawable.navigation_list_icon);
+            } else if (currentFragment instanceof PoolFragment) {
+                navigationChartImage.setBackgroundResource(R.drawable.navigation_chart_icon);
+            } else if (currentFragment instanceof PersonSetFragment) {
+                navigationSettingImage.setBackgroundResource(R.drawable.navigation_set_icon);
+            }
+            currentFragment = to;
+        }
+    }
+
     public Toolbar getToolBar() {
         return toolbar;
     }
@@ -78,47 +121,5 @@ public class MainVu implements Vu {
 
     public void setToolbarTittle(String title) {
         toolbarTitle.setText(title);
-    }
-
-    public void switchContent(Fragment to, FragmentManager fm) {
-
-        if (currentFragment != to) {
-            //添加渐隐渐现的动画
-            android.app.FragmentTransaction ft = fm.beginTransaction();
-            if (!to.isAdded()) {    // 先判断是否被add过
-                ft.hide(currentFragment).add(containerView.getId(), to).commit(); // 隐藏当前的fragment，add下一个到Activity中
-            } else {
-                ft.hide(currentFragment).show(to).commit(); // 隐藏当前的fragment，显示下一个
-            }
-
-            //设置跳转后 条目的提示语和图标
-            if (to instanceof ShowThingsFragment) {
-                setToolbarTittle("代做事项");
-                navigationShowThingsImage.setBackgroundResource(R.drawable.navigation_list_selected_icon);
-            } else if (to instanceof PoolFragment) {
-                setToolbarTittle("汇总");
-                navigationChartImage.setBackgroundResource(R.drawable.navigation_chart_selected_icon);
-            } else if (to instanceof PersonSetFragment) {
-                setToolbarTittle("个性化设置");
-                navigationSettingImage.setBackgroundResource(R.drawable.navigation_set_selected_icon);
-            }
-
-            //修改之前 所在 条目 的图标
-            if (currentFragment instanceof ShowThingsFragment) {
-                navigationShowThingsImage.setBackgroundResource(R.drawable.navigation_list_icon);
-            } else if (currentFragment instanceof PoolFragment) {
-                navigationChartImage.setBackgroundResource(R.drawable.navigation_chart_icon);
-            } else if (currentFragment instanceof PersonSetFragment) {
-                navigationSettingImage.setBackgroundResource(R.drawable.navigation_set_icon);
-            }
-            currentFragment = to;
-        }
-    }
-
-    public void initFragment(Fragment initFragment, FragmentManager fm) {
-        fm.beginTransaction().replace(getContainerId(), initFragment).commit();
-        currentFragment = initFragment;
-        setToolbarTittle("代做事项");
-        navigationShowThingsImage.setBackgroundResource(R.drawable.navigation_list_selected_icon);
     }
 }

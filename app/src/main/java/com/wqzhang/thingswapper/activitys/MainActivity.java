@@ -1,13 +1,20 @@
 package com.wqzhang.thingswapper.activitys;
 
+import android.app.AlarmManager;
 import android.app.Fragment;
+import android.os.SystemClock;
 import android.view.View;
 
 import com.wqzhang.thingswapper.R;
+import com.wqzhang.thingswapper.dao.BusinessProcess;
+import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
 import com.wqzhang.thingswapper.fragments.PersonSetFragment;
 import com.wqzhang.thingswapper.fragments.PoolFragment;
 import com.wqzhang.thingswapper.fragments.ShowThingsFragment;
+import com.wqzhang.thingswapper.tools.AlarmTimer;
 import com.wqzhang.thingswapper.vus.MainVu;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends BasePartenerAppCompatActivity<MainVu> implements View.OnClickListener {
@@ -30,6 +37,10 @@ public class MainActivity extends BasePartenerAppCompatActivity<MainVu> implemen
         vu.getNavigationShowThings().setOnClickListener(this);
 
         vu.initFragment(showThingsFragment, fragmentManager);
+
+        ArrayList<ToDoThing> needNotifyThings = BusinessProcess.getInstance().readRecentToDoThings();
+        AlarmTimer.setAlarmTimer(getApplicationContext(), SystemClock.elapsedRealtime() + 5 * 1000, AlarmManager.ELAPSED_REALTIME, needNotifyThings);
+
     }
 
     @Override
