@@ -57,7 +57,7 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
 
     @Override
     protected void onBind() {
-        setSupportActionBar(vu.getToolBar());
+//        setSupportActionBar(vu.getToolBar());
 
 
         vu.getAddCancel().setOnClickListener(this);

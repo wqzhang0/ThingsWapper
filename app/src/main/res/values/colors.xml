@@ -6,11 +6,7 @@
 
     <color name="white">#ffffff</color>
     <color name="colorSpanBackgroung">#F0EEF4</color>
+    <color name="colorTextGray">#707070</color>
 </resources>
 
-<!--backup-->
-<!--<resources>-->
-<!--<color name="colorPrimary">#3F51B5</color>-->
-<!--<color name="colorPrimaryDark">#303F9F</color>-->
-<!--<color name="colorAccent">#FF4081</color>-->
-<!--</resources>-->
+    <!--backup--><!--<resources>--><!--<color name="colorPrimary">#3F51B5</color>--><!--<color name="colorPrimaryDark">#303F9F</color>--><!--<color name="colorAccent">#FF4081</color>--><!--</resources>-->

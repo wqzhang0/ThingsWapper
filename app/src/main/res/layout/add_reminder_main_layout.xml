@@ -8,7 +8,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="#ffffff"
+        android:background="@color/colorPrimary"
         android:elevation="5dp">
 
         <RelativeLayout
@@ -22,17 +22,16 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:text="返回"
-                android:textColor="#707070"
-                android:textSize="14dp" />
+                android:textColor="@color/white"
+                android:textSize="16sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
+                android:layout_centerInParent="true"
                 android:text="添加提醒"
-                android:textColor="#707070"
-                android:textSize="20dp" />
+                android:textColor="@color/white"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/add_submit"
@@ -43,7 +42,7 @@
                 android:layout_marginRight="20dp"
                 android:text="完成"
                 android:textColor="#1296db"
-                android:textSize="14dp" />
+                android:textSize="16sp" />
 
 
         </RelativeLayout>
