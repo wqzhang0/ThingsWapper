@@ -1,6 +1,5 @@
 package com.wqzhang.thingswapper.fragments;
 
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -166,11 +165,15 @@ public class ShowThingsFragment extends BasePartenerFragment<ShowThingsVu> {
     }
 
 
+    @Override
+    protected void afterOnStart() {
+        super.afterOnStart();
+    }
 
     @Override
     protected void beforeOnStop() {
         super.beforeOnStop();
-        bus.unregister(this);
+//        bus.unregister(this);
     }
 
     @Override

@@ -99,7 +99,9 @@ public class AddThingVu implements Vu {
         }
         reminderDateHourLoopView.setItems(hoursList);
         reminderDateHourLoopView.setTextSize(15);
-        reminderDateHourLoopView.setInitPosition(8);
+        int _hours_position = DateUtil.getHour(new Date());
+        reminderDateHourLoopView.setInitPosition(_hours_position);
+
         reminderDateHourLoopView.setListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(int index) {
@@ -110,18 +112,28 @@ public class AddThingVu implements Vu {
 
 
         final ArrayList<String> minuteList = new ArrayList<>();
+        int _currentMinute = DateUtil.getMinute(new Date());
+        int _minuteListPosition = 0;
         for (int i = 0; i < 60; i += 5) {
             if (i < 10) {
                 minuteList.add("0" + String.valueOf(i));
             } else {
                 minuteList.add(String.valueOf(i));
-
             }
+            if (_currentMinute > i) {
+                _minuteListPosition = minuteList.size() - 1;
+            }
+        }
+        if (_minuteListPosition < minuteList.size() - 1) {
+            _minuteListPosition = _minuteListPosition + 1;
+        } else if (_minuteListPosition == minuteList.size() - 1) {
+            _minuteListPosition = 0;
         }
         reminderDateMinuteLoopView.setItems(minuteList);
         reminderDateMinuteLoopView.setTextSize(15);
 
-        reminderDateMinuteLoopView.setInitPosition(0);
+
+        reminderDateMinuteLoopView.setInitPosition(_minuteListPosition);
         reminderDateMinuteLoopView.setListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(int index) {

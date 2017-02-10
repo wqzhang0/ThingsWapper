@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="提醒次数:" />
+            android:text="重        复:" />
 
         <Switch
             android:id="@+id/count_switch"

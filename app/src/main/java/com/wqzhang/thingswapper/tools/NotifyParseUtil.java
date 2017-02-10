@@ -79,4 +79,50 @@ public class NotifyParseUtil {
         }
         return map;
     }
+
+    public static Integer getNotifyType(List<ToDoThing> toDoThings) {
+        if (toDoThings == null || toDoThings.size() == 0) return Common.REMINDER_TYPE_NONE;
+        //查找需要提醒事项里 提醒的种类
+        // REMINDER_TYPE_VERTICAL = 1;
+        // REMINDER_TYPE_ALARM = 2;
+        // REMINDER_TYPE_EMAIL = 4;
+        boolean _vertical = false;
+        boolean _alarm = false;
+        boolean _email = false;
+        for (ToDoThing toDoThing : toDoThings) {
+            int reminderType = toDoThing.getReminderType();
+            if (reminderType == Common.REMINDER_TYPE_VERTICAL) {
+                _vertical = true;
+            } else if (reminderType == Common.REMINDER_TYPE_ALARM) {
+                _alarm = true;
+            } else if (reminderType == Common.REMINDER_TYPE_EMAIL) {
+                _email = true;
+            } else if (reminderType == (Common.REMINDER_TYPE_VERTICAL | Common.REMINDER_TYPE_ALARM)) {
+                _vertical = true;
+                _alarm = true;
+            } else if (reminderType == (Common.REMINDER_TYPE_VERTICAL | Common.REMINDER_TYPE_EMAIL)) {
+                _vertical = true;
+                _email = true;
+            } else if (reminderType == (Common.REMINDER_TYPE_ALARM | Common.REMINDER_TYPE_EMAIL)) {
+                _alarm = true;
+                _email = true;
+            } else if (reminderType == (Common.REMINDER_TYPE_ALARM | Common.REMINDER_TYPE_EMAIL | Common.REMINDER_TYPE_VERTICAL)) {
+                _vertical = true;
+                _alarm = true;
+                _email = true;
+            }
+        }
+        Integer finalType = 0;
+        if (_vertical) {
+            finalType |= Common.REMINDER_TYPE_VERTICAL;
+        }
+        if (_alarm) {
+
+            finalType |= Common.REMINDER_TYPE_ALARM;
+        }
+        if (_email) {
+            finalType |= Common.REMINDER_TYPE_EMAIL;
+        }
+        return finalType;
+    }
 }

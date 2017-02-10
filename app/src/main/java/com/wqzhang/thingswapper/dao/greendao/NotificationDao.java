@@ -31,6 +31,7 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
         public final static Property EndDate = new Property(6, java.util.Date.class, "endDate", false, "END_DATE");
         public final static Property IsSynchronize = new Property(7, Boolean.class, "isSynchronize", false, "IS_SYNCHRONIZE");
         public final static Property PreNotifyDate = new Property(8, java.util.Date.class, "preNotifyDate", false, "PRE_NOTIFY_DATE");
+        public final static Property AlearyNotify = new Property(9, Boolean.class, "alearyNotify", false, "ALEARY_NOTIFY");
     }
 
     private DaoSession daoSession;
@@ -57,7 +58,8 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
                 "\"REMIND_COUNT\" INTEGER," + // 5: remindCount
                 "\"END_DATE\" INTEGER," + // 6: endDate
                 "\"IS_SYNCHRONIZE\" INTEGER," + // 7: isSynchronize
-                "\"PRE_NOTIFY_DATE\" INTEGER);"); // 8: preNotifyDate
+                "\"PRE_NOTIFY_DATE\" INTEGER," + // 8: preNotifyDate
+                "\"ALEARY_NOTIFY\" INTEGER);"); // 9: alearyNotify
     }
 
     /** Drops the underlying database table. */
@@ -114,6 +116,11 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
         if (preNotifyDate != null) {
             stmt.bindLong(9, preNotifyDate.getTime());
         }
+ 
+        Boolean alearyNotify = entity.getAlearyNotify();
+        if (alearyNotify != null) {
+            stmt.bindLong(10, alearyNotify ? 1L: 0L);
+        }
     }
 
     @Override
@@ -164,6 +171,11 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
         if (preNotifyDate != null) {
             stmt.bindLong(9, preNotifyDate.getTime());
         }
+ 
+        Boolean alearyNotify = entity.getAlearyNotify();
+        if (alearyNotify != null) {
+            stmt.bindLong(10, alearyNotify ? 1L: 0L);
+        }
     }
 
     @Override
@@ -188,7 +200,8 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
             cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5), // remindCount
             cursor.isNull(offset + 6) ? null : new java.util.Date(cursor.getLong(offset + 6)), // endDate
             cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0, // isSynchronize
-            cursor.isNull(offset + 8) ? null : new java.util.Date(cursor.getLong(offset + 8)) // preNotifyDate
+            cursor.isNull(offset + 8) ? null : new java.util.Date(cursor.getLong(offset + 8)), // preNotifyDate
+            cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0 // alearyNotify
         );
         return entity;
     }
@@ -204,6 +217,7 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
         entity.setEndDate(cursor.isNull(offset + 6) ? null : new java.util.Date(cursor.getLong(offset + 6)));
         entity.setIsSynchronize(cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0);
         entity.setPreNotifyDate(cursor.isNull(offset + 8) ? null : new java.util.Date(cursor.getLong(offset + 8)));
+        entity.setAlearyNotify(cursor.isNull(offset + 9) ? null : cursor.getShort(offset + 9) != 0);
      }
     
     @Override

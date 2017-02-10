@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.wqzhang.thingswapper">
 
+    <!-- 注册开机广播权限-->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <user-permission android:name="android.premission.SYSTEM_ALERT_WINDOW" />
     <application
         android:name=".MainApplication"
         android:allowBackup="true"
@@ -12,16 +15,19 @@
 
         <activity android:name=".activitys.WelcomeActivity">
             <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
+            <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--<category android:name="android.intent.category.LAUNCHER" />-->
             <!--</intent-filter>-->
         </activity>
+        <!--android:launchMode="singleTask"-->
 
         <activity
             android:name=".activitys.MainActivity"
             android:clearTaskOnLaunch="true"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -51,11 +57,18 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
-        <receiver android:name=".Receivers.NotifyReceiver">
 
+        <receiver android:name=".Receivers.NotifyReceiver">
             <intent-filter>
                 <action android:name="com.wqzhang.thingswapper.Receivers.NotifyReceiver" />
                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".Receivers.BootComletedBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </receiver>
     </application>

@@ -29,8 +29,8 @@ public class WelcomeActivity extends BasePartenerActivity<WelcomeVu> implements 
     protected void onBind() {
         super.onBind();
         User user = BusinessProcess.getInstance().getOnlineUser();
-        ArrayList<ToDoThing> needNotifyThings = BusinessProcess.getInstance().readRecentToDoThings();
-        AlarmTimer.setAlarmTimer(getApplicationContext(), SystemClock.elapsedRealtime() + 5 * 1000, AlarmManager.ELAPSED_REALTIME, needNotifyThings);
+
+//        AlarmTimer.setAlarmTimer(getApplicationContext(), AlarmManager.ELAPSED_REALTIME, BusinessProcess.getInstance().readNeedNotifyToDoThings());
 
 //        Intent intent = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
 //        startActivity(intent);

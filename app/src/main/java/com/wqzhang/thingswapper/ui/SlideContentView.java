@@ -122,6 +122,7 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
                 X = (int) event.getRawX();
                 Y = (int) event.getY();
                 isScollerContentView = false;
+                Log.d(TAG, "SlideContent Down ");
                 break;
             case MotionEvent.ACTION_MOVE:
 
@@ -133,21 +134,25 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
                     isScollerContentView = true;
                 }
                 if (isScollerContentView) {
-                    int noTouchSlopScroll = 0;
-                    noTouchSlopScroll = deltaX - touchSlop;
-                    Log.d(TAG, "deltaX" + deltaX);
-                    Log.d(TAG, "touchSlop" + touchSlop);
-                    Log.d(TAG, "noTouchSlopScroll" + noTouchSlopScroll);
-                    if (Math.abs(noTouchSlopScroll) > mBottomRightHolderWidth) {
-                        if (noTouchSlopScroll > 0) {
-//                            mContentView.scrollTo(-mBottomRightHolderWidth, 0);
-                            smoothScrollTo(-mBottomRightHolderWidth);
+                    mRightRelativeView.setVisibility(VISIBLE);
+                    mLeftRelativeView.setVisibility(VISIBLE);
+                    int removeTouchSlopScrollX = 0;
+                    removeTouchSlopScrollX = deltaX - touchSlop;
+//                    Log.d(TAG, "deltaX" + deltaX);
+//                    Log.d(TAG, "touchSlop" + touchSlop);
+//                    Log.d(TAG, "noTouchSlopScroll" + noTouchSlopScroll);
+                    if (Math.abs(removeTouchSlopScrollX) > mBottomRightHolderWidth) {
+                        if (removeTouchSlopScrollX > 0) {
+                            mContentView.scrollTo(-mBottomRightHolderWidth, 0);
+//                            smoothScrollTo(-mBottomRightHolderWidth);
                         } else {
-                            smoothScrollTo(mBottomRightHolderWidth);
-//                            mContentView.scrollTo(mBottomRightHolderWidth, 0);
+//                            smoothScrollTo(mBottomRightHolderWidth);
+                            mContentView.scrollTo(mBottomRightHolderWidth, 0);
                         }
                     } else {
-                        mContentView.scrollTo(-noTouchSlopScroll, 0);
+                        mContentView.scrollTo(-removeTouchSlopScrollX, 0);
+//                        invalidate();
+
                     }
                 }
 
@@ -165,6 +170,7 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
                     shrink();
                 }
 
+
                 break;
             default:
                 break;
@@ -178,6 +184,8 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
     public void shrink() {
         if (mContentView.getScrollX() != 0) {
             smoothScrollTo(0);
+            mRightRelativeView.setVisibility(INVISIBLE);
+            mLeftRelativeView.setVisibility(INVISIBLE);
         }
     }
 

@@ -23,6 +23,7 @@ import com.wqzhang.thingswapper.events.DataCacheChange;
 import com.wqzhang.thingswapper.events.SaveChooseOperationEvent;
 import com.wqzhang.thingswapper.events.ShowMoreSetEvent;
 import com.wqzhang.thingswapper.exceptions.CustomerException;
+import com.wqzhang.thingswapper.tools.Common;
 import com.wqzhang.thingswapper.vus.AddThingVu;
 
 import org.greenrobot.eventbus.EventBus;
@@ -136,7 +137,15 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
                 //先去除 内容的前后空格  然后判断是否为空   不为空则添加事件
                 if (TextUtils.isEmpty(AddThingOperationXMLDataCache.getContent().trim())) {
                     Toast.makeText(this, "内容为空,添加失败", Toast.LENGTH_LONG).show();
+                } else if (AddThingOperationXMLDataCache.getNotifyType() != Common.REMINDER_TYPE_NONE && !AddThingOperationXMLData.getInstall().isReminder()) {
+                    //设置了提醒内容但是没有提醒时间
+                    Toast.makeText(this, "请设置提醒时间!或取消提醒类型", Toast.LENGTH_LONG).show();
+                } else if (AddThingOperationXMLDataCache.getNotifyType() != Common.REMINDER_TYPE_NONE && AddThingOperationXMLData.getInstall().isReminder() && AddThingOperationXMLDataCache.getDates().size() <= 0) {
+                    Toast.makeText(this, "请设置提醒时间!或取消提醒类型", Toast.LENGTH_LONG).show();
+                } else if (AddThingOperationXMLDataCache.getNotifyType() == Common.REMINDER_TYPE_NONE && AddThingOperationXMLData.getInstall().isReminder() && AddThingOperationXMLDataCache.getDates().size() > 0) {
+                    Toast.makeText(this, "请选择提醒类型", Toast.LENGTH_LONG).show();
                 } else {
+
                     BusinessProcess.getInstance().addToDoThing(AddThingOperationXMLData.getInstall().getToDothing(),
                             AddThingOperationXMLData.getInstall().getNotifycation());
 

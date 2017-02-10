@@ -11,9 +11,11 @@ import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
 import com.wqzhang.thingswapper.dao.greendao.ToDoThingDao;
 import com.wqzhang.thingswapper.dao.greendao.User;
 import com.wqzhang.thingswapper.dao.greendao.UserDao;
+import com.wqzhang.thingswapper.model.AlarmModel;
 import com.wqzhang.thingswapper.model.ChartDataModel;
 import com.wqzhang.thingswapper.tools.Common;
 import com.wqzhang.thingswapper.tools.DateUtil;
+import com.wqzhang.thingswapper.tools.NotifyParseUtil;
 
 import org.greenrobot.greendao.query.Query;
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -142,34 +144,49 @@ public class BusinessProcess implements BusinessProcessImpl {
         ToDoThing toDoThing = toDoThingQueryBuilder.where(ToDoThingDao.Properties.Id.eq(id)).list().get(0);
         if (state == Common.STATUS_FINSH) {
             toDoThing.setFinshDate(new Date());
+            ArrayList<Notification> notifications = new ArrayList<Notification>();
+            ArrayList<Connection_T_N> connection_t_ns = (ArrayList<Connection_T_N>) toDoThing.getNotificationIds();
+            for (int i = 0; i < connection_t_ns.size(); i++) {
+                Notification _tmpNotification = connection_t_ns.get(i).getNotification();
+                _tmpNotification.setAlearyNotify(true);
+                notifications.add(_tmpNotification);
+            }
+            notificationDao.updateInTx(notifications);
         }
         toDoThing.setStatus(state);
         toDoThingDao.update(toDoThing);
     }
 
     @Override
-    public ArrayList<ToDoThing> readRecentToDoThings() {
+    public AlarmModel readNeedNotifyToDoThings() {
         //找到需要提醒的事项,判断依据,
         // 是否提醒(根据 提醒类型判断)
         // 上次是否有提醒时间,
         // 提醒时间是否大于当前时间
 
+        AlarmModel alarmModel = null;
         Date currentDate = DateUtil.getCurrentDate();
         ArrayList<ToDoThing> toDoThings = new ArrayList<>();
 
         QueryBuilder<Notification> notificationQueryBuilder = notificationDao.queryBuilder();
         notificationQueryBuilder.where(NotificationDao.Properties.PreNotifyDate.isNull(),
                 NotificationDao.Properties.NotifyType.notEq(0),
-                NotificationDao.Properties.ReminderDate.ge(currentDate))
+                NotificationDao.Properties.ReminderDate.ge(currentDate),
+                NotificationDao.Properties.AlearyNotify.eq(false))
                 .orderAsc(NotificationDao.Properties.ReminderDate);
 
         ArrayList<Notification> notificationArrayList = (ArrayList<Notification>) notificationQueryBuilder.list();
-
+        ToDoThing _tmpToDoThings;
         if (notificationArrayList.size() == 0) {
-            return toDoThings;
+            return alarmModel;
         } else if (notificationArrayList.size() == 1) {
-            toDoThings.add(notificationArrayList.get(0).getToDoThingIds().get(0).getToDoThing());
-            return toDoThings;
+            _tmpToDoThings = notificationArrayList.get(0).getToDoThingIds().get(0).getToDoThing();
+            if (_tmpToDoThings.getStatus() == Common.STATUS_TO_BE_DONE) {
+                toDoThings.add(notificationArrayList.get(0).getToDoThingIds().get(0).getToDoThing());
+                Integer reminderType = toDoThings.get(0).getReminderType();
+                alarmModel = new AlarmModel(toDoThings, notificationArrayList.get(0).getReminderDate(), reminderType);
+                return alarmModel;
+            }
 
         } else if (notificationArrayList.size() > 1) {
             Notification recentNotification = notificationArrayList.get(0);
@@ -178,16 +195,62 @@ public class BusinessProcess implements BusinessProcessImpl {
                     toDoThings.add(_NOTIFYCATION.getToDoThingIds().get(0).getToDoThing());
                 }
             }
+            Integer reminderType = NotifyParseUtil.getNotifyType(toDoThings);
+            alarmModel = new AlarmModel(toDoThings, notificationArrayList.get(0).getReminderDate(), reminderType);
+            return alarmModel;
         }
-
-        notificationArrayList.get(0).getToDoThingIds();
-        return toDoThings;
+        return null;
     }
 
     @Override
-    public ArrayList<ToDoThing> readExpiredToDoThing() {
-        //比较上一次提醒的时间,
+    public AlarmModel readExpiredToDoThing() {
+        //找到需要提醒的事项,判断依据,
+        // 是否提醒(根据 提醒类型判断)
+        // 上次是否有提醒时间,
+        // 提醒时间是否大于当前时间         //比较上一次提醒的时间,
+        AlarmModel alarmModel = null;
+        Date currentDate = DateUtil.getCurrentDate();
+        ArrayList<ToDoThing> toDoThings = new ArrayList<>();
+
+        QueryBuilder<Notification> notificationQueryBuilder = notificationDao.queryBuilder();
+        notificationQueryBuilder.where(NotificationDao.Properties.PreNotifyDate.isNull(),
+                NotificationDao.Properties.NotifyType.notEq(0),
+                NotificationDao.Properties.ReminderDate.lt(currentDate),
+                NotificationDao.Properties.AlearyNotify.eq(false))
+                .orderAsc(NotificationDao.Properties.ReminderDate);
+
+        ArrayList<Notification> notificationArrayList = (ArrayList<Notification>) notificationQueryBuilder.list();
+        ArrayList<Long> notificationIds = new ArrayList<>();
+        if (notificationArrayList.size() == 0) {
+            return alarmModel;
+        } else if (notificationArrayList.size() > 0) {
+            for (int i = 0; i < notificationArrayList.size(); i++) {
+                ToDoThing _tmpToDoThings = notificationArrayList.get(i).getToDoThingIds().get(0).getToDoThing();
+                if (_tmpToDoThings.getStatus() == Common.STATUS_TO_BE_DONE) {
+                    toDoThings.add(notificationArrayList.get(i).getToDoThingIds().get(0).getToDoThing());
+                    notificationIds.add(notificationArrayList.get(i).getId());
+                }
+            }
+//            Integer reminderType = NotifyParseUtil.getNotifyType(toDoThings);
+            Integer reminderType = Common.REMINDER_TYPE_NONE;
+
+            alarmModel = new AlarmModel(toDoThings, new Date(), reminderType, notificationIds);
+            return alarmModel;
+        }
+
         return null;
+    }
+
+    @Override
+    public void setPreNotifyDate(Long notifyId, Date date) {
+        QueryBuilder<Notification> notificationQueryBuilder = notificationDao.queryBuilder();
+        notificationQueryBuilder.where(NotificationDao.Properties.Id.eq(notifyId));
+        ArrayList<Notification> notifications = (ArrayList<Notification>) notificationQueryBuilder.build().list();
+        if (notifications.size() > 0) {
+            notifications.get(0).setPreNotifyDate(date);
+            notifications.get(0).setAlearyNotify(true);
+        }
+        notificationDao.update(notifications.get(0));
     }
 
     @Override

@@ -78,6 +78,12 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
     int X = 0, Y = 0;
 
     @Override
+    public boolean onInterceptTouchEvent(MotionEvent e) {
+//        return true;
+        return super.onInterceptTouchEvent(e);
+    }
+
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
 //        Log.d(TAG, "Touch " + event.getAction());
         switch (event.getAction()) {
@@ -170,9 +176,10 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
 //                    return super.onTouchEvent(event);
                 }
 
+                //如果确定是滑动内部内容  则直接返回 不让recyclerView 处理滑动事件
                 if (isSlideContentView) {
                     slideContentView.onRequeirTouchEvent(event);
-                    return super.onTouchEvent(event);
+                    return true;
                 }
 
                 int scrollValue = (int) (event.getRawY() - lastY);
@@ -239,6 +246,9 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                 lastY = (int) event.getRawY();
                 break;
             case MotionEvent.ACTION_UP:
+                if (!slideValid) {
+                    return true;
+                }
                 slideValid = false;
                 //重置判断
                 if (slideContentView != null) {
@@ -268,7 +278,12 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                 break;
         }
 
+
+        if (slideContentView != null) {
+//            slideContentView.onRequeirTouchEvent(event);
+        }
         return super.onTouchEvent(event);
+//        return true;
 
     }
 

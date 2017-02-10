@@ -2,6 +2,7 @@ package com.wqzhang.thingswapper;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Handler;
 
 import com.wqzhang.thingswapper.dao.AddThingOperationXMLData;
 import com.wqzhang.thingswapper.dao.AddThingOperationXMLDataCache;
@@ -20,6 +21,7 @@ import org.greenrobot.greendao.database.Database;
 public class MainApplication extends Application {
     private static Context mContext;
     private static DaoSession daoSession;
+    private static Context dialogContext;
 
 
     @Override
@@ -58,5 +60,15 @@ public class MainApplication extends Application {
 
     public static Context getGlobleContext() {
         return mContext;
+    }
+
+
+
+    public static Context getDialogContext() {
+        return dialogContext;
+    }
+
+    public static void setDialogContext(Context dialogContext) {
+        MainApplication.dialogContext = dialogContext;
     }
 }

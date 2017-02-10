@@ -188,6 +188,7 @@ public class AddThingOperationXMLData {
         int notifyType = readNotifyType();
         if (dates.size() == 0) {
             Notification notification = new Notification();
+            notification.setAlearyNotify(false);
             notification.setNotifyType(Common.REMINDER_TYPE_NONE);
             notification.setIsSynchronize(false);
             notificationArrayList.add(notification);
@@ -198,7 +199,7 @@ public class AddThingOperationXMLData {
             notification.setNotifyType(notifyType);
             notification.setIsSynchronize(false);
             notification.setReminderDate(dates.get(0));
-
+            notification.setAlearyNotify(false);
             notificationArrayList.add(notification);
 
         } else {
@@ -208,6 +209,7 @@ public class AddThingOperationXMLData {
                 notification.setNotifyType(notifyType);
                 notification.setIsSynchronize(false);
                 notification.setReminderDate(_date);
+                notification.setAlearyNotify(false);
                 notificationArrayList.add(notification);
             }
         }

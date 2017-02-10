@@ -2,6 +2,7 @@ package com.wqzhang.thingswapper.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,16 +50,16 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
             View emptyView = inflater.inflate(R.layout.list_item_empty_fullscreen_view, parent, false);
             EmptyViewHolder emptyViewHolder = new EmptyViewHolder(emptyView);
             return emptyViewHolder;
-        } else if(viewType == TYPE_NORMAL_FINSH){
+        } else if (viewType == TYPE_NORMAL_FINSH) {
             View view = inflater.inflate(R.layout.list_item_show_reminder, parent, false);
-            SlideContentView slideContentView = new SlideContentView(mContext,view,R.layout.list_item_show_finsh_reminder_slide_view_merge);
+            SlideContentView slideContentView = new SlideContentView(mContext, view, R.layout.list_item_show_finsh_reminder_slide_view_merge);
 
             SlideViewHolder slideViewHolder = new SlideViewHolder(slideContentView);
             return slideViewHolder;
-        }else if (viewType == TYPE_NORMAL_TO_BE_DONE){
+        } else if (viewType == TYPE_NORMAL_TO_BE_DONE) {
             View view = inflater.inflate(R.layout.list_item_show_reminder, parent, false);
 
-            SlideContentView slideContentView = new SlideContentView(mContext,view,R.layout.list_item_show_tobedone_reminder_slide_view_merge);
+            SlideContentView slideContentView = new SlideContentView(mContext, view, R.layout.list_item_show_tobedone_reminder_slide_view_merge);
             SlideViewHolder slideViewHolder = new SlideViewHolder(slideContentView);
             return slideViewHolder;
         }
@@ -79,6 +80,12 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
             final TextView textView = (TextView) slideContentView.findViewById(R.id.tittle);
             textView.setText(toDoThings.get(position).getReminderContext());
             textView.setTag(R.id.toDoThingId, toDoThings.get(position).getId());
+//            textView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Log.d(TAG, "textView is clicked");
+//                }
+//            });
             slideContentView.findViewById(R.id.finsh).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

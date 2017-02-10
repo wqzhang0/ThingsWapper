@@ -2,6 +2,7 @@ package com.wqzhang.thingswapper.services;
 
 import android.app.AlertDialog;
 import android.app.IntentService;
+import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.IBinder;
@@ -31,6 +32,10 @@ public class NotifyService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d("NotifyService", "recevied message onHandleIntent");
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        notificationManager.cancel(1);
+
 
     }
 
@@ -39,14 +44,17 @@ public class NotifyService extends IntentService {
     public void onCreate() {
         super.onCreate();
         Log.d("NotifyService", "recevied message");
-        new AlertDialog.Builder(this).setTitle("闹钟")
-                .setMessage("闹钟响了，起床啦，懒虫！")
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                }).show();
+        notificationManager.cancel(1);
+//        new AlertDialog.Builder(this).setTitle("闹钟")
+//                .setMessage("闹钟响了，起床啦，懒虫！")
+//                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                    }
+//                }).show();
     }
 
 

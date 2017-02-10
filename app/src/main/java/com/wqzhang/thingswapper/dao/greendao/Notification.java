@@ -27,6 +27,7 @@ public class Notification {
     private java.util.Date endDate;
     private Boolean isSynchronize;
     private java.util.Date preNotifyDate;
+    private Boolean alearyNotify;
 
     /** Used to resolve relations */
     @Generated
@@ -53,7 +54,7 @@ public class Notification {
     }
 
     @Generated
-    public Notification(Long id, Integer notifyType, java.util.Date reminderDate, Integer remindFrequency, Integer remindFrequencyInterval, Integer remindCount, java.util.Date endDate, Boolean isSynchronize, java.util.Date preNotifyDate) {
+    public Notification(Long id, Integer notifyType, java.util.Date reminderDate, Integer remindFrequency, Integer remindFrequencyInterval, Integer remindCount, java.util.Date endDate, Boolean isSynchronize, java.util.Date preNotifyDate, Boolean alearyNotify) {
         this.id = id;
         this.notifyType = notifyType;
         this.reminderDate = reminderDate;
@@ -63,6 +64,7 @@ public class Notification {
         this.endDate = endDate;
         this.isSynchronize = isSynchronize;
         this.preNotifyDate = preNotifyDate;
+        this.alearyNotify = alearyNotify;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -142,6 +144,14 @@ public class Notification {
 
     public void setPreNotifyDate(java.util.Date preNotifyDate) {
         this.preNotifyDate = preNotifyDate;
+    }
+
+    public Boolean getAlearyNotify() {
+        return alearyNotify;
+    }
+
+    public void setAlearyNotify(Boolean alearyNotify) {
+        this.alearyNotify = alearyNotify;
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */

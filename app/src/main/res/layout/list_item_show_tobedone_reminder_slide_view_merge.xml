@@ -15,9 +15,10 @@
             android:layout_width="112dp"
             android:layout_height="56dp"
             android:layout_gravity="left"
-            android:background="#d81e06">
+            android:background="#d81e06"
+            android:visibility="invisible">
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/trash"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -31,9 +32,10 @@
             android:layout_width="112dp"
             android:layout_height="56dp"
             android:layout_gravity="right"
-            android:background="#c8c7cd">
+            android:background="#c8c7cd"
+            android:visibility="invisible">
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/finsh"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
