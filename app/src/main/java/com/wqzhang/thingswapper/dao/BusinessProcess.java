@@ -177,6 +177,7 @@ public class BusinessProcess implements BusinessProcessImpl {
 
         ArrayList<Notification> notificationArrayList = (ArrayList<Notification>) notificationQueryBuilder.list();
         ToDoThing _tmpToDoThings;
+        ArrayList<Long> notificationIds = new ArrayList<>();
         if (notificationArrayList.size() == 0) {
             return alarmModel;
         } else if (notificationArrayList.size() == 1) {
@@ -184,22 +185,29 @@ public class BusinessProcess implements BusinessProcessImpl {
             if (_tmpToDoThings.getStatus() == Common.STATUS_TO_BE_DONE) {
                 toDoThings.add(notificationArrayList.get(0).getToDoThingIds().get(0).getToDoThing());
                 Integer reminderType = toDoThings.get(0).getReminderType();
-                alarmModel = new AlarmModel(toDoThings, notificationArrayList.get(0).getReminderDate(), reminderType);
+
+                notificationIds.add(notificationArrayList.get(0).getId());
+                alarmModel = new AlarmModel(toDoThings, notificationArrayList.get(0).getReminderDate(), reminderType, notificationIds);
                 return alarmModel;
             }
 
         } else if (notificationArrayList.size() > 1) {
             Notification recentNotification = notificationArrayList.get(0);
             for (Notification _NOTIFYCATION : notificationArrayList) {
+                //查找出与排序第一条相同的提醒时间
                 if (_NOTIFYCATION.getReminderDate().equals(recentNotification.getReminderDate())) {
-                    toDoThings.add(_NOTIFYCATION.getToDoThingIds().get(0).getToDoThing());
+                    //并且事项处于未被提醒状态
+                    if (_NOTIFYCATION.getToDoThingIds().get(0).getToDoThing().getStatus() == Common.STATUS_TO_BE_DONE) {
+                        toDoThings.add(_NOTIFYCATION.getToDoThingIds().get(0).getToDoThing());
+                        notificationIds.add(_NOTIFYCATION.getId());
+                    }
                 }
             }
             Integer reminderType = NotifyParseUtil.getNotifyType(toDoThings);
-            alarmModel = new AlarmModel(toDoThings, notificationArrayList.get(0).getReminderDate(), reminderType);
+            alarmModel = new AlarmModel(toDoThings, notificationArrayList.get(0).getReminderDate(), reminderType, notificationIds);
             return alarmModel;
         }
-        return null;
+        return alarmModel;
     }
 
     @Override

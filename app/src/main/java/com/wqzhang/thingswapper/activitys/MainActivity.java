@@ -85,29 +85,31 @@ public class MainActivity extends BasePartenerAppCompatActivity<MainVu> implemen
                 break;
             case R.id.setting:
                 vu.switchContent(personSetFragment, fragmentManager);
-                AlarmModel needNotifyAlarmModel = BusinessProcess.getInstance().readNeedNotifyToDoThings();
-                if (needNotifyAlarmModel != null) {
-                    //存在需要提醒的事项
-                    //设置Alerm
-                    Context context = MainApplication.getGlobleContext();
-                    if (needNotifyAlarmModel == null) {
-                        Log.e(TAG, "AlarmModel is null ,return request");
-                    }
-
-
-                    Intent intent = new Intent(context, NotifyReceiver.class);
-
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable(Common.INTENT_PARCELABLE_KEY, needNotifyAlarmModel);
-                    bundle.putString(Common.NOTIFY_TYPE, Common.NOTIFY_NEW_MEG);
-
-                    intent.putExtra(Common.INTENT_KEY_BUNDLE_KEY, bundle);
-
-                    Calendar calendar = Calendar.getInstance();
-//        calendar.setTime(alarmDate);
-                    calendar.add(Calendar.MINUTE, 1);
-                    sendBroadcast(intent);
-                }
+//                AlarmModel needNotifyAlarmModel = BusinessProcess.getInstance().readNeedNotifyToDoThings();
+//
+//
+//                if (needNotifyAlarmModel != null) {
+//                    //存在需要提醒的事项
+//                    //设置Alerm
+//                    Context context = MainApplication.getGlobleContext();
+//                    if (needNotifyAlarmModel == null) {
+//                        Log.e(TAG, "AlarmModel is null ,return request");
+//                    }
+//
+//
+//                    Intent intent = new Intent(context, NotifyReceiver.class);
+//
+//                    Bundle bundle = new Bundle();
+//                    bundle.putParcelable(Common.INTENT_PARCELABLE_KEY, needNotifyAlarmModel);
+//                    bundle.putString(Common.NOTIFY_TYPE, Common.NOTIFY_NEW_MEG);
+//
+//                    intent.putExtra(Common.INTENT_KEY_BUNDLE_KEY, bundle);
+//
+//                    Calendar calendar = Calendar.getInstance();
+////        calendar.setTime(alarmDate);
+//                    calendar.add(Calendar.MINUTE, 1);
+//                    sendBroadcast(intent);
+//                }
                 break;
             default:
                 break;

@@ -125,4 +125,33 @@ public class NotifyParseUtil {
         }
         return finalType;
     }
+
+    public static boolean isVertical(int type) {
+        boolean isVertical = false;
+        //震动 type = 1
+        if (type == 1 || type == 3 || type == 5 || type == 7) {
+            isVertical = true;
+        }
+        return isVertical;
+    }
+
+    public static boolean isEmail(int type) {
+        //邮件提醒类型 type = 4;
+        boolean isEmail = false;
+        if (type == 4 || type == 5 || type == 6 || type == 7) {
+            isEmail = true;
+        }
+        return isEmail;
+    }
+
+    public static boolean isAlarm(int type) {
+        //闹铃提醒 type = 2;
+        boolean isAlarm = false;
+
+        if (type == 2 || type == 3 || type == 6 || type == 7) {
+            isAlarm = true;
+        }
+        return isAlarm;
+    }
+
 }

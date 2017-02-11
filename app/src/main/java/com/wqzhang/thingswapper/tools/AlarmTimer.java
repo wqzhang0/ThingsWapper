@@ -12,7 +12,6 @@ import com.wqzhang.thingswapper.Receivers.NotifyReceiver;
 import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
 import com.wqzhang.thingswapper.model.AlarmModel;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -77,8 +76,10 @@ public class AlarmTimer {
         calendar.setTime(alarmDate);
 //        calendar.add(Calendar.MINUTE, 1);
 
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        //设置前先取消
+        cancelAlarmTimer();
 
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Log.d(TAG, "设置了闹铃");
         //ELAPSED_REALTIME 过了一段时间调用
         //ELAPSED_REALTIME_WAKEUP 关机也会调用
@@ -86,11 +87,20 @@ public class AlarmTimer {
         //RTC_WAKEUP 关机时也会调用
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 
-        checkNeedReset(new ToDoThing());
+
     }
 
-    public static void cancelAlarmTimer(Context context) {
+    public static void cancelAlarmTimer() {
 
+        Context context = MainApplication.getGlobleContext();
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(context, NotifyReceiver.class);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        alarmManager.cancel(pendingIntent);
     }
 
     public static void checkNeedReset(ToDoThing toDoThing) {
@@ -101,7 +111,6 @@ public class AlarmTimer {
             AlarmManager.AlarmClockInfo alarmClockInfo = alarmManager.getNextAlarmClock();
             if (alarmClockInfo != null) {
                 Date date = new Date(alarmClockInfo.getTriggerTime());
-
             }
         }
 //        alarmManager.cancel();

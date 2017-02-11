@@ -103,6 +103,7 @@ public class AlarmModel implements Parcelable {
         parcel.writeList(toDoThingsID);
         parcel.writeLong(notifyDate.getTime());
         parcel.writeInt(reminderType);
+        parcel.writeList(notifyIds);
     }
 
     public static final Creator<AlarmModel> CREATOR = new Creator<AlarmModel>() {
@@ -111,11 +112,12 @@ public class AlarmModel implements Parcelable {
             AlarmModel alarmModel = new AlarmModel();
             alarmModel.toDoThingsContent = new ArrayList<>();
             alarmModel.toDoThingsID = new ArrayList<>();
+            alarmModel.notifyIds = new ArrayList<>();
             in.readStringList(alarmModel.toDoThingsContent);
             in.readList(alarmModel.toDoThingsID, Long.class.getClassLoader());
             alarmModel.notifyDate = new Date(in.readLong());
             alarmModel.reminderType = in.readInt();
-
+            in.readList(alarmModel.notifyIds, Long.class.getClassLoader());
             return alarmModel;
 
         }

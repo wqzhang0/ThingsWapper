@@ -20,7 +20,10 @@ import com.wqzhang.thingswapper.model.AlarmModel;
 import com.wqzhang.thingswapper.services.NotifyService;
 import com.wqzhang.thingswapper.tools.Common;
 import com.wqzhang.thingswapper.tools.DialogUtil;
+import com.wqzhang.thingswapper.tools.NotifyParseUtil;
 import com.wqzhang.thingswapper.tools.SystemUtil;
+
+import java.util.ArrayList;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -44,14 +47,51 @@ public class NotifyReceiver extends BroadcastReceiver {
             //判断应用是在前台还是后台
             boolean isBg = SystemUtil.isBackground(SystemUtil.APP_PACKAGE);
             if (isBg) {
-                showNotification(intent);
+                AlarmModel alarmModel = bundle.getParcelable(Common.INTENT_PARCELABLE_KEY);
+                DialogUtil.showNotifyNow(MainApplication.getDialogContext(), alarmModel.getToDoThingsContent());
+                ArrayList<Long> notifyIds = alarmModel.getNotifyIds();
+                ArrayList<String> contents = alarmModel.getToDoThingsContent();
+                for (int i = 0; i < notifyIds.size(); i++) {
+                    sendNotification(notifyIds.get(i), contents.get(i), intent);
+                }
             } else {
                 //如果在前台 直接显示
                 AlarmModel alarmModel = bundle.getParcelable(Common.INTENT_PARCELABLE_KEY);
-//                DialogUtil.showNotifyNow(MainApplication.getDialogContext(), alarmModel.getToDoThingsContent());
-                sendNotification(intent);
+                DialogUtil.showNotifyNow(MainApplication.getDialogContext(), alarmModel.getToDoThingsContent());
             }
         }
+    }
+
+    public void sendNotification(Long notifyid, String contents, Intent sourceInent) {
+        Intent showIntent = new Intent(MainApplication.getGlobleContext(), MainActivity.class);
+//        showIntent.setFlags(Intent.NEED.)
+        Bundle bundle = sourceInent.getBundleExtra(Common.INTENT_KEY_BUNDLE_KEY);
+
+        showIntent.putExtras(bundle);
+        PendingIntent piShowIntent = PendingIntent.getActivity(
+                MainApplication.getGlobleContext(), 0, showIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(MainApplication.getGlobleContext()).
+                setContentText(contents).setContentTitle("有新的提醒").setSmallIcon(R.drawable.finsh_light);
+//        builder.setFullScreenIntent(piShowIntent, false);
+        builder.setContentIntent(piShowIntent);
+
+        Notification notification = builder.build();
+        AlarmModel alarmModel = bundle.getParcelable(Common.INTENT_PARCELABLE_KEY);
+
+        if (NotifyParseUtil.isAlarm(alarmModel.getReminderType())) {
+            notification.defaults |= Notification.DEFAULT_SOUND;
+        }
+        if (NotifyParseUtil.isVertical(alarmModel.getReminderType())) {
+            notification.defaults |= Notification.DEFAULT_VIBRATE;
+        }
+        if (NotifyParseUtil.isEmail(alarmModel.getReminderType())) {
+            notification.defaults |= Notification.DEFAULT_SOUND;
+            notification.defaults |= Notification.DEFAULT_VIBRATE;
+        }
+
+        NotificationManager notificationManager = (NotificationManager) MainApplication.getGlobleContext().getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(notifyid.intValue(), notification);
     }
 
     public void sendNotification(Intent sourceInent) {
@@ -60,10 +100,9 @@ public class NotifyReceiver extends BroadcastReceiver {
         Bundle bundle = sourceInent.getBundleExtra(Common.INTENT_KEY_BUNDLE_KEY);
 
         showIntent.putExtras(bundle);
-        showIntent.putExtra("sss", "sss");
 //        showIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //        showIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        showIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//        showIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent piShowIntent = PendingIntent.getActivity(
                 MainApplication.getGlobleContext(), 0, showIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -77,7 +116,7 @@ public class NotifyReceiver extends BroadcastReceiver {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(MainApplication.getGlobleContext()).
                 setContentText("吃早饭\\n看电影").setContentTitle("有新的提醒").setSmallIcon(R.drawable.finsh_light);
-        builder.setFullScreenIntent(piShowIntent, false);
+//        builder.setFullScreenIntent(piShowIntent, false);
         builder.setContentIntent(piShowIntent);
 //        builder.addAction(0, "五分钟后再次提醒", piSnooze);
 //        builder.addAction(0, "不再提醒", piDismiss);
@@ -95,6 +134,9 @@ public class NotifyReceiver extends BroadcastReceiver {
         notification.defaults |= Notification.DEFAULT_VIBRATE;
         NotificationManager notificationManager = (NotificationManager) MainApplication.getGlobleContext().getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(1, notification);
+        notificationManager.notify(2, notification);
+        notificationManager.notify(3, notification);
+        notificationManager.notify(4, notification);
     }
 
     public void showNotification(Intent sourceInent) {
