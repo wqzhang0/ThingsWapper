@@ -60,13 +60,19 @@ public class AlarmTimer {
         Date alarmDate = alarmModel.getNotifyDate();
 
         Intent intent = new Intent(context, NotifyReceiver.class);
-//        intent.setFlags(Common.NOTIFY_NEW_MEG);
 
         Bundle bundle = new Bundle();
         bundle.putParcelable(Common.INTENT_PARCELABLE_KEY, alarmModel);
         bundle.putString(Common.NOTIFY_TYPE, Common.NOTIFY_NEW_MEG);
+//
+        intent.putExtras(bundle);
+//        intent.putExtra(Common.INTENT_PARCELABLE_KEY, alarmModel);
+//        intent.putExtra(Common.NOTIFY_TYPE, Common.NOTIFY_NEW_MEG);
+//        intent.putExtra("common", "value");
+//        intent.putExtra(Common.INTENT_KEY_BUNDLE_KEY, bundle);
 
-        intent.putExtra(Common.INTENT_KEY_BUNDLE_KEY, bundle);
+//        intent.putExtra(Common.INTENT_KEY_BUNDLE_KEY, bundle);
+
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -76,8 +82,8 @@ public class AlarmTimer {
         calendar.setTime(alarmDate);
 //        calendar.add(Calendar.MINUTE, 1);
 
-        //设置前先取消
-        cancelAlarmTimer();
+        //设置前先取消 废弃  应为Pendintent设置的Flag 是用Intent 更新
+//        cancelAlarmTimer();
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Log.d(TAG, "设置了闹铃");

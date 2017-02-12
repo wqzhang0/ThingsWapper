@@ -139,6 +139,7 @@ public class BusinessProcess implements BusinessProcessImpl {
 
     }
 
+    @Override
     public void changeToDoThingState(Long id, int state) {
         QueryBuilder<ToDoThing> toDoThingQueryBuilder = toDoThingDao.queryBuilder();
         ToDoThing toDoThing = toDoThingQueryBuilder.where(ToDoThingDao.Properties.Id.eq(id)).list().get(0);
@@ -149,6 +150,7 @@ public class BusinessProcess implements BusinessProcessImpl {
             for (int i = 0; i < connection_t_ns.size(); i++) {
                 Notification _tmpNotification = connection_t_ns.get(i).getNotification();
                 _tmpNotification.setAlearyNotify(true);
+                _tmpNotification.setPreNotifyDate(new Date());
                 notifications.add(_tmpNotification);
             }
             notificationDao.updateInTx(notifications);
@@ -165,7 +167,7 @@ public class BusinessProcess implements BusinessProcessImpl {
         // 提醒时间是否大于当前时间
 
         AlarmModel alarmModel = null;
-        Date currentDate = DateUtil.getCurrentDate();
+        long currentDate = DateUtil.getCurrentDate().getTime();
         ArrayList<ToDoThing> toDoThings = new ArrayList<>();
 
         QueryBuilder<Notification> notificationQueryBuilder = notificationDao.queryBuilder();
@@ -217,7 +219,7 @@ public class BusinessProcess implements BusinessProcessImpl {
         // 上次是否有提醒时间,
         // 提醒时间是否大于当前时间         //比较上一次提醒的时间,
         AlarmModel alarmModel = null;
-        Date currentDate = DateUtil.getCurrentDate();
+        long currentDate = DateUtil.getCurrentDate().getTime();
         ArrayList<ToDoThing> toDoThings = new ArrayList<>();
 
         QueryBuilder<Notification> notificationQueryBuilder = notificationDao.queryBuilder();
@@ -299,9 +301,9 @@ public class BusinessProcess implements BusinessProcessImpl {
         calendar.add(Calendar.DAY_OF_YEAR, -6);
 
         for (int i = 0; i < 7; i++) {
-            Date dayStart = calendar.getTime();
+            long dayStart = calendar.getTime().getTime();
             calendar.add(calendar.DATE, +1);
-            Date dayEnd = calendar.getTime();
+            long dayEnd = calendar.getTime().getTime();
 
             QueryBuilder<ToDoThing> toDoThingQueryBuilder = toDoThingDao.queryBuilder();
 

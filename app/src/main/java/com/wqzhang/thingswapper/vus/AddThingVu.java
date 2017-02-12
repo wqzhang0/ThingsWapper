@@ -108,7 +108,7 @@ public class AddThingVu implements Vu {
                 newHourValue = Integer.valueOf(hoursList.get(index));
             }
         });
-        newHourValue = Integer.valueOf(hoursList.get(8));
+        newHourValue = Integer.valueOf(hoursList.get(_hours_position));
 
 
         final ArrayList<String> minuteList = new ArrayList<>();
@@ -142,7 +142,7 @@ public class AddThingVu implements Vu {
             }
         });
 //        reminderDateCalLoopView.setNotLoop();
-        newMinuteValue = Integer.valueOf(minuteList.get(0));
+        newMinuteValue = Integer.valueOf(minuteList.get(_minuteListPosition));
 
 
         final ArrayList<String> calList = new ArrayList<>();

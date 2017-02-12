@@ -1,8 +1,10 @@
 package com.wqzhang.thingswapper.tools;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by wqzhang on 16-12-30.
@@ -387,5 +389,21 @@ public class DateUtil {
             str.append(randomValues[number.intValue()]);
         }
         return str.toString();
+    }
+
+    public static ArrayList<Date> sortAsc(List<Date> dateList) {
+        ArrayList<Date> newDateList = new ArrayList<>();
+
+//
+//        for (int i = 1; i < dateList.size(); i++) {
+//            int j = i - 1;
+//            Date temp = dateList.get(i);
+//            for (; j >= 0 && temp.getTime() < dateList.get(j).getTime(); j--) {
+//                dateList.get(j + 1) = dateList.get(j);  //将大于temp的值整体后移一个单位
+//            }
+//            dateList.get(j + 1) = temp;
+//        }
+
+        return newDateList;
     }
 }

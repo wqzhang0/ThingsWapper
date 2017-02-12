@@ -12,7 +12,7 @@
 
         <RelativeLayout
             android:id="@+id/bottom_left"
-            android:layout_width="112dp"
+            android:layout_width="0dp"
             android:layout_height="56dp"
             android:layout_gravity="left"
             android:background="#111111"
@@ -29,7 +29,7 @@
 
         <RelativeLayout
             android:id="@+id/bottom_right"
-            android:layout_width="112dp"
+            android:layout_width="0dp"
             android:layout_height="56dp"
             android:layout_gravity="right"
             android:background="#c8c7cd"

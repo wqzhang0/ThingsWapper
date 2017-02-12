@@ -13,15 +13,16 @@
         <RelativeLayout
             android:id="@+id/bottom_left"
             android:layout_width="112dp"
-            android:layout_height="56dp"
+            android:layout_height="match_parent"
             android:layout_gravity="left"
             android:background="#d81e06"
+            android:minHeight="56dp"
             android:visibility="invisible">
 
             <ImageView
                 android:id="@+id/trash"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:background="@drawable/trash" />
         </RelativeLayout>
@@ -30,9 +31,10 @@
         <RelativeLayout
             android:id="@+id/bottom_right"
             android:layout_width="112dp"
-            android:layout_height="56dp"
+            android:layout_height="match_parent"
             android:layout_gravity="right"
             android:background="#c8c7cd"
+            android:minHeight="56dp"
             android:visibility="invisible">
 
             <ImageView

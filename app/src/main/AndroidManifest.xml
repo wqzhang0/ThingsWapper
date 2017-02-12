@@ -4,7 +4,8 @@
 
     <!-- 注册开机广播权限-->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <user-permission android:name="android.premission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.premission.SYSTEM_ALERT_WINDOW" />
+
     <application
         android:name=".MainApplication"
         android:allowBackup="true"
@@ -43,8 +44,11 @@
         </activity>
 
         <!--android:windowSoftInputMode="stateAlwaysHidden|adjustResize"-->
+        <!--android:windowSoftInputMode="stateAlwaysHidden|adjustPan">-->
+
 
         <activity android:name=".activitys.AddToDoThingActivity">
+
             <intent-filter>
                 <action android:name="com.wqzhang.thingswapper.activity.AddToDoThingActivity" />
                 <category android:name="android.intent.category.DEFAULT" />

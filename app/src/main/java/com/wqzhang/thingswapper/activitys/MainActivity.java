@@ -103,8 +103,8 @@ public class MainActivity extends BasePartenerAppCompatActivity<MainVu> implemen
 //                    bundle.putParcelable(Common.INTENT_PARCELABLE_KEY, needNotifyAlarmModel);
 //                    bundle.putString(Common.NOTIFY_TYPE, Common.NOTIFY_NEW_MEG);
 //
-//                    intent.putExtra(Common.INTENT_KEY_BUNDLE_KEY, bundle);
-//
+////                    intent.putExtra(Common.INTENT_KEY_BUNDLE_KEY, bundle);
+//                    intent.putExtras(bundle);
 //                    Calendar calendar = Calendar.getInstance();
 ////        calendar.setTime(alarmDate);
 //                    calendar.add(Calendar.MINUTE, 1);

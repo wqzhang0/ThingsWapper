@@ -49,7 +49,7 @@ public interface BusinessProcessImpl {
     //获取默认登录的用户
     User getOnlineUser();
 
-    //改变ToDoThing的状态
+    //改变ToDoThing的状态 如果更改为完成状态,则同时设上一次提醒时间为当前时间
     void changeToDoThingState(Long id, int state);
 
     //查找距离此时最近的一次提醒

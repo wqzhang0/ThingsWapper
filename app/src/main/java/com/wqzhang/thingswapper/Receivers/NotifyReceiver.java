@@ -16,6 +16,7 @@ import com.wqzhang.thingswapper.MainApplication;
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.activitys.AddToDoThingActivity;
 import com.wqzhang.thingswapper.activitys.MainActivity;
+import com.wqzhang.thingswapper.dao.BusinessProcess;
 import com.wqzhang.thingswapper.model.AlarmModel;
 import com.wqzhang.thingswapper.services.NotifyService;
 import com.wqzhang.thingswapper.tools.Common;
@@ -38,9 +39,12 @@ public class NotifyReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "收到消息  ");
 //        Toast.makeText(context, "naol", Toast.LENGTH_LONG).show();
-        Bundle bundle = intent.getBundleExtra(Common.INTENT_KEY_BUNDLE_KEY);
+//        Bundle bundle = intent.getBundleExtra(Common.INTENT_KEY_BUNDLE_KEY);
+        Bundle bundle = intent.getExtras();
 
-        String intentType = bundle.getString(Common.NOTIFY_TYPE);
+//        String intentType = bundle.getString(Common.NOTIFY_TYPE);
+//        String common = (String) bundle.get("common");
+        String intentType = (String) bundle.getCharSequence(Common.NOTIFY_TYPE);
         if (intentType.equals(Common.NOTIFY_NEW_MEG)) {
             //有新的闹醒需要提醒
 
@@ -52,7 +56,10 @@ public class NotifyReceiver extends BroadcastReceiver {
                 ArrayList<Long> notifyIds = alarmModel.getNotifyIds();
                 ArrayList<String> contents = alarmModel.getToDoThingsContent();
                 for (int i = 0; i < notifyIds.size(); i++) {
+                    //发送通知消息
                     sendNotification(notifyIds.get(i), contents.get(i), intent);
+                    //已经发送通知,这里修改数据库  提醒类型设置为已经提醒
+                    BusinessProcess.getInstance().changeToDoThingState(notifyIds.get(i), Common.STATUS_FINSH);
                 }
             } else {
                 //如果在前台 直接显示
@@ -65,7 +72,7 @@ public class NotifyReceiver extends BroadcastReceiver {
     public void sendNotification(Long notifyid, String contents, Intent sourceInent) {
         Intent showIntent = new Intent(MainApplication.getGlobleContext(), MainActivity.class);
 //        showIntent.setFlags(Intent.NEED.)
-        Bundle bundle = sourceInent.getBundleExtra(Common.INTENT_KEY_BUNDLE_KEY);
+        Bundle bundle = sourceInent.getExtras();
 
         showIntent.putExtras(bundle);
         PendingIntent piShowIntent = PendingIntent.getActivity(
@@ -97,7 +104,8 @@ public class NotifyReceiver extends BroadcastReceiver {
     public void sendNotification(Intent sourceInent) {
         Intent showIntent = new Intent(MainApplication.getGlobleContext(), MainActivity.class);
 //        showIntent.setFlags(Intent.NEED.)
-        Bundle bundle = sourceInent.getBundleExtra(Common.INTENT_KEY_BUNDLE_KEY);
+//        Bundle bundle = sourceInent.getBundleExtra(Common.INTENT_KEY_BUNDLE_KEY);
+        Bundle bundle = sourceInent.getExtras();
 
         showIntent.putExtras(bundle);
 //        showIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

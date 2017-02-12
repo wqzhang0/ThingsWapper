@@ -24,6 +24,7 @@ import com.wqzhang.thingswapper.events.SaveChooseOperationEvent;
 import com.wqzhang.thingswapper.events.ShowMoreSetEvent;
 import com.wqzhang.thingswapper.exceptions.CustomerException;
 import com.wqzhang.thingswapper.tools.Common;
+import com.wqzhang.thingswapper.tools.DateUtil;
 import com.wqzhang.thingswapper.vus.AddThingVu;
 
 import org.greenrobot.eventbus.EventBus;
@@ -133,19 +134,26 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
                 startActivity(intent);
                 break;
             case R.id.add_submit:
+                //如果提醒时间里存在已经过去的时间,则提醒并且忽悠此次提交操作
+                ArrayList<Date> dates = AddThingOperationXMLDataCache.getDates();
+                for (Date _data : dates) {
+                    if (_data.getTime() <= DateUtil.getCurrentDate().getTime()) {
+                        Toast.makeText(this, "提醒时间内存在过期的时间,请检验", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
 //                bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_CONTEXT, ((EditText) findViewById(R.id.remind_content)).getText().toString()));
                 //先去除 内容的前后空格  然后判断是否为空   不为空则添加事件
                 if (TextUtils.isEmpty(AddThingOperationXMLDataCache.getContent().trim())) {
-                    Toast.makeText(this, "内容为空,添加失败", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "内容为空,添加失败", Toast.LENGTH_SHORT).show();
                 } else if (AddThingOperationXMLDataCache.getNotifyType() != Common.REMINDER_TYPE_NONE && !AddThingOperationXMLData.getInstall().isReminder()) {
                     //设置了提醒内容但是没有提醒时间
-                    Toast.makeText(this, "请设置提醒时间!或取消提醒类型", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "请设置提醒时间!或取消提醒类型", Toast.LENGTH_SHORT).show();
                 } else if (AddThingOperationXMLDataCache.getNotifyType() != Common.REMINDER_TYPE_NONE && AddThingOperationXMLData.getInstall().isReminder() && AddThingOperationXMLDataCache.getDates().size() <= 0) {
-                    Toast.makeText(this, "请设置提醒时间!或取消提醒类型", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "请设置提醒时间!或取消提醒类型", Toast.LENGTH_SHORT).show();
                 } else if (AddThingOperationXMLDataCache.getNotifyType() == Common.REMINDER_TYPE_NONE && AddThingOperationXMLData.getInstall().isReminder() && AddThingOperationXMLDataCache.getDates().size() > 0) {
-                    Toast.makeText(this, "请选择提醒类型", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "请选择提醒类型", Toast.LENGTH_SHORT).show();
                 } else {
-
                     BusinessProcess.getInstance().addToDoThing(AddThingOperationXMLData.getInstall().getToDothing(),
                             AddThingOperationXMLData.getInstall().getNotifycation());
 
@@ -170,6 +178,7 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
 
                 Date date = vu.getNotifyDate();
 
+
                 boolean alreadyExists = false;
                 ArrayList<Date> dateArrayList = AddThingOperationXMLDataCache.getDates();
                 for (Date _tmpDate : dateArrayList) {
@@ -179,6 +188,12 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
                 }
                 if (alreadyExists) {
                     Toast.makeText(this, "提醒时间已存在", Toast.LENGTH_SHORT).show();
+                } else if (DateUtil.getCurrentDate().getTime() > date.getTime()) {
+                    Toast.makeText(this, "不能添加以前的时间", Toast.LENGTH_SHORT).show();
+                    bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE, new Date(), false));
+                    //将xml里存储的 是否提醒字段(IS_REMINDER) 值更改为false
+                    bus.post(new DataCacheChange(DataCacheChange.TYPE_NOTIFLY_DATE_CANCEL));
+
                 } else {
                     //将xml里存储的 是否提醒字段(IS_REMINDER) 值更改为true
                     bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_IS_REMINDER, true));
