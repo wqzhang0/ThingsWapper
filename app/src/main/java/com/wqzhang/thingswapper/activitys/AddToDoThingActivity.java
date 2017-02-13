@@ -131,6 +131,7 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
             case R.id.add_cancel:
 //                bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_CONTEXT, ((EditText) findViewById(R.id.remind_content)).getText().toString()));
                 Intent intent = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 break;
             case R.id.add_submit:
@@ -158,8 +159,9 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
                             AddThingOperationXMLData.getInstall().getNotifycation());
 
                     AddThingOperationXMLData.getInstall().clearHistory();
-                    Intent intent2 = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
-                    startActivity(intent2);
+                    Intent mianIntent = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
+                    mianIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(mianIntent);
                 }
 
                 break;
@@ -217,7 +219,6 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
             vu.getAddSubmit().setClickable(false);
             vu.getAddSubmit().setTextColor(Color.parseColor("#707070"));
         }
-
     }
 
     @Subscribe

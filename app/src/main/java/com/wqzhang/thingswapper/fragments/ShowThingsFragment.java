@@ -129,7 +129,6 @@ public class ShowThingsFragment extends BasePartenerFragment<ShowThingsVu> {
         vu.getRecyclerView().setAdapter(toDoThingsRecyclerAdapter);
         vu.getRecyclerView().addItemDecoration(new CustomerItemDecoration());
 
-
         //默认可以上拉
         TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOWN);
         int lastPosition = ((LinearLayoutManager) vu.getRecyclerView().getLayoutManager()).findLastVisibleItemPosition();
@@ -164,6 +163,14 @@ public class ShowThingsFragment extends BasePartenerFragment<ShowThingsVu> {
         vu.onScrolling(event);
     }
 
+    @Override
+    protected void afterOnResume() {
+        super.afterOnResume();
+        ArrayList<ToDoThing> toDoThings = BusinessProcess.getInstance().readNotDoneThingsCreateTimeDesc();
+        ToDoThingsRecyclerAdapter adapter = (ToDoThingsRecyclerAdapter) vu.getRecyclerView().getAdapter();
+        adapter.setData(toDoThings);
+
+    }
 
     @Override
     protected void afterOnStart() {

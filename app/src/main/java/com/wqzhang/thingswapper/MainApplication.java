@@ -10,6 +10,8 @@ import com.wqzhang.thingswapper.dao.BusinessProcess;
 import com.wqzhang.thingswapper.dao.SharedPreferencesControl;
 import com.wqzhang.thingswapper.dao.greendao.DaoMaster;
 import com.wqzhang.thingswapper.dao.greendao.DaoSession;
+import com.wqzhang.thingswapper.model.AlarmModel;
+import com.wqzhang.thingswapper.tools.AlarmTimer;
 
 
 import org.greenrobot.greendao.database.Database;
@@ -52,6 +54,19 @@ public class MainApplication extends Application {
 //        daoSession = new DaoMaster(db).newSession();
 
 
+        //应用开启,设置新的闹铃
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AlarmModel needNotifyAlarmModel = BusinessProcess.getInstance().readNeedNotifyToDoThings();
+                if (needNotifyAlarmModel != null) {
+                    //存在需要提醒的事项
+                    //设置Alerm
+                    AlarmTimer.setAlarmTimer(needNotifyAlarmModel);
+                }
+            }
+        }).start();
+
     }
 
     public static DaoSession getDaoSession() {
@@ -61,7 +76,6 @@ public class MainApplication extends Application {
     public static Context getGlobleContext() {
         return mContext;
     }
-
 
 
     public static Context getDialogContext() {

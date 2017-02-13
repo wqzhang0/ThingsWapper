@@ -42,6 +42,7 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
 
     public void setData(ArrayList<ToDoThing> toDoThings) {
         this.toDoThings = toDoThings;
+        notifyDataSetChanged();
     }
 
     @Override

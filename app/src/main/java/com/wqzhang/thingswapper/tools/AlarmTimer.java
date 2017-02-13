@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.wqzhang.thingswapper.MainApplication;
-import com.wqzhang.thingswapper.Receivers.NotifyReceiver;
+import com.wqzhang.thingswapper.receivers.NotifyReceiver;
 import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
 import com.wqzhang.thingswapper.model.AlarmModel;
 

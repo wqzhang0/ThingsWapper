@@ -47,7 +47,9 @@
         <!--android:windowSoftInputMode="stateAlwaysHidden|adjustPan">-->
 
 
-        <activity android:name=".activitys.AddToDoThingActivity">
+        <activity
+            android:name=".activitys.AddToDoThingActivity"
+            android:launchMode="singleTop">
 
             <intent-filter>
                 <action android:name="com.wqzhang.thingswapper.activity.AddToDoThingActivity" />
@@ -62,14 +64,14 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".Receivers.NotifyReceiver">
+        <receiver android:name=".receivers.NotifyReceiver">
             <intent-filter>
                 <action android:name="com.wqzhang.thingswapper.Receivers.NotifyReceiver" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".Receivers.BootComletedBroadcastReceiver">
+        <receiver android:name=".receivers.BootComletedBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <category android:name="android.intent.category.HOME" />
