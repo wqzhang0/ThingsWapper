@@ -28,7 +28,7 @@ public class UserDao extends AbstractDao<User, Long> {
         public final static Property Password = new Property(3, String.class, "password", false, "PASSWORD");
         public final static Property Email = new Property(4, String.class, "email", false, "EMAIL");
         public final static Property CreateDate = new Property(5, java.util.Date.class, "createDate", false, "CREATE_DATE");
-        public final static Property IsSynchronize = new Property(6, Boolean.class, "isSynchronize", false, "IS_SYNCHRONIZE");
+        public final static Property Synchronize = new Property(6, Boolean.class, "synchronize", false, "SYNCHRONIZE");
         public final static Property DefaultLoginAccount = new Property(7, Boolean.class, "defaultLoginAccount", false, "DEFAULT_LOGIN_ACCOUNT");
     }
 
@@ -54,7 +54,7 @@ public class UserDao extends AbstractDao<User, Long> {
                 "\"PASSWORD\" TEXT," + // 3: password
                 "\"EMAIL\" TEXT," + // 4: email
                 "\"CREATE_DATE\" INTEGER," + // 5: createDate
-                "\"IS_SYNCHRONIZE\" INTEGER," + // 6: isSynchronize
+                "\"SYNCHRONIZE\" INTEGER," + // 6: synchronize
                 "\"DEFAULT_LOGIN_ACCOUNT\" INTEGER);"); // 7: defaultLoginAccount
     }
 
@@ -98,9 +98,9 @@ public class UserDao extends AbstractDao<User, Long> {
             stmt.bindLong(6, createDate.getTime());
         }
  
-        Boolean isSynchronize = entity.getIsSynchronize();
-        if (isSynchronize != null) {
-            stmt.bindLong(7, isSynchronize ? 1L: 0L);
+        Boolean synchronize = entity.getSynchronize();
+        if (synchronize != null) {
+            stmt.bindLong(7, synchronize ? 1L: 0L);
         }
  
         Boolean defaultLoginAccount = entity.getDefaultLoginAccount();
@@ -143,9 +143,9 @@ public class UserDao extends AbstractDao<User, Long> {
             stmt.bindLong(6, createDate.getTime());
         }
  
-        Boolean isSynchronize = entity.getIsSynchronize();
-        if (isSynchronize != null) {
-            stmt.bindLong(7, isSynchronize ? 1L: 0L);
+        Boolean synchronize = entity.getSynchronize();
+        if (synchronize != null) {
+            stmt.bindLong(7, synchronize ? 1L: 0L);
         }
  
         Boolean defaultLoginAccount = entity.getDefaultLoginAccount();
@@ -174,7 +174,7 @@ public class UserDao extends AbstractDao<User, Long> {
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // password
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // email
             cursor.isNull(offset + 5) ? null : new java.util.Date(cursor.getLong(offset + 5)), // createDate
-            cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0, // isSynchronize
+            cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0, // synchronize
             cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0 // defaultLoginAccount
         );
         return entity;
@@ -188,7 +188,7 @@ public class UserDao extends AbstractDao<User, Long> {
         entity.setPassword(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setEmail(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setCreateDate(cursor.isNull(offset + 5) ? null : new java.util.Date(cursor.getLong(offset + 5)));
-        entity.setIsSynchronize(cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0);
+        entity.setSynchronize(cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0);
         entity.setDefaultLoginAccount(cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0);
      }
     

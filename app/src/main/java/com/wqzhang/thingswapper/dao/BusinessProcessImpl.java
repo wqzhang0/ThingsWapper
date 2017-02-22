@@ -4,8 +4,8 @@ package com.wqzhang.thingswapper.dao;
 import com.wqzhang.thingswapper.dao.greendao.Notification;
 import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
 import com.wqzhang.thingswapper.dao.greendao.User;
-import com.wqzhang.thingswapper.model.AlarmModel;
-import com.wqzhang.thingswapper.model.ChartDataModel;
+import com.wqzhang.thingswapper.model.AlarmDTO;
+import com.wqzhang.thingswapper.model.ChartDataDTO;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,54 +20,54 @@ public interface BusinessProcessImpl {
     User readOrAddUserInfo();
 
     //根据用户查找所有的事项
-    ArrayList<ToDoThing> readAllThingsByUser(User user);
+    ArrayList<ToDoThing> listAllThingsByUser(User user);
 
     //根据用户ID查找所有的事项
-    ArrayList<ToDoThing> readAllThingsByUserId(int userId);
+    ArrayList<ToDoThing> listAllThingsByUserId(int userId);
 
     //查找数据库中所有的事项
-    ArrayList<ToDoThing> readAllThings();
+    ArrayList<ToDoThing> listAllThings();
 
     //根据ToDoThing的id  删除事项
-    void deleteToDoTingById(Long id);
+    void removeToDoTingById(Long id);
 
     //根据ToDoThing的id 查找事项
-    ToDoThing readThingById(Long id);
+    ToDoThing getThingById(Long id);
 
     //添加事项  已废弃
-    void addToDoThing(ToDoThing toDoThing);
+    void saveThing(ToDoThing toDoThing);
 
     //添加事项, 和提醒时间(notificationList 可为空)
-    void addToDoThing(ToDoThing toDoThing, List<Notification> notificationList);
+    void saveThing(ToDoThing toDoThing, List<Notification> notificationList);
 
     //查找已经完成的事情
-    ArrayList<ToDoThing> readFinshThingsFinshTimeDesc();
+    ArrayList<ToDoThing> listFinshThingsOrderByFinshTimeDesc();
 
     //查找还未做的事情
-    ArrayList<ToDoThing> readNotDoneThingsCreateTimeDesc();
+    ArrayList<ToDoThing> listNotDoneThingsOrderByCreateTimeDesc();
 
     //获取默认登录的用户
     User getOnlineUser();
 
     //改变ToDoThing的状态 如果更改为完成状态,则同时设上一次提醒时间为当前时间
-    void changeToDoThingState(Long id, int state);
+    void updateThingState(Long id, int state);
 
     //查找距离此时最近的一次提醒
-    AlarmModel readNeedNotifyToDoThings();
+    AlarmDTO listNeedNotifyThings();
 
     //获取到已经过期但是还未提醒的事项 Expired
-    AlarmModel readExpiredToDoThing();
+    AlarmDTO listExpiredThings();
 
-    void setPreNotifyDate(Long id, Date date);
+    void updatePreNotifyDate(Long id, Date date);
 
     //获取最近七日内增加的事件数量 date-counts
-    ArrayList<ChartDataModel> readRecentWeekNewThings();
+    ArrayList<ChartDataDTO> countRecentWeekNewThings();
 
     //获取最近七日完成的事件  date-counts
-    ArrayList<ChartDataModel> readRecentWeekFinshThings();
+    ArrayList<ChartDataDTO> countRecentWeekFinshThings();
 
     //获得今天添加的事项 和 已完成的事情
-    ArrayList<ChartDataModel> readTodayThings();
+    ArrayList<ChartDataDTO> countTodayThings();
 
 
 }

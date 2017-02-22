@@ -10,7 +10,7 @@ import android.util.Log;
 import com.wqzhang.thingswapper.MainApplication;
 import com.wqzhang.thingswapper.model.ToDoThing_model;
 import com.wqzhang.thingswapper.model.User_model;
-import com.wqzhang.thingswapper.tools.Common;
+import com.wqzhang.thingswapper.util.Common;
 
 import java.util.ArrayList;
 import java.util.Date;

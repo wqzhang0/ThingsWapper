@@ -23,8 +23,8 @@ public class ToDoThing {
     private Integer reminderType;
     private java.util.Date createDate;
     private java.util.Date finshDate;
-    private Integer Status;
-    private Boolean isSynchronize;
+    private Integer status;
+    private Boolean synchronize;
     private Long userId;
 
     /** Used to resolve relations */
@@ -58,14 +58,14 @@ public class ToDoThing {
     }
 
     @Generated
-    public ToDoThing(Long id, String reminderContext, Integer reminderType, java.util.Date createDate, java.util.Date finshDate, Integer Status, Boolean isSynchronize, Long userId) {
+    public ToDoThing(Long id, String reminderContext, Integer reminderType, java.util.Date createDate, java.util.Date finshDate, Integer status, Boolean synchronize, Long userId) {
         this.id = id;
         this.reminderContext = reminderContext;
         this.reminderType = reminderType;
         this.createDate = createDate;
         this.finshDate = finshDate;
-        this.Status = Status;
-        this.isSynchronize = isSynchronize;
+        this.status = status;
+        this.synchronize = synchronize;
         this.userId = userId;
     }
 
@@ -117,19 +117,19 @@ public class ToDoThing {
     }
 
     public Integer getStatus() {
-        return Status;
+        return status;
     }
 
-    public void setStatus(Integer Status) {
-        this.Status = Status;
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
-    public Boolean getIsSynchronize() {
-        return isSynchronize;
+    public Boolean getSynchronize() {
+        return synchronize;
     }
 
-    public void setIsSynchronize(Boolean isSynchronize) {
-        this.isSynchronize = isSynchronize;
+    public void setSynchronize(Boolean synchronize) {
+        this.synchronize = synchronize;
     }
 
     public Long getUserId() {

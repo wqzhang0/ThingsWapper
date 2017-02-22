@@ -15,8 +15,8 @@ public class AddThingOperationXMLDataCache {
     private static int notifyType;
     private static ArrayList<Date> dates;
     private static String notifyCounts;
-    private static boolean isRepeat;
-    private static boolean isReminder;
+    private static boolean repeat;
+    private static boolean reminder;
 
 
     public static String getContent() {
@@ -52,30 +52,31 @@ public class AddThingOperationXMLDataCache {
     }
 
     public static boolean isRepeat() {
-        return isRepeat;
-    }
-
-    public static void setIsRepeat(boolean isRepeat) {
-        AddThingOperationXMLDataCache.isRepeat = isRepeat;
+        return repeat;
     }
 
     public static boolean isReminder() {
-        return isReminder;
+        return reminder;
     }
 
-    public static void setIsReminder(boolean isReminder) {
-        AddThingOperationXMLDataCache.isReminder = isReminder;
+    public static void setRepeat(boolean repeat) {
+        AddThingOperationXMLDataCache.repeat = repeat;
+    }
+
+
+    public static void setReminder(boolean reminder) {
+        AddThingOperationXMLDataCache.reminder = reminder;
     }
 
     public static void readHistory() {
-        String _content = AddThingOperationXMLData.getInstall().readContent();
-        int _notifyType = AddThingOperationXMLData.getInstall().readNotifyType();
-        ArrayList<Date> _dates = AddThingOperationXMLData.getInstall().readNotifyTime();
-        String _notifyCount = AddThingOperationXMLData.getInstall().readNotifyCounts();
+        String content = AddThingOperationXMLData.getInstall().readContent();
+        int notifyType = AddThingOperationXMLData.getInstall().readNotifyType();
+        ArrayList<Date> dates = AddThingOperationXMLData.getInstall().readNotifyTime();
+        String notifyCount = AddThingOperationXMLData.getInstall().readNotifyCounts();
 
-        content = _content;
-        notifyType = _notifyType;
-        dates = _dates;
-        notifyCounts = _notifyCount;
+        AddThingOperationXMLDataCache.content = content;
+        AddThingOperationXMLDataCache.notifyType = notifyType;
+        AddThingOperationXMLDataCache.dates = dates;
+        notifyCounts = notifyCount;
     }
 }

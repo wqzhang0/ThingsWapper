@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".activitys.WelcomeActivity">
+        <activity android:name=".activity.WelcomeActivity">
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN" />-->
 
@@ -24,7 +24,7 @@
         <!--android:launchMode="singleTask"-->
 
         <activity
-            android:name=".activitys.MainActivity"
+            android:name=".activity.MainActivity"
             android:clearTaskOnLaunch="true"
             android:label="@string/app_name"
             android:launchMode="singleTop"
@@ -48,7 +48,7 @@
 
 
         <activity
-            android:name=".activitys.AddToDoThingActivity"
+            android:name=".activity.AddToDoThingActivity"
             android:launchMode="singleTop">
 
             <intent-filter>
@@ -57,21 +57,21 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".services.NotifyService">
+        <service android:name=".service.NotifyService">
             <intent-filter>
                 <action android:name="com.wqzhang.thingswapper.services.NotifyService" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
 
-        <receiver android:name=".receivers.NotifyReceiver">
+        <receiver android:name=".receiver.NotifyReceiver">
             <intent-filter>
                 <action android:name="com.wqzhang.thingswapper.Receivers.NotifyReceiver" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".receivers.BootComletedBroadcastReceiver">
+        <receiver android:name=".receiver.BootComletedBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <category android:name="android.intent.category.HOME" />

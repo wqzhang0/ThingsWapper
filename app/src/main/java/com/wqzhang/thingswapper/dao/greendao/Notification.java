@@ -21,13 +21,16 @@ public class Notification {
     private Long id;
     private Integer notifyType;
     private java.util.Date reminderDate;
+    private String repeatType;
     private Integer remindFrequency;
     private Integer remindFrequencyInterval;
     private Integer remindCount;
     private java.util.Date endDate;
-    private Boolean isSynchronize;
+    private Boolean synchronize;
     private java.util.Date preNotifyDate;
     private Boolean alearyNotify;
+    private Boolean invalide;
+    private java.util.Date nextRemindDate;
 
     /** Used to resolve relations */
     @Generated
@@ -54,17 +57,20 @@ public class Notification {
     }
 
     @Generated
-    public Notification(Long id, Integer notifyType, java.util.Date reminderDate, Integer remindFrequency, Integer remindFrequencyInterval, Integer remindCount, java.util.Date endDate, Boolean isSynchronize, java.util.Date preNotifyDate, Boolean alearyNotify) {
+    public Notification(Long id, Integer notifyType, java.util.Date reminderDate, String repeatType, Integer remindFrequency, Integer remindFrequencyInterval, Integer remindCount, java.util.Date endDate, Boolean synchronize, java.util.Date preNotifyDate, Boolean alearyNotify, Boolean invalide, java.util.Date nextRemindDate) {
         this.id = id;
         this.notifyType = notifyType;
         this.reminderDate = reminderDate;
+        this.repeatType = repeatType;
         this.remindFrequency = remindFrequency;
         this.remindFrequencyInterval = remindFrequencyInterval;
         this.remindCount = remindCount;
         this.endDate = endDate;
-        this.isSynchronize = isSynchronize;
+        this.synchronize = synchronize;
         this.preNotifyDate = preNotifyDate;
         this.alearyNotify = alearyNotify;
+        this.invalide = invalide;
+        this.nextRemindDate = nextRemindDate;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -96,6 +102,14 @@ public class Notification {
 
     public void setReminderDate(java.util.Date reminderDate) {
         this.reminderDate = reminderDate;
+    }
+
+    public String getRepeatType() {
+        return repeatType;
+    }
+
+    public void setRepeatType(String repeatType) {
+        this.repeatType = repeatType;
     }
 
     public Integer getRemindFrequency() {
@@ -130,12 +144,12 @@ public class Notification {
         this.endDate = endDate;
     }
 
-    public Boolean getIsSynchronize() {
-        return isSynchronize;
+    public Boolean getSynchronize() {
+        return synchronize;
     }
 
-    public void setIsSynchronize(Boolean isSynchronize) {
-        this.isSynchronize = isSynchronize;
+    public void setSynchronize(Boolean synchronize) {
+        this.synchronize = synchronize;
     }
 
     public java.util.Date getPreNotifyDate() {
@@ -152,6 +166,22 @@ public class Notification {
 
     public void setAlearyNotify(Boolean alearyNotify) {
         this.alearyNotify = alearyNotify;
+    }
+
+    public Boolean getInvalide() {
+        return invalide;
+    }
+
+    public void setInvalide(Boolean invalide) {
+        this.invalide = invalide;
+    }
+
+    public java.util.Date getNextRemindDate() {
+        return nextRemindDate;
+    }
+
+    public void setNextRemindDate(java.util.Date nextRemindDate) {
+        this.nextRemindDate = nextRemindDate;
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */

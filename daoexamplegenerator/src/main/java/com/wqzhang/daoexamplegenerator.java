@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class daoexamplegenerator {
     public static void main(String[] args) throws Exception {
-        Schema schema = new Schema(10, "com.wqzhang.thingswapper.dao.greendao");
+        Schema schema = new Schema(11, "com.wqzhang.thingswapper.dao.greendao");
         schema.enableKeepSectionsByDefault();
         initDatabase(schema);
         new DaoGenerator().generateAll(schema, "/home/wqzhang/GraduationProjectCode/ThingsWapper/app/src/main/java");
@@ -26,7 +26,7 @@ public class daoexamplegenerator {
         user.addStringProperty("password");
         user.addStringProperty("email");
         user.addDateProperty("createDate");
-        user.addBooleanProperty("isSynchronize");
+        user.addBooleanProperty("synchronize");
         user.addBooleanProperty("defaultLoginAccount");
         user.setJavaDoc("user Model ,保存用户基本信息");
 
@@ -36,21 +36,24 @@ public class daoexamplegenerator {
         toDoThing.addIntProperty("reminderType");
         toDoThing.addDateProperty("createDate");
         toDoThing.addDateProperty("finshDate");
-        toDoThing.addIntProperty("Status");
-        toDoThing.addBooleanProperty("isSynchronize");
+        toDoThing.addIntProperty("status");
+        toDoThing.addBooleanProperty("synchronize");
 
         Entity notification = schema.addEntity("Notification");
 
         notification.addIdProperty();
         notification.addIntProperty("notifyType");
         notification.addDateProperty("reminderDate");
+        notification.addStringProperty("repeatType");
         notification.addIntProperty("remindFrequency");
         notification.addIntProperty("remindFrequencyInterval");
         notification.addIntProperty("remindCount");
         notification.addDateProperty("endDate");
-        notification.addBooleanProperty("isSynchronize");
+        notification.addBooleanProperty("synchronize");
         notification.addDateProperty("preNotifyDate");
         notification.addBooleanProperty("alearyNotify");
+        notification.addBooleanProperty("invalide");
+        notification.addDateProperty("nextRemindDate");
 
         Entity connection_T_N = schema.addEntity("Connection_T_N");
         connection_T_N.addIdProperty();

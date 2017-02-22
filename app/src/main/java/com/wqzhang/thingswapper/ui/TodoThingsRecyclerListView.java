@@ -10,8 +10,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 
-import com.wqzhang.thingswapper.adapters.ToDoThingsRecyclerAdapter;
-import com.wqzhang.thingswapper.events.PullFreshScrollingEvent;
+import com.wqzhang.thingswapper.adapter.ToDoThingsRecyclerAdapter;
+import com.wqzhang.thingswapper.event.PullFreshScrollingEvent;
 import com.wqzhang.thingswapper.listener.abs.OnScrolledListener;
 
 import org.greenrobot.eventbus.EventBus;

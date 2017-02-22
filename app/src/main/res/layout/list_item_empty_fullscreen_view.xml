@@ -9,6 +9,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="事情都做完啦,下滑添加一个吧" />
+        android:text="这里什么都没有,下滑添加一个吧" />
 
 </LinearLayout>

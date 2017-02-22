@@ -2,10 +2,10 @@ package com.wqzhang.thingswapper.dao;
 
 import com.wqzhang.thingswapper.dao.greendao.Notification;
 import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
-import com.wqzhang.thingswapper.events.DataCacheChange;
-import com.wqzhang.thingswapper.events.SaveChooseOperationEvent;
-import com.wqzhang.thingswapper.exceptions.CustomerException;
-import com.wqzhang.thingswapper.tools.Common;
+import com.wqzhang.thingswapper.event.DataCacheChange;
+import com.wqzhang.thingswapper.event.SaveChooseOperationEvent;
+import com.wqzhang.thingswapper.exception.CustomerException;
+import com.wqzhang.thingswapper.util.Common;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -73,14 +73,14 @@ public class AddThingOperationXMLData {
 
                 break;
             case SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_COUNTS:
-                if (!saveChooseOperationEvent.isDetermine()) return;
+                if (!saveChooseOperationEvent.getDetermine()) return;
                 sharedPreferencesControl.getEditor().putString("NOTIFY_COUNTS", saveChooseOperationEvent.getNotifityCounts()).commit();
                 AddThingOperationXMLDataCache.setNotifyCounts(saveChooseOperationEvent.getNotifityCounts());
                 //发送 改变视图的消息
                 bus.post(new DataCacheChange(DataCacheChange.TYPE_NOTYFLY_COUNTS_CHANGE, saveChooseOperationEvent.getNotifityCounts()));
                 break;
             case SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE:
-                if (!saveChooseOperationEvent.isDetermine()) return;
+                if (!saveChooseOperationEvent.getDetermine()) return;
                 dates = readNotifyTime();
                 dates.add(saveChooseOperationEvent.getDate());
                 sb = new StringBuilder();
@@ -96,7 +96,7 @@ public class AddThingOperationXMLData {
                 bus.post(new DataCacheChange(DataCacheChange.TYPE_NOTYFLY_DATE_CHANGE, true));
                 break;
             case SaveChooseOperationEvent.TYPE_REMOVE_NOTIFY_DATE:
-                if (!saveChooseOperationEvent.isDetermine()) return;
+                if (!saveChooseOperationEvent.getDetermine()) return;
                 dates = readNotifyTime();
                 for (int i = 0; i < dates.size(); i++) {
                     if (dates.get(i).equals(saveChooseOperationEvent.getDate())) {
@@ -120,12 +120,12 @@ public class AddThingOperationXMLData {
 
 
             case SaveChooseOperationEvent.TYPE_IS_REPEAT:
-                sharedPreferencesControl.getEditor().putBoolean("IS_REPEAT", saveChooseOperationEvent.isDetermine()).commit();
-                AddThingOperationXMLDataCache.setIsRepeat(saveChooseOperationEvent.isDetermine());
+                sharedPreferencesControl.getEditor().putBoolean("IS_REPEAT", saveChooseOperationEvent.getDetermine()).commit();
+                AddThingOperationXMLDataCache.setRepeat(saveChooseOperationEvent.getDetermine());
                 break;
             case SaveChooseOperationEvent.TYPE_IS_REMINDER:
-                sharedPreferencesControl.getEditor().putBoolean("IS_REMINDER", saveChooseOperationEvent.isDetermine()).commit();
-                AddThingOperationXMLDataCache.setIsReminder(saveChooseOperationEvent.isDetermine());
+                sharedPreferencesControl.getEditor().putBoolean("IS_REMINDER", saveChooseOperationEvent.getDetermine()).commit();
+                AddThingOperationXMLDataCache.setReminder(saveChooseOperationEvent.getDetermine());
                 break;
             default:
                 break;
@@ -169,7 +169,7 @@ public class AddThingOperationXMLData {
     public ToDoThing getToDothing() {
         ToDoThing toDoThing = new ToDoThing();
         toDoThing.setCreateDate(new Date());
-        toDoThing.setIsSynchronize(false);
+        toDoThing.setSynchronize(false);
         toDoThing.setStatus(Common.STATUS_TO_BE_DONE);
         toDoThing.setReminderContext(readContent());
         toDoThing.setReminderType(readNotifyType());
@@ -183,6 +183,10 @@ public class AddThingOperationXMLData {
      */
     public ArrayList<Notification> getNotifycation() {
         ArrayList<Notification> notificationArrayList = new ArrayList<>();
+        //如果没有用户设置了提醒时间,但是没有又关闭了选择switch,这里给出提醒的时间为空
+        if (!isReminder()) {
+            return notificationArrayList;
+        }
 
         ArrayList<Date> dates = readNotifyTime();
         int notifyType = readNotifyType();
@@ -190,25 +194,31 @@ public class AddThingOperationXMLData {
             Notification notification = new Notification();
             notification.setAlearyNotify(false);
             notification.setNotifyType(Common.REMINDER_TYPE_NONE);
-            notification.setIsSynchronize(false);
+            notification.setSynchronize(false);
             notificationArrayList.add(notification);
         } else if (dates.size() == 1) {
             //只有一个时间
             //现在版本 只有提醒时间  无其他
             Notification notification = new Notification();
             notification.setNotifyType(notifyType);
-            notification.setIsSynchronize(false);
+            notification.setSynchronize(false);
             notification.setReminderDate(dates.get(0));
             notification.setAlearyNotify(false);
+            //仅当只有一次提醒时间时可以设置重复  这里做重复的判断
+            if (isRepeat()) {
+                String rePeatType = readNotifyCounts();
+                notification.setRepeatType(rePeatType);
+            }
+
             notificationArrayList.add(notification);
 
         } else {
             //多个时间提醒
-            for (Date _date : dates) {
+            for (Date date : dates) {
                 Notification notification = new Notification();
                 notification.setNotifyType(notifyType);
-                notification.setIsSynchronize(false);
-                notification.setReminderDate(_date);
+                notification.setSynchronize(false);
+                notification.setReminderDate(date);
                 notification.setAlearyNotify(false);
                 notificationArrayList.add(notification);
             }
@@ -227,13 +237,13 @@ public class AddThingOperationXMLData {
 
     public ArrayList<Date> readNotifyTime() {
         ArrayList<Date> dates = new ArrayList<>();
-        String _str_dates = sharedPreferencesControl.getSharedPreferences().getString("NOTIFY_DATES", "");
-        if (_str_dates.equals("")) {
+        String characterDates = sharedPreferencesControl.getSharedPreferences().getString("NOTIFY_DATES", "");
+        if (characterDates.equals("")) {
             return dates;
         }
-        String[] _str_Num = _str_dates.split("&&");
-        for (String tmp : _str_Num) {
-            dates.add(new Date(tmp));
+        String[] arrayDates = characterDates.split("&&");
+        for (String strDate : arrayDates) {
+            dates.add(new Date(strDate));
         }
 
         return dates;

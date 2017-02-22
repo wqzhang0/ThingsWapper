@@ -106,7 +106,7 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
     }
 
 
-    float first_press_down = 0;
+    float firstPressDown = 0;
 
     int X = 0, Y = 0;
     int TAN = 2;
@@ -117,8 +117,8 @@ public class SlideContentView extends LinearLayout implements View.OnClickListen
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                first_press_down = getScaleX();
-                first_press_down = event.getX();
+                firstPressDown = getScaleX();
+                firstPressDown = event.getX();
                 X = (int) event.getRawX();
                 Y = (int) event.getY();
                 isScollerContentView = false;

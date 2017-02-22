@@ -2,7 +2,6 @@ package com.wqzhang.thingswapper;
 
 import android.app.Application;
 import android.content.Context;
-import android.os.Handler;
 
 import com.wqzhang.thingswapper.dao.AddThingOperationXMLData;
 import com.wqzhang.thingswapper.dao.AddThingOperationXMLDataCache;
@@ -10,8 +9,8 @@ import com.wqzhang.thingswapper.dao.BusinessProcess;
 import com.wqzhang.thingswapper.dao.SharedPreferencesControl;
 import com.wqzhang.thingswapper.dao.greendao.DaoMaster;
 import com.wqzhang.thingswapper.dao.greendao.DaoSession;
-import com.wqzhang.thingswapper.model.AlarmModel;
-import com.wqzhang.thingswapper.tools.AlarmTimer;
+import com.wqzhang.thingswapper.model.AlarmDTO;
+import com.wqzhang.thingswapper.util.AlarmTimer;
 
 
 import org.greenrobot.greendao.database.Database;
@@ -58,7 +57,7 @@ public class MainApplication extends Application {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                AlarmModel needNotifyAlarmModel = BusinessProcess.getInstance().readNeedNotifyToDoThings();
+                AlarmDTO needNotifyAlarmModel = BusinessProcess.getInstance().listNeedNotifyThings();
                 if (needNotifyAlarmModel != null) {
                     //存在需要提醒的事项
                     //设置Alerm

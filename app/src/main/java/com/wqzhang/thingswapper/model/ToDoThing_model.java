@@ -1,7 +1,7 @@
 package com.wqzhang.thingswapper.model;
 
 import com.wqzhang.thingswapper.db.DatebaseHelper;
-import com.wqzhang.thingswapper.tools.Common;
+import com.wqzhang.thingswapper.util.Common;
 
 import java.util.Date;
 

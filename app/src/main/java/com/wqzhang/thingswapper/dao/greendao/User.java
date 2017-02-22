@@ -24,7 +24,7 @@ public class User {
     private String password;
     private String email;
     private java.util.Date createDate;
-    private Boolean isSynchronize;
+    private Boolean synchronize;
     private Boolean defaultLoginAccount;
 
     /** Used to resolve relations */
@@ -52,14 +52,14 @@ public class User {
     }
 
     @Generated
-    public User(Long id, String name, String account, String password, String email, java.util.Date createDate, Boolean isSynchronize, Boolean defaultLoginAccount) {
+    public User(Long id, String name, String account, String password, String email, java.util.Date createDate, Boolean synchronize, Boolean defaultLoginAccount) {
         this.id = id;
         this.name = name;
         this.account = account;
         this.password = password;
         this.email = email;
         this.createDate = createDate;
-        this.isSynchronize = isSynchronize;
+        this.synchronize = synchronize;
         this.defaultLoginAccount = defaultLoginAccount;
     }
 
@@ -118,12 +118,12 @@ public class User {
         this.createDate = createDate;
     }
 
-    public Boolean getIsSynchronize() {
-        return isSynchronize;
+    public Boolean getSynchronize() {
+        return synchronize;
     }
 
-    public void setIsSynchronize(Boolean isSynchronize) {
-        this.isSynchronize = isSynchronize;
+    public void setSynchronize(Boolean synchronize) {
+        this.synchronize = synchronize;
     }
 
     public Boolean getDefaultLoginAccount() {

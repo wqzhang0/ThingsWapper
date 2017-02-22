@@ -11,11 +11,11 @@ import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
 import com.wqzhang.thingswapper.dao.greendao.ToDoThingDao;
 import com.wqzhang.thingswapper.dao.greendao.User;
 import com.wqzhang.thingswapper.dao.greendao.UserDao;
-import com.wqzhang.thingswapper.model.AlarmModel;
-import com.wqzhang.thingswapper.model.ChartDataModel;
-import com.wqzhang.thingswapper.tools.Common;
-import com.wqzhang.thingswapper.tools.DateUtil;
-import com.wqzhang.thingswapper.tools.NotifyParseUtil;
+import com.wqzhang.thingswapper.model.AlarmDTO;
+import com.wqzhang.thingswapper.model.ChartDataDTO;
+import com.wqzhang.thingswapper.util.Common;
+import com.wqzhang.thingswapper.util.DateUtil;
+import com.wqzhang.thingswapper.util.NotifyParseUtil;
 
 import org.greenrobot.greendao.query.Query;
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -65,7 +65,7 @@ public class BusinessProcess implements BusinessProcessImpl {
         if (userArrayList.size() == 0) {
             user = new User();
             user.setCreateDate(new Date());
-            user.setIsSynchronize(false);
+            user.setSynchronize(false);
             user.setName("default");
             user.setDefaultLoginAccount(true);
             userDao.insert(user);
@@ -76,14 +76,14 @@ public class BusinessProcess implements BusinessProcessImpl {
     }
 
     @Override
-    public ArrayList<ToDoThing> readFinshThingsFinshTimeDesc() {
+    public ArrayList<ToDoThing> listFinshThingsOrderByFinshTimeDesc() {
         QueryBuilder<ToDoThing> finshQueryBuilder = toDoThingDao.queryBuilder();
         ArrayList<ToDoThing> toDoThings = (ArrayList<ToDoThing>) finshQueryBuilder.where(ToDoThingDao.Properties.Status.eq(Common.STATUS_FINSH)).orderDesc(ToDoThingDao.Properties.FinshDate).list();
         return toDoThings;
     }
 
     @Override
-    public ArrayList<ToDoThing> readNotDoneThingsCreateTimeDesc() {
+    public ArrayList<ToDoThing> listNotDoneThingsOrderByCreateTimeDesc() {
         QueryBuilder<ToDoThing> notDoneQueryBuilder = toDoThingDao.queryBuilder();
         ArrayList<ToDoThing> toDoThings = (ArrayList<ToDoThing>) notDoneQueryBuilder.where(ToDoThingDao.Properties.Status.eq(Common.STATUS_TO_BE_DONE)).orderDesc(ToDoThingDao.Properties.CreateDate).list();
         return toDoThings;
@@ -98,32 +98,32 @@ public class BusinessProcess implements BusinessProcessImpl {
     }
 
     @Override
-    public ArrayList<ToDoThing> readAllThingsByUser(User user) {
+    public ArrayList<ToDoThing> listAllThingsByUser(User user) {
         return null;
     }
 
     @Override
-    public ArrayList<ToDoThing> readAllThingsByUserId(int userId) {
+    public ArrayList<ToDoThing> listAllThingsByUserId(int userId) {
         return null;
     }
 
     @Override
-    public ArrayList<ToDoThing> readAllThings() {
+    public ArrayList<ToDoThing> listAllThings() {
         Query<ToDoThing> todoThingQueue = toDoThingDao.queryBuilder().build();
         ArrayList<ToDoThing> toDoThings = (ArrayList<ToDoThing>) todoThingQueue.list();
         return toDoThings;
     }
 
     @Override
-    public void deleteToDoTingById(Long id) {
-        ToDoThing toDoThing = readThingById(id);
+    public void removeToDoTingById(Long id) {
+        ToDoThing toDoThing = getThingById(id);
         if (toDoThing != null) {
             toDoThingDao.delete(toDoThing);
         }
     }
 
     @Override
-    public ToDoThing readThingById(Long id) {
+    public ToDoThing getThingById(Long id) {
         ToDoThing toDoThing = null;
         QueryBuilder<ToDoThing> toDoThingQueryBuilder = toDoThingDao.queryBuilder();
         ArrayList<ToDoThing> toDoThings = (ArrayList<ToDoThing>) toDoThingQueryBuilder.where(ToDoThingDao.Properties.Id.eq(id)).list();
@@ -134,13 +134,13 @@ public class BusinessProcess implements BusinessProcessImpl {
     }
 
     @Override
-    public void addToDoThing(ToDoThing toDoThing) {
+    public void saveThing(ToDoThing toDoThing) {
         toDoThingDao.insert(toDoThing);
 
     }
 
     @Override
-    public void changeToDoThingState(Long id, int state) {
+    public void updateThingState(Long id, int state) {
         QueryBuilder<ToDoThing> toDoThingQueryBuilder = toDoThingDao.queryBuilder();
         ToDoThing toDoThing = toDoThingQueryBuilder.where(ToDoThingDao.Properties.Id.eq(id)).list().get(0);
         if (state == Common.STATUS_FINSH) {
@@ -148,10 +148,11 @@ public class BusinessProcess implements BusinessProcessImpl {
             ArrayList<Notification> notifications = new ArrayList<Notification>();
             ArrayList<Connection_T_N> connection_t_ns = (ArrayList<Connection_T_N>) toDoThing.getNotificationIds();
             for (int i = 0; i < connection_t_ns.size(); i++) {
-                Notification _tmpNotification = connection_t_ns.get(i).getNotification();
-                _tmpNotification.setAlearyNotify(true);
-                _tmpNotification.setPreNotifyDate(new Date());
-                notifications.add(_tmpNotification);
+                Notification tmpNotification = connection_t_ns.get(i).getNotification();
+                tmpNotification.setAlearyNotify(true);
+                tmpNotification.setPreNotifyDate(new Date());
+                tmpNotification.setInvalide(true);
+                notifications.add(tmpNotification);
             }
             notificationDao.updateInTx(notifications);
         }
@@ -160,65 +161,76 @@ public class BusinessProcess implements BusinessProcessImpl {
     }
 
     @Override
-    public AlarmModel readNeedNotifyToDoThings() {
+    public AlarmDTO listNeedNotifyThings() {
         //找到需要提醒的事项,判断依据,
         // 是否提醒(根据 提醒类型判断)
         // 上次是否有提醒时间,
         // 提醒时间是否大于当前时间
 
-        AlarmModel alarmModel = null;
+        AlarmDTO alarmModel = null;
         long currentDate = DateUtil.getCurrentDate().getTime();
         ArrayList<ToDoThing> toDoThings = new ArrayList<>();
 
-        QueryBuilder<Notification> notificationQueryBuilder = notificationDao.queryBuilder();
-        notificationQueryBuilder.where(NotificationDao.Properties.PreNotifyDate.isNull(),
+
+        //这里查询 的结果是不重复的提醒,判断依据是 :
+        // 1 上次提醒时间为空;
+        // 2 提醒类型不为空;
+        // 3 设置的提醒时间大于此时;
+        // 4 AlearyNotify为false
+        // 5 invalide 字段为false
+        //按照提醒时间倒叙排序
+        QueryBuilder<Notification> noRepeatNotificationQueryBuilder = notificationDao.queryBuilder();
+        noRepeatNotificationQueryBuilder.where(
+                NotificationDao.Properties.PreNotifyDate.isNull(),
                 NotificationDao.Properties.NotifyType.notEq(0),
                 NotificationDao.Properties.ReminderDate.ge(currentDate),
+                NotificationDao.Properties.Invalide.eq(false),
                 NotificationDao.Properties.AlearyNotify.eq(false))
                 .orderAsc(NotificationDao.Properties.ReminderDate);
 
-        ArrayList<Notification> notificationArrayList = (ArrayList<Notification>) notificationQueryBuilder.list();
-        ToDoThing _tmpToDoThings;
-        ArrayList<Long> notificationIds = new ArrayList<>();
-        if (notificationArrayList.size() == 0) {
-            return alarmModel;
-        } else if (notificationArrayList.size() == 1) {
-            _tmpToDoThings = notificationArrayList.get(0).getToDoThingIds().get(0).getToDoThing();
-            if (_tmpToDoThings.getStatus() == Common.STATUS_TO_BE_DONE) {
-                toDoThings.add(notificationArrayList.get(0).getToDoThingIds().get(0).getToDoThing());
-                Integer reminderType = toDoThings.get(0).getReminderType();
+        ArrayList<Notification> noRepeatNotificationArrayList = (ArrayList<Notification>) noRepeatNotificationQueryBuilder.list();
 
-                notificationIds.add(notificationArrayList.get(0).getId());
-                alarmModel = new AlarmModel(toDoThings, notificationArrayList.get(0).getReminderDate(), reminderType, notificationIds);
-                return alarmModel;
-            }
+        //这里负责查询重复的提醒
+        //查询的依据是
+        // 1.重复提醒类型不是"不重复";
+        // 2.invalide 字段为false
+        QueryBuilder<Notification> repeatNotificationQueryBuilder = notificationDao.queryBuilder();
+        repeatNotificationQueryBuilder.where(
+                NotificationDao.Properties.RepeatType.notEq("不重复"),
+                NotificationDao.Properties.Invalide.eq(false)
+        ).orderAsc(NotificationDao.Properties.NextRemindDate);
+        //提醒日期按照上次提醒的日期和创建的日期,和重复的类型 之间运算
+        ArrayList<Notification> repeatNotificationArrayList = (ArrayList<Notification>) repeatNotificationQueryBuilder.list();
 
-        } else if (notificationArrayList.size() > 1) {
-            Notification recentNotification = notificationArrayList.get(0);
-            for (Notification _NOTIFYCATION : notificationArrayList) {
-                //查找出与排序第一条相同的提醒时间
-                if (_NOTIFYCATION.getReminderDate().equals(recentNotification.getReminderDate())) {
-                    //并且事项处于未被提醒状态
-                    if (_NOTIFYCATION.getToDoThingIds().get(0).getToDoThing().getStatus() == Common.STATUS_TO_BE_DONE) {
-                        toDoThings.add(_NOTIFYCATION.getToDoThingIds().get(0).getToDoThing());
-                        notificationIds.add(_NOTIFYCATION.getId());
-                    }
-                }
-            }
-            Integer reminderType = NotifyParseUtil.getNotifyType(toDoThings);
-            alarmModel = new AlarmModel(toDoThings, notificationArrayList.get(0).getReminderDate(), reminderType, notificationIds);
+        if (noRepeatNotificationArrayList.size() == 0 && repeatNotificationArrayList.size() == 0) {
             return alarmModel;
+        } else if (noRepeatNotificationArrayList.size() > 0 && repeatNotificationArrayList.size() == 0) {
+            return NotifyParseUtil.getRecentNoRepeatNotifys(noRepeatNotificationArrayList);
+        } else if (noRepeatNotificationArrayList.size() == 0 && repeatNotificationArrayList.size() > 0) {
+            return NotifyParseUtil.getRecentRepeatNotifys(repeatNotificationArrayList);
+        } else if (noRepeatNotificationArrayList.size() > 0 && repeatNotificationArrayList.size() > 0) {
+            //如果不重复的提醒时间 大于 重复提醒的  下一次提醒时间
+            if (noRepeatNotificationArrayList.get(0).getReminderDate().getTime() > repeatNotificationArrayList.get(0).getNextRemindDate().getTime()) {
+                //返回 不重复提醒时间
+                return NotifyParseUtil.getRecentNoRepeatNotifys(noRepeatNotificationArrayList);
+            } else if (noRepeatNotificationArrayList.get(0).getReminderDate().getTime() == repeatNotificationArrayList.get(0).getNextRemindDate().getTime()) {
+                //如果两者需要提醒的时间相等
+                return NotifyParseUtil.getRecentNotifys(noRepeatNotificationArrayList, repeatNotificationArrayList);
+            } else if (noRepeatNotificationArrayList.get(0).getReminderDate().getTime() < repeatNotificationArrayList.get(0).getNextRemindDate().getTime()) {
+                //返回重复提醒的时间
+                return NotifyParseUtil.getRecentRepeatNotifys(repeatNotificationArrayList);
+            }
         }
         return alarmModel;
     }
 
     @Override
-    public AlarmModel readExpiredToDoThing() {
+    public AlarmDTO listExpiredThings() {
         //找到需要提醒的事项,判断依据,
         // 是否提醒(根据 提醒类型判断)
         // 上次是否有提醒时间,
         // 提醒时间是否大于当前时间         //比较上一次提醒的时间,
-        AlarmModel alarmModel = null;
+        AlarmDTO alarmModel = null;
         long currentDate = DateUtil.getCurrentDate().getTime();
         ArrayList<ToDoThing> toDoThings = new ArrayList<>();
 
@@ -244,7 +256,7 @@ public class BusinessProcess implements BusinessProcessImpl {
 //            Integer reminderType = NotifyParseUtil.getNotifyType(toDoThings);
             Integer reminderType = Common.REMINDER_TYPE_NONE;
 
-            alarmModel = new AlarmModel(toDoThings, new Date(), reminderType, notificationIds);
+            alarmModel = new AlarmDTO(toDoThings, new Date(), reminderType, notificationIds);
             return alarmModel;
         }
 
@@ -252,7 +264,7 @@ public class BusinessProcess implements BusinessProcessImpl {
     }
 
     @Override
-    public void setPreNotifyDate(Long notifyId, Date date) {
+    public void updatePreNotifyDate(Long notifyId, Date date) {
         QueryBuilder<Notification> notificationQueryBuilder = notificationDao.queryBuilder();
         notificationQueryBuilder.where(NotificationDao.Properties.Id.eq(notifyId));
         ArrayList<Notification> notifications = (ArrayList<Notification>) notificationQueryBuilder.build().list();
@@ -264,8 +276,8 @@ public class BusinessProcess implements BusinessProcessImpl {
     }
 
     @Override
-    public ArrayList<ChartDataModel> readRecentWeekNewThings() {
-        ArrayList<ChartDataModel> arrayList = new ArrayList<>();
+    public ArrayList<ChartDataDTO> countRecentWeekNewThings() {
+        ArrayList<ChartDataDTO> arrayList = new ArrayList<>();
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -284,15 +296,15 @@ public class BusinessProcess implements BusinessProcessImpl {
                     .where(ToDoThingDao.Properties.CreateDate.ge(dayStart), ToDoThingDao.Properties.CreateDate.lt(dayEnd))
                     .list().size();
 
-            arrayList.add(new ChartDataModel(calendar.getTime(), size));
+            arrayList.add(new ChartDataDTO(calendar.getTime(), size));
         }
 
         return arrayList;
     }
 
     @Override
-    public ArrayList<ChartDataModel> readRecentWeekFinshThings() {
-        ArrayList<ChartDataModel> arrayList = new ArrayList<>();
+    public ArrayList<ChartDataDTO> countRecentWeekFinshThings() {
+        ArrayList<ChartDataDTO> arrayList = new ArrayList<>();
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -311,16 +323,16 @@ public class BusinessProcess implements BusinessProcessImpl {
                     .where(ToDoThingDao.Properties.FinshDate.ge(dayStart), ToDoThingDao.Properties.FinshDate.lt(dayEnd))
                     .list().size();
 
-            arrayList.add(new ChartDataModel(calendar.getTime(), size));
+            arrayList.add(new ChartDataDTO(calendar.getTime(), size));
         }
 
         return arrayList;
     }
 
     @Override
-    public ArrayList<ChartDataModel> readTodayThings() {
+    public ArrayList<ChartDataDTO> countTodayThings() {
 
-        ArrayList<ChartDataModel> arrayList = new ArrayList<>();
+        ArrayList<ChartDataDTO> arrayList = new ArrayList<>();
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -341,17 +353,17 @@ public class BusinessProcess implements BusinessProcessImpl {
                 .where(ToDoThingDao.Properties.FinshDate.ge(dayStart), ToDoThingDao.Properties.FinshDate.lt(dayEnd))
                 .list().size();
 
-        int toBeDoneThingsCounts = readNotDoneThingsCreateTimeDesc().size();
+        int toBeDoneThingsCounts = listNotDoneThingsOrderByCreateTimeDesc().size();
 
         //依次添加顺序 未做,新增,完成
-        arrayList.add(new ChartDataModel(new Date(), toBeDoneThingsCounts));
-        arrayList.add(new ChartDataModel(new Date(), todayNewThingsCounts));
-        arrayList.add(new ChartDataModel(new Date(), todayFinshThingsCounts));
+        arrayList.add(new ChartDataDTO(new Date(), toBeDoneThingsCounts));
+        arrayList.add(new ChartDataDTO(new Date(), todayNewThingsCounts));
+        arrayList.add(new ChartDataDTO(new Date(), todayFinshThingsCounts));
         return arrayList;
     }
 
     @Override
-    public void addToDoThing(ToDoThing toDoThing, List<Notification> notificationList) {
+    public void saveThing(ToDoThing toDoThing, List<Notification> notificationList) {
         ArrayList<Connection_T_N> connection_t_nArrayList = new ArrayList<>();
         toDoThing.setUser(readOrAddUserInfo());
         try {

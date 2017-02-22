@@ -32,8 +32,8 @@ public class ToDoThingDao extends AbstractDao<ToDoThing, Long> {
         public final static Property ReminderType = new Property(2, Integer.class, "reminderType", false, "REMINDER_TYPE");
         public final static Property CreateDate = new Property(3, java.util.Date.class, "createDate", false, "CREATE_DATE");
         public final static Property FinshDate = new Property(4, java.util.Date.class, "finshDate", false, "FINSH_DATE");
-        public final static Property Status = new Property(5, Integer.class, "Status", false, "STATUS");
-        public final static Property IsSynchronize = new Property(6, Boolean.class, "isSynchronize", false, "IS_SYNCHRONIZE");
+        public final static Property Status = new Property(5, Integer.class, "status", false, "STATUS");
+        public final static Property Synchronize = new Property(6, Boolean.class, "synchronize", false, "SYNCHRONIZE");
         public final static Property UserId = new Property(7, Long.class, "userId", false, "USER_ID");
     }
 
@@ -59,8 +59,8 @@ public class ToDoThingDao extends AbstractDao<ToDoThing, Long> {
                 "\"REMINDER_TYPE\" INTEGER," + // 2: reminderType
                 "\"CREATE_DATE\" INTEGER," + // 3: createDate
                 "\"FINSH_DATE\" INTEGER," + // 4: finshDate
-                "\"STATUS\" INTEGER," + // 5: Status
-                "\"IS_SYNCHRONIZE\" INTEGER," + // 6: isSynchronize
+                "\"STATUS\" INTEGER," + // 5: status
+                "\"SYNCHRONIZE\" INTEGER," + // 6: synchronize
                 "\"USER_ID\" INTEGER);"); // 7: userId
     }
 
@@ -99,14 +99,14 @@ public class ToDoThingDao extends AbstractDao<ToDoThing, Long> {
             stmt.bindLong(5, finshDate.getTime());
         }
  
-        Integer Status = entity.getStatus();
-        if (Status != null) {
-            stmt.bindLong(6, Status);
+        Integer status = entity.getStatus();
+        if (status != null) {
+            stmt.bindLong(6, status);
         }
  
-        Boolean isSynchronize = entity.getIsSynchronize();
-        if (isSynchronize != null) {
-            stmt.bindLong(7, isSynchronize ? 1L: 0L);
+        Boolean synchronize = entity.getSynchronize();
+        if (synchronize != null) {
+            stmt.bindLong(7, synchronize ? 1L: 0L);
         }
  
         Long userId = entity.getUserId();
@@ -144,14 +144,14 @@ public class ToDoThingDao extends AbstractDao<ToDoThing, Long> {
             stmt.bindLong(5, finshDate.getTime());
         }
  
-        Integer Status = entity.getStatus();
-        if (Status != null) {
-            stmt.bindLong(6, Status);
+        Integer status = entity.getStatus();
+        if (status != null) {
+            stmt.bindLong(6, status);
         }
  
-        Boolean isSynchronize = entity.getIsSynchronize();
-        if (isSynchronize != null) {
-            stmt.bindLong(7, isSynchronize ? 1L: 0L);
+        Boolean synchronize = entity.getSynchronize();
+        if (synchronize != null) {
+            stmt.bindLong(7, synchronize ? 1L: 0L);
         }
  
         Long userId = entity.getUserId();
@@ -179,8 +179,8 @@ public class ToDoThingDao extends AbstractDao<ToDoThing, Long> {
             cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2), // reminderType
             cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)), // createDate
             cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)), // finshDate
-            cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5), // Status
-            cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0, // isSynchronize
+            cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5), // status
+            cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0, // synchronize
             cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7) // userId
         );
         return entity;
@@ -194,7 +194,7 @@ public class ToDoThingDao extends AbstractDao<ToDoThing, Long> {
         entity.setCreateDate(cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)));
         entity.setFinshDate(cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)));
         entity.setStatus(cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5));
-        entity.setIsSynchronize(cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0);
+        entity.setSynchronize(cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0);
         entity.setUserId(cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7));
      }
     
