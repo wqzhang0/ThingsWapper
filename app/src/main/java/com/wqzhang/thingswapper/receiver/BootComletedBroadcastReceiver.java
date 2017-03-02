@@ -24,7 +24,7 @@ public class BootComletedBroadcastReceiver extends BroadcastReceiver {
             //用Notification 提示
 
         }
-        AlarmDTO needNotifyAlarmModel = BusinessProcess.getInstance().listNeedNotifyThings();
+        AlarmDTO needNotifyAlarmModel = BusinessProcess.getInstance().listRecentNeedNotifyThings();
         if (needNotifyAlarmModel != null) {
             //存在需要提醒的事项
             //设置Alerm

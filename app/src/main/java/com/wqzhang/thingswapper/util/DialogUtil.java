@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 
+import com.wqzhang.thingswapper.MainApplication;
 import com.wqzhang.thingswapper.dao.BusinessProcess;
 
 import java.util.ArrayList;
@@ -15,8 +16,19 @@ import java.util.List;
  */
 
 public class DialogUtil {
+
+    private static AlertDialog.Builder builder;
+
+    private static AlertDialog.Builder getBuilder() {
+        if (builder == null) {
+            builder = new AlertDialog.Builder(MainApplication.getDialogContext());
+        }
+        return builder;
+    }
+
     public static void showNotifyNow(Context context, ArrayList<String> sequences) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = getBuilder();
         String finalMsg = "";
         for (int i = 0; i < sequences.size(); i++) {
             if (i == sequences.size() - 1) {
@@ -32,7 +44,8 @@ public class DialogUtil {
     }
 
     public static void showHistoryThings(Context context, ArrayList<String> sequences) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = getBuilder();
         builder.setTitle("你离开期间的通知");
         String finalMsg = "";
 
@@ -47,9 +60,9 @@ public class DialogUtil {
         builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-               List<Long> _ids =  BusinessProcess.getInstance().listExpiredThings().getNotifyIds();
-                for(Long _tmpIds : _ids){
-                    BusinessProcess.getInstance().updatePreNotifyDate(_tmpIds,new Date());
+                List<Long> _ids = BusinessProcess.getInstance().listExpiredThings().getNotifyIds();
+                for (Long _tmpIds : _ids) {
+                    BusinessProcess.getInstance().updatePreNotifyDate(_tmpIds, new Date());
                 }
             }
         });

@@ -3,8 +3,13 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="AppTheme.base">
         <item name="android:windowBackground">@drawable/splash</item>
-        <item name="android:windowFullscreen">true</item>
 
+        <!--<item name="android:windowFullscreen">true</item>-->
+    </style>
+
+    <style name="ActionTheme" parent="AppTheme.base">
+
+        <!--<item name="android:windowFullscreen">true</item>-->
     </style>
 
     <style name="AppTheme2" parent="Theme.AppCompat.CompactMenu"></style>

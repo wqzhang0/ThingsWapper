@@ -7,7 +7,10 @@
         android:id="@+id/slide_content_view"
         android:layout_width="600dp"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:background="@color/colorShowReminderBg"
+        android:elevation="5dp">
 
 
         <RelativeLayout
@@ -15,7 +18,7 @@
             android:layout_width="112dp"
             android:layout_height="match_parent"
             android:layout_gravity="left"
-            android:background="#d81e06"
+            android:background="@color/colorAccent"
             android:minHeight="56dp"
             android:visibility="invisible">
 

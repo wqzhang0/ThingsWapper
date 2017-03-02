@@ -35,36 +35,34 @@ public class NotifyReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "收到消息  ");
-//        Toast.makeText(context, "naol", Toast.LENGTH_LONG).show();
-//        Bundle bundle = intent.getBundleExtra(Common.INTENT_KEY_BUNDLE_KEY);
         Bundle bundle = intent.getExtras();
-
-//        String intentType = bundle.getString(Common.NOTIFY_TYPE);
-//        String common = (String) bundle.get("common");
         String intentType = (String) bundle.getCharSequence(Common.NOTIFY_TYPE);
+        //有新的闹醒需要提醒
+
         if (intentType.equals(Common.NOTIFY_NEW_MEG)) {
-            //有新的闹醒需要提醒
+            //如果是重复提醒,设置下次提醒的时间
+            AlarmDTO alarmDTO = bundle.getParcelable(Common.INTENT_PARCELABLE_KEY);
 
             //判断应用是在前台还是后台
             boolean isBg = SystemUtil.isBackground(SystemUtil.APP_PACKAGE);
+            alarmDTO.getNotifyIds();
+
             if (isBg) {
-                AlarmDTO alarmModel = bundle.getParcelable(Common.INTENT_PARCELABLE_KEY);
-                DialogUtil.showNotifyNow(MainApplication.getDialogContext(), alarmModel.getToDoThingsContent());
-                ArrayList<Long> notifyIds = alarmModel.getNotifyIds();
-                ArrayList<String> contents = alarmModel.getToDoThingsContent();
+                DialogUtil.showNotifyNow(MainApplication.getDialogContext(), alarmDTO.getToDoThingsContent());
+                ArrayList<Long> notifyIds = alarmDTO.getNotifyIds();
+                ArrayList<String> contents = alarmDTO.getToDoThingsContent();
                 for (int i = 0; i < notifyIds.size(); i++) {
                     //发送通知消息
                     sendNotification(notifyIds.get(i), contents.get(i), intent);
                     //已经发送通知,这里修改数据库  提醒类型设置为已经提醒
-                    BusinessProcess.getInstance().updateThingState(notifyIds.get(i), Common.STATUS_FINSH);
+//                    BusinessProcess.getInstance().updateThingState(notifyIds.get(i), Common.STATUS_FINSH);
                 }
             } else {
                 //如果在前台 直接显示
-                AlarmDTO alarmModel = bundle.getParcelable(Common.INTENT_PARCELABLE_KEY);
-                DialogUtil.showNotifyNow(MainApplication.getDialogContext(), alarmModel.getToDoThingsContent());
+                DialogUtil.showNotifyNow(MainApplication.getDialogContext(), alarmDTO.getToDoThingsContent());
             }
             //通知之后  重新设置新的闹铃
-            AlarmDTO needNotifyAlarmModel = BusinessProcess.getInstance().listNeedNotifyThings();
+            AlarmDTO needNotifyAlarmModel = BusinessProcess.getInstance().listRecentNeedNotifyThings();
             if (needNotifyAlarmModel != null) {
                 //存在需要提醒的事项
                 //设置Alerm

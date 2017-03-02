@@ -11,7 +11,7 @@
         android:id="@+id/topLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="#F0EFF5"
+        android:background="@color/colorMainBg"
         android:orientation="horizontal"
         android:paddingBottom="20dp"
         android:visibility="invisible">
@@ -39,8 +39,9 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffffff"
-        android:orientation="vertical">
+        android:background="@color/colorMainBg"
+        android:orientation="vertical"
+        android:scrollbars="vertical">
 
         <!--
         android:overScrollMode="never"-->
@@ -50,7 +51,7 @@
         android:id="@+id/bottomLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="#F0EFF5"
+        android:background="@color/colorMainBg"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:visibility="invisible">

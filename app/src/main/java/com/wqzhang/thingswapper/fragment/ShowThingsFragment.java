@@ -127,7 +127,7 @@ public class ShowThingsFragment extends BasePartenerFragment<ShowThingsVu> {
         toDoThingsRecyclerAdapter.setData(toDoThings);
         vu.getRecyclerView().setTag(R.id.showThingType, 1);
         vu.getRecyclerView().setAdapter(toDoThingsRecyclerAdapter);
-        vu.getRecyclerView().addItemDecoration(new CustomerItemDecoration());
+//        vu.getRecyclerView().addItemDecoration(new CustomerItemDecoration());
 
         //默认可以上拉
         TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOWN);

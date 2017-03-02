@@ -2,6 +2,7 @@ package com.wqzhang.thingswapper.vu;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +28,7 @@ public class MainVu implements Vu {
     private FrameLayout containerView;
     private TextView toolbarTitle;
     private ImageView navigationSettingImage, navigationShowThingsImage, navigationChartImage;
-
+    private FloatingActionButton fab;
     private Fragment currentFragment;
 
     @Override
@@ -42,6 +43,7 @@ public class MainVu implements Vu {
         navigationSettingImage = (ImageView) view.findViewById(R.id.navigation_setting_icon);
         navigationChartImage = (ImageView) view.findViewById(R.id.navigation_chart_icon);
         navigationShowThingsImage = (ImageView) view.findViewById(R.id.navigation_showthings_icon);
+        fab = (FloatingActionButton) view.findViewById(R.id.fab);
     }
 
     @Override
@@ -72,6 +74,7 @@ public class MainVu implements Vu {
             if (to instanceof ShowThingsFragment) {
                 setToolbarTittle("事项清单");
                 navigationShowThingsImage.setBackgroundResource(R.drawable.navigation_list_selected_icon);
+                fab.setVisibility(View.VISIBLE);
             } else if (to instanceof PoolFragment) {
                 setToolbarTittle("汇总");
                 navigationChartImage.setBackgroundResource(R.drawable.navigation_chart_selected_icon);
@@ -83,6 +86,7 @@ public class MainVu implements Vu {
             //修改之前 所在 条目 的图标
             if (currentFragment instanceof ShowThingsFragment) {
                 navigationShowThingsImage.setBackgroundResource(R.drawable.navigation_list_icon);
+                fab.setVisibility(View.INVISIBLE);
             } else if (currentFragment instanceof PoolFragment) {
                 navigationChartImage.setBackgroundResource(R.drawable.navigation_chart_icon);
             } else if (currentFragment instanceof PersonSetFragment) {
@@ -120,5 +124,9 @@ public class MainVu implements Vu {
 
     public void setToolbarTittle(String title) {
         toolbarTitle.setText(title);
+    }
+
+    public FloatingActionButton getFab() {
+        return fab;
     }
 }

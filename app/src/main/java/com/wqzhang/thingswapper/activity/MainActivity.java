@@ -2,6 +2,8 @@ package com.wqzhang.thingswapper.activity;
 
 import android.app.Fragment;
 import android.app.NotificationManager;
+import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.view.View;
 
 import com.wqzhang.thingswapper.MainApplication;
@@ -33,7 +35,7 @@ public class MainActivity extends BasePartenerAppCompatActivity<MainVu> implemen
         vu.getNavigationCharts().setOnClickListener(this);
         vu.getNavigationSetting().setOnClickListener(this);
         vu.getNavigationShowThings().setOnClickListener(this);
-
+        vu.getFab().setOnClickListener(this);
         vu.initFragment(showThingsFragment, fragmentManager);
 
     }
@@ -63,8 +65,10 @@ public class MainActivity extends BasePartenerAppCompatActivity<MainVu> implemen
                 vu.switchContent(poolFragment, fragmentManager);
                 break;
             case R.id.setting:
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
                 vu.switchContent(personSetFragment, fragmentManager);
-//                AlarmModel needNotifyAlarmModel = BusinessProcess.getInstance().listNeedNotifyThings();
+//                AlarmModel needNotifyAlarmModel = BusinessProcess.getInstance().listRecentNeedNotifyThings();
 //
 //
 //                if (needNotifyAlarmModel != null) {
@@ -89,6 +93,10 @@ public class MainActivity extends BasePartenerAppCompatActivity<MainVu> implemen
 //                    calendar.add(Calendar.MINUTE, 1);
 //                    sendBroadcast(intent);
 //                }
+                break;
+            case R.id.fab:
+                Intent intent = new Intent("com.wqzhang.thingswapper.activity.AddToDoThingActivity");
+                startActivity(intent);
                 break;
             default:
                 break;

@@ -40,7 +40,7 @@ public class MainApplication extends Application {
         AddThingOperationXMLData.getInstall().init();
 
 
-        BusinessProcess.getInstance().readOrAddUserInfo();
+        BusinessProcess.getInstance().getOrAddUserInfo();
         //初始化未保存事项 的历史数据 作为缓存
         AddThingOperationXMLDataCache.readHistory();
 
@@ -57,7 +57,7 @@ public class MainApplication extends Application {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                AlarmDTO needNotifyAlarmModel = BusinessProcess.getInstance().listNeedNotifyThings();
+                AlarmDTO needNotifyAlarmModel = BusinessProcess.getInstance().listRecentNeedNotifyThings();
                 if (needNotifyAlarmModel != null) {
                     //存在需要提醒的事项
                     //设置Alerm

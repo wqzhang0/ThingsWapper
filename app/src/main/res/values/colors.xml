@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#1296db</color>
-    <color name="colorPrimaryDark">#1296ff</color>
-    <color name="colorAccent">#FF4081</color>
+    <!--<color name="colorPrimary">#1296db</color>-->
+    <!--<color name="colorPrimaryDark">#1296ff</color>-->
+    <!--<color name="colorAccent">#FF4081</color>-->
+
+
+    <!--自己设定的主题颜色-->
+    <color name="colorPrimary">#2d7a9b</color>
+    <color name="colorPrimaryDark">#186d91</color>
+    <color name="colorAccent">#ff1654</color>
+    <color name="colorMainBg">#b2dbbf</color>
+    <color name="colorShowReminderBg">#f3ffbd</color>
+
 
     <color name="white">#ffffff</color>
     <color name="colorSpanBackgroung">#F0EEF4</color>

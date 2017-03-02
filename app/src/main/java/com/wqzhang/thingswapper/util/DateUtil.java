@@ -420,4 +420,38 @@ public class DateUtil {
 
         return newDateList;
     }
+
+    /**
+     * 对比传入时间  和 当前时间的 小时,分,秒 判断是否超过时间
+     *
+     * @param date
+     * @return
+     */
+    public static boolean reachCurrentTime(Date date) {
+        boolean isReach = false;
+        Date nowDate = new Date();
+        if (getHour(date) > getHour(nowDate)) {
+            //已经超过
+            isReach = true;
+        } else if (getHour(date) == getHour(nowDate)) {
+            //继续对比分钟
+            if (getMinute(date) > getMinute(nowDate)) {
+                //超过时间
+                isReach = true;
+            } else if (getMinute(date) == getMinute(nowDate)) {
+                //分钟相等,继续比较秒
+                if (getMillis(date) > getMillis(nowDate)) {
+                    isReach = true;
+                } else {
+                    //未超过
+                }
+            } else {
+                //小于,未超过
+            }
+        } else {
+            //未超过
+        }
+        return isReach;
+
+    }
 }

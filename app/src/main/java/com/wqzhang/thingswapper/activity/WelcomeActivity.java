@@ -24,7 +24,7 @@ public class WelcomeActivity extends BasePartenerActivity<WelcomeVu> implements 
         super.onBind();
         User user = BusinessProcess.getInstance().getOnlineUser();
 
-//        AlarmTimer.setAlarmTimer(getApplicationContext(), AlarmManager.ELAPSED_REALTIME, BusinessProcess.getInstance().listNeedNotifyThings());
+//        AlarmTimer.setAlarmTimer(getApplicationContext(), AlarmManager.ELAPSED_REALTIME, BusinessProcess.getInstance().listRecentNeedNotifyThings());
 
 //        Intent intent = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
 //        startActivity(intent);
