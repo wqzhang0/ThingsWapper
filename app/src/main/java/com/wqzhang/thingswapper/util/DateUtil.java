@@ -452,6 +452,25 @@ public class DateUtil {
             //未超过
         }
         return isReach;
+    }
 
+    /**
+     * 采用今天的日期,和传入的时分秒
+     *
+     * @param date
+     * @return
+     */
+    public static Date produceDete(Date date) {
+        Calendar nowCalendar = Calendar.getInstance();
+        nowCalendar.setTime(new Date());
+
+        Calendar targetCalendar = Calendar.getInstance();
+        targetCalendar.setTime(date);
+
+        nowCalendar.set(Calendar.HOUR, targetCalendar.get(Calendar.HOUR));
+        nowCalendar.set(Calendar.MINUTE, targetCalendar.get(Calendar.MINUTE));
+        nowCalendar.set(Calendar.MILLISECOND, targetCalendar.get(Calendar.MILLISECOND));
+
+        return nowCalendar.getTime();
     }
 }

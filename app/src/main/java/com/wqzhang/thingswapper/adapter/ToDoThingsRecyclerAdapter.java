@@ -2,17 +2,21 @@ package com.wqzhang.thingswapper.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.dao.BusinessProcess;
 import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
+import com.wqzhang.thingswapper.model.ShowThingsDTO;
 import com.wqzhang.thingswapper.util.Common;
 import com.wqzhang.thingswapper.ui.SlideContentView;
 import com.wqzhang.thingswapper.ui.TodoThingsRecyclerListView;
+import com.wqzhang.thingswapper.util.DateUtil;
 
 import java.util.ArrayList;
 
@@ -30,7 +34,7 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
 
     private LayoutInflater inflater = null;
     private Context mContext = null;
-    private ArrayList<ToDoThing> toDoThings;
+    private ArrayList<ShowThingsDTO> showThingsDTOs;
 
 
     public ToDoThingsRecyclerAdapter(Context context) {
@@ -39,8 +43,8 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
     }
 
 
-    public void setData(ArrayList<ToDoThing> toDoThings) {
-        this.toDoThings = toDoThings;
+    public void setData(ArrayList<ShowThingsDTO> toDoThings) {
+        this.showThingsDTOs = toDoThings;
         notifyDataSetChanged();
     }
 
@@ -78,8 +82,10 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
             SlideViewHolder slideViewHolder = (SlideViewHolder) holder;
             final SlideContentView slideContentView = slideViewHolder.slide_content_view;
             final TextView textView = (TextView) slideContentView.findViewById(R.id.tittle);
-            textView.setText(toDoThings.get(position).getReminderContext());
-            textView.setTag(R.id.toDoThingId, toDoThings.get(position).getId());
+
+            ToDoThing toDoThing = showThingsDTOs.get(position).getToDoThing();
+            textView.setText(toDoThing.getReminderContext());
+            textView.setTag(R.id.toDoThingId, toDoThing.getId());
 //            textView.setOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View view) {
@@ -110,8 +116,10 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
             SlideViewHolder slideViewHolder = (SlideViewHolder) holder;
             final SlideContentView slideContentView = slideViewHolder.slide_content_view;
             final TextView textView = (TextView) slideContentView.findViewById(R.id.tittle);
-            textView.setText(toDoThings.get(position).getReminderContext());
-            textView.setTag(R.id.toDoThingId, toDoThings.get(position).getId());
+
+            ToDoThing toDoThing = showThingsDTOs.get(position).getToDoThing();
+            textView.setText(toDoThing.getReminderContext());
+            textView.setTag(R.id.toDoThingId, toDoThing.getId());
             slideContentView.findViewById(R.id.bottom_right).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -131,31 +139,47 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
                     slideContentView.shrink();
                 }
             });
+            LinearLayout notifyLayout = (LinearLayout) slideContentView.findViewById(R.id.notify_layout);
+
+            ToDoThing tmpToDoThing = showThingsDTOs.get(position).getToDoThing();
+            if (tmpToDoThing.getReminderType() > 0) {
+                notifyLayout.setVisibility(View.VISIBLE);
+                TextView notifyTime = (TextView) slideContentView.findViewById(R.id.notify_time);
+                if (!showThingsDTOs.get(position).isAlreayNotify()) {
+                    String answer = DateUtil.formatDateByFormat(showThingsDTOs.get(position).getRecentReminderDate(), DateUtil.TIMESTAMP_PATTERN);
+                    notifyTime.setText((answer));
+                }
+                //如果存在nextReminder
+//                if(TextUtils.isEmpty(tmpToDoThing.get))
+//                notifyTime.setText();
+
+            } else {
+                notifyLayout.setVisibility(View.GONE);
+            }
         }
     }
 
     private void removeItem(Long toDoThingId) {
-        for (int i = 0; i < toDoThings.size(); i++) {
-            if (toDoThings.get(i).getId() == toDoThingId) {
+        for (int i = 0; i < showThingsDTOs.size(); i++) {
+            if (showThingsDTOs.get(i).getToDoThing().getId() == toDoThingId) {
                 notifyItemRemoved(i);
-                toDoThings.remove(i);
+                showThingsDTOs.remove(i);
             }
-
         }
     }
 
 
     @Override
     public int getItemCount() {
-        return (toDoThings == null || toDoThings.size() == 0) ? 1 : toDoThings.size();
+        return (showThingsDTOs == null || showThingsDTOs.size() == 0) ? 1 : showThingsDTOs.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (toDoThings == null || toDoThings.size() == 0) {
+        if (showThingsDTOs == null || showThingsDTOs.size() == 0) {
             return TYPE_EMPTY;
         } else {
-            if (toDoThings.get(position).getStatus() == Common.STATUS_FINSH) {
+            if (showThingsDTOs.get(position).getToDoThing().getStatus() == Common.STATUS_FINSH) {
                 return TYPE_NORMAL_FINSH;
             } else {
                 return TYPE_NORMAL_TO_BE_DONE;

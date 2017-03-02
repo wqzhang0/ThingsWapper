@@ -1,6 +1,7 @@
 package com.wqzhang.thingswapper.dao.dbOperation.impl;
 
 import com.wqzhang.thingswapper.dao.greendao.Connection_T_N;
+import com.wqzhang.thingswapper.dao.greendao.Notification;
 
 import java.util.ArrayList;
 
@@ -10,4 +11,6 @@ import java.util.ArrayList;
 
 public interface ConnectionTNOperationImpl {
     void saveAll(ArrayList<Connection_T_N> arrayList);
+
+    ArrayList<Notification> listNotifications(long thingId);
 }

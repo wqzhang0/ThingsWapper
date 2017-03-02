@@ -25,4 +25,12 @@ public class Common {
     public static final String INTENT_KEY_BUNDLE_KEY = "VALUES";
     public static final String INTENT_PARCELABLE_KEY = "MODEL";
 
+
+    public static final String REPEAT_TYPE_0 = "不重复";
+    public static final String REPEAT_TYPE_1 = "工作日";
+    public static final String REPEAT_TYPE_2 = "每天";
+    public static final String REPEAT_TYPE_3 = "每周";
+    public static final String REPEAT_TYPE_4 = "每两周";
+    public static final String REPEAT_TYPE_5 = "仅周末";
+
 }

@@ -7,21 +7,25 @@
         android:id="@+id/slide_content_view"
         android:layout_width="600dp"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:background="@color/colorShowReminderBg"
+        android:elevation="5dp">
 
 
         <RelativeLayout
             android:id="@+id/bottom_left"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
+            android:layout_width="112dp"
+            android:layout_height="match_parent"
             android:layout_gravity="left"
-            android:background="#111111"
+            android:background="@color/colorAccent"
+            android:minHeight="56dp"
             android:visibility="invisible">
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/trash"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:background="@drawable/trash" />
         </RelativeLayout>
@@ -52,17 +56,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|right"
-                android:layout_marginRight="36dp"
-                android:src="@drawable/finsh_log" />
         </FrameLayout>
 
-
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:src="@drawable/finsh_log" />
     </FrameLayout>
-
-
 </merge>
+
+

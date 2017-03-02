@@ -195,6 +195,8 @@ public class AddThingOperationXMLData {
             notification.setAlearyNotify(false);
             notification.setNotifyType(Common.REMINDER_TYPE_NONE);
             notification.setSynchronize(false);
+            notification.setInvalide(false);
+            notification.setRepeatType(Common.REPEAT_TYPE_0);
             notificationArrayList.add(notification);
         } else if (dates.size() == 1) {
             //只有一个时间
@@ -203,7 +205,9 @@ public class AddThingOperationXMLData {
             notification.setNotifyType(notifyType);
             notification.setSynchronize(false);
             notification.setReminderDate(dates.get(0));
+            notification.setInvalide(false);
             notification.setAlearyNotify(false);
+            notification.setRepeatType(Common.REPEAT_TYPE_0);
             //仅当只有一次提醒时间时可以设置重复  这里做重复的判断
             if (isRepeat()) {
                 String rePeatType = readNotifyCounts();
@@ -219,7 +223,9 @@ public class AddThingOperationXMLData {
                 notification.setNotifyType(notifyType);
                 notification.setSynchronize(false);
                 notification.setReminderDate(date);
+                notification.setRepeatType(Common.REPEAT_TYPE_0);
                 notification.setAlearyNotify(false);
+                notification.setInvalide(false);
                 notificationArrayList.add(notification);
             }
         }

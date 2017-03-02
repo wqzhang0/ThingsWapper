@@ -1,5 +1,6 @@
 package com.wqzhang.thingswapper.dao;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.wqzhang.thingswapper.dao.dbOperation.ConnectionTNOperation;
@@ -13,7 +14,10 @@ import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
 import com.wqzhang.thingswapper.dao.greendao.User;
 import com.wqzhang.thingswapper.model.AlarmDTO;
 import com.wqzhang.thingswapper.model.ChartDataDTO;
+import com.wqzhang.thingswapper.model.ShowThingsDTO;
+import com.wqzhang.thingswapper.util.AlarmTimer;
 import com.wqzhang.thingswapper.util.Common;
+import com.wqzhang.thingswapper.util.DateUtil;
 import com.wqzhang.thingswapper.util.NotifyParseUtil;
 
 import java.util.ArrayList;
@@ -73,6 +77,61 @@ public class BusinessProcess implements BusinessProcessImpl {
     }
 
     @Override
+    public ArrayList<ShowThingsDTO> listNotDoneThingsOrderByCreateTimeDescWithReminderTime() {
+        ArrayList<ToDoThing> toDoThings = toDoThingsOperation.listNotDoneThingsOrderByCreateTimeDesc();
+
+        ArrayList<ShowThingsDTO> showThingsDTOs = new ArrayList<>();
+
+        for (ToDoThing toDoThing : toDoThings) {
+            ArrayList<Notification> tmpNotifications = connectionTNOperation.listNotifications(toDoThing.getId());
+            if (tmpNotifications.size() == 0) {
+                showThingsDTOs.add(new ShowThingsDTO(toDoThing, 0, false, null));
+            } else if (tmpNotifications.size() == 1) {
+                Notification tmpNotification = tmpNotifications.get(0);
+                if (Common.REPEAT_TYPE_0.equals(tmpNotification.getRepeatType())) {
+                    showThingsDTOs.add(new ShowThingsDTO(toDoThing, tmpNotification.getNotifyType(), tmpNotification.getAlearyNotify(), tmpNotification.getReminderDate()));
+                } else {
+                    showThingsDTOs.add(new ShowThingsDTO(toDoThing, tmpNotification.getNotifyType(), tmpNotification.getInvalide(), tmpNotification.getNextRemindDate()));
+                }
+            } else {
+                Date recentTime = null;
+                long index = -1;
+                for (int i = 0; i < tmpNotifications.size(); i++) {
+                    Notification tmpNotification = tmpNotifications.get(i);
+                    if (!tmpNotification.getAlearyNotify()) {
+                        if (recentTime == null) {
+                            recentTime = tmpNotification.getReminderDate();
+                            index = i;
+                        }
+                        if (DateUtil.leDateTime(recentTime, tmpNotification.getReminderDate())) {
+                            recentTime = tmpNotification.getReminderDate();
+                            index = i;
+                        }
+                    }
+                }
+                if (index == -1) {
+                    showThingsDTOs.add(new ShowThingsDTO(toDoThing, 0, false, null));
+                } else {
+                    Notification recentNotification = tmpNotifications.get((int) index);
+                    showThingsDTOs.add(new ShowThingsDTO(toDoThing, recentNotification.getNotifyType(), recentNotification.getAlearyNotify(), recentNotification.getReminderDate()));
+                }
+            }
+        }
+        return showThingsDTOs;
+    }
+
+    @Override
+    public ArrayList<ShowThingsDTO> listFinshThingsOrderByFinshTimeDescWithReminderTime() {
+        ArrayList<ToDoThing> toDoThings = toDoThingsOperation.listFinshThingsOrderByFinshTimeDesc();
+
+        ArrayList<ShowThingsDTO> showThingsDTOs = new ArrayList<>();
+        for (ToDoThing toDoThing : toDoThings) {
+            showThingsDTOs.add(new ShowThingsDTO(toDoThing, 0, false, new Date()));
+        }
+        return showThingsDTOs;
+    }
+
+    @Override
     public User getOnlineUser() {
         return userOperation.getOnlineUser();
     }
@@ -118,7 +177,59 @@ public class BusinessProcess implements BusinessProcessImpl {
 
     @Override
     public void updateCalculationNextReminderDate(List<Long> ids) {
-        notificationOperation.updateCalculationNextReminderDate(ids);
+        ArrayList<Notification> notificationArrayList = notificationOperation.listByIds(ids);
+        Date nowData = new Date();
+        for (Notification tmpNotification : notificationArrayList) {
+            String repeatType = tmpNotification.getRepeatType();
+            if (!repeatType.equals("不重复")) {
+                Date nextReminderDate = tmpNotification.getNextRemindDate();
+                if (tmpNotification.getRepeatType().equals("工作日")) {
+                    //查看今天是周几.如果是工作日
+                    //如果设定的时间HHMMSS还未到.不处理
+                    //如果设定的时间HHMMSS已经超过 则设置nextReminderTime 为下个工作日
+                    if (DateUtil.getWeek(nowData) < 6) {
+                        if (DateUtil.reachCurrentTime(nextReminderDate)) {
+                            if (DateUtil.getWeek(nowData) == 5) {
+                                //如果今天是周五,加三天
+                                DateUtil.addDate(nextReminderDate, 3);
+                            } else {
+                                DateUtil.addDate(nextReminderDate, 1);
+                            }
+                            tmpNotification.setNextRemindDate(nextReminderDate);
+                        }
+                    }
+                } else if (repeatType.equals("每天")) {
+                    //如果设定的时间HHMMSS还未到.不处理
+                    //如果设定的时间HHMMSS已经超过 则设置nextReminderTime 为明天
+                    if (DateUtil.reachCurrentTime(nextReminderDate)) {
+                        DateUtil.addDate(nextReminderDate, 1);
+                    }
+                } else if (repeatType.equals("每周")) {
+                    //如果存在上一次提醒时间,则用上一次时间,否则用创建那天的时间
+                    //检查几天星期几是否和之前的星期对比那天相同
+                    //如果设定的时间HHMMSS还未到.不处理
+                    //如果设定的时间HHMMSS已经超过 则设置nextReminderTime 下周时间
+                    if (DateUtil.getWeek(nowData) == DateUtil.getWeek(nextReminderDate)) {
+                        if (DateUtil.leDateTime(nowData, nextReminderDate)) {
+                            DateUtil.addDate(nextReminderDate, 7);
+                        }
+                    }
+                } else if (repeatType.equals("每两周")) {
+                    //如果存在上一次提醒时间,则用上一次时间,否则用创建那天的时间
+                    //检查几天星期几是否和创建那天相同
+                    //如果设定的时间HHMMSS还未到.不处理
+                    //如果设定的时间HHMMSS已经超过 则设置nextReminderTime 下周时间
+                    if (DateUtil.getWeek(nowData) == DateUtil.getWeek(nextReminderDate)) {
+                        if (DateUtil.leDateTime(nowData, nextReminderDate)) {
+                            DateUtil.addDate(nextReminderDate, 14);
+                        }
+                    }
+                } else if (repeatType.equals("仅周末")) {
+                    //如果是周末,
+                }
+            }
+            notificationOperation.update(tmpNotification);
+        }
     }
 
     @Override
@@ -212,10 +323,68 @@ public class BusinessProcess implements BusinessProcessImpl {
                 Connection_T_N connection_t_n = new Connection_T_N();
 
                 connection_t_n.setToDoThing(toDoThing);
+                String repeatType = notification.getRepeatType();
+                if (!repeatType.equals("不重复")) {
+                    Date nowDate = new Date();
+                    Date reminderDate = notification.getReminderDate();
 
+                    if (repeatType.equals("工作日")) {
+                        Date nextMinderDate = DateUtil.produceDete(reminderDate);
+                        //查看今天是周几.如果是工作日
+                        //如果设定的时间HHMMSS还未到.不处理
+                        //如果设定的时间HHMMSS已经超过 则设置nextReminderTime 为下个工作日
+                        if (DateUtil.getWeek(nowDate) < 6) {
+                            if (DateUtil.reachCurrentTime(reminderDate)) {
+                                if (DateUtil.getWeek(nextMinderDate) == 5) {
+                                    //如果今天是周五,加三天
+                                    DateUtil.addDate(nextMinderDate, 3);
+                                } else {
+                                    DateUtil.addDate(nextMinderDate, 1);
+                                }
+                            }
+                        } else if (DateUtil.getWeek(nowDate) == 6) {
+                            DateUtil.addDate(nextMinderDate, 2);
+                        } else if (DateUtil.getWeek(nowDate) == 7) {
+                            DateUtil.addDate(nextMinderDate, 1);
+                        }
+                        notification.setNextRemindDate(nextMinderDate);
+                    } else if (repeatType.equals("每天")) {
+                        Date nextMinderDate = DateUtil.produceDete(reminderDate);
+
+                        //如果设定的时间HHMMSS还未到.不处理
+                        //如果设定的时间HHMMSS已经超过 则设置nextReminderTime 为明天
+                        if (DateUtil.reachCurrentTime(reminderDate)) {
+                            DateUtil.addDate(nextMinderDate, 1);
+                        }
+                        notification.setNextRemindDate(nextMinderDate);
+                    } else if (repeatType.equals("每周")) {
+                        //如果存在上一次提醒时间,则用上一次时间,否则用创建那天的时间
+                        //检查几天星期几是否和之前的星期对比那天相同
+                        //如果设定的时间HHMMSS还未到.不处理
+                        //如果设定的时间HHMMSS已经超过 则设置nextReminderTime 下周时间
+                        if (DateUtil.getWeek(nowDate) == DateUtil.getWeek(reminderDate)) {
+                            if (DateUtil.leDateTime(nowDate, reminderDate)) {
+                                DateUtil.addDate(reminderDate, 7);
+                            }
+                            notification.setNextRemindDate(reminderDate);
+                        }
+                    } else if (repeatType.equals("每两周")) {
+                        //如果存在上一次提醒时间,则用上一次时间,否则用创建那天的时间
+                        //检查几天星期几是否和创建那天相同
+                        //如果设定的时间HHMMSS还未到.不处理
+                        //如果设定的时间HHMMSS已经超过 则设置nextReminderTime 下周时间
+                        if (DateUtil.getWeek(nowDate) == DateUtil.getWeek(reminderDate)) {
+                            if (DateUtil.leDateTime(nowDate, reminderDate)) {
+                                DateUtil.addDate(reminderDate, 14);
+                            }
+                            notification.setNextRemindDate(reminderDate);
+                        }
+                    } else if (repeatType.equals("仅周末")) {
+                        //如果是周末
+                    }
+                }
                 notificationOperation.save(notification);
                 connection_t_n.setNotification(notification);
-
                 connection_t_nArrayList.add(connection_t_n);
             }
             connectionTNOperation.saveAll(connection_t_nArrayList);
@@ -223,4 +392,7 @@ public class BusinessProcess implements BusinessProcessImpl {
             Log.e("SQL", "saveThing 添加失败");
         }
     }
+
+
 }
+

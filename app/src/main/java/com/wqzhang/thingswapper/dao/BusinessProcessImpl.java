@@ -6,6 +6,7 @@ import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
 import com.wqzhang.thingswapper.dao.greendao.User;
 import com.wqzhang.thingswapper.model.AlarmDTO;
 import com.wqzhang.thingswapper.model.ChartDataDTO;
+import com.wqzhang.thingswapper.model.ShowThingsDTO;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -91,6 +92,19 @@ public interface BusinessProcessImpl {
      * @return
      */
     ArrayList<ToDoThing> listNotDoneThingsOrderByCreateTimeDesc();
+
+    /**
+     * 查找还未做的事情,附带展示需要的各种信息
+     *
+     * @return
+     */
+    ArrayList<ShowThingsDTO> listNotDoneThingsOrderByCreateTimeDescWithReminderTime();
+
+    /**
+     * 查找已经完成的事情 附带展示需要的各种信息
+     * @return
+     */
+    ArrayList<ShowThingsDTO> listFinshThingsOrderByFinshTimeDescWithReminderTime();
 
     /**
      * 获取默认登录的用户

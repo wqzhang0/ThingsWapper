@@ -68,11 +68,11 @@ public class ShowThingsVu implements Vu {
                 int type = (int) recyclerView.getTag(R.id.showThingType);
                 if (type == 0) {
                     //当前显示的是已完成界面,需要切换至未完成界面
-                    ((ToDoThingsRecyclerAdapter) recyclerView.getAdapter()).setData(BusinessProcess.getInstance().listNotDoneThingsOrderByCreateTimeDesc());
+                    ((ToDoThingsRecyclerAdapter) recyclerView.getAdapter()).setData(BusinessProcess.getInstance().listNotDoneThingsOrderByCreateTimeDescWithReminderTime());
                     recyclerView.setTag(R.id.showThingType, 1);
                 } else {
                     //已完成
-                    ((ToDoThingsRecyclerAdapter) recyclerView.getAdapter()).setData(BusinessProcess.getInstance().listFinshThingsOrderByFinshTimeDesc());
+                    ((ToDoThingsRecyclerAdapter) recyclerView.getAdapter()).setData(BusinessProcess.getInstance().listFinshThingsOrderByFinshTimeDescWithReminderTime());
                     recyclerView.setTag(R.id.showThingType, 0);
                 }
                 recyclerView.getAdapter().notifyDataSetChanged();

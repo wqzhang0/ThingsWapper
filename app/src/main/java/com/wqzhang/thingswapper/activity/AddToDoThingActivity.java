@@ -23,6 +23,8 @@ import com.wqzhang.thingswapper.event.DataCacheChange;
 import com.wqzhang.thingswapper.event.SaveChooseOperationEvent;
 import com.wqzhang.thingswapper.event.ShowMoreSetEvent;
 import com.wqzhang.thingswapper.exception.CustomerException;
+import com.wqzhang.thingswapper.model.AlarmDTO;
+import com.wqzhang.thingswapper.util.AlarmTimer;
 import com.wqzhang.thingswapper.util.Common;
 import com.wqzhang.thingswapper.util.DateUtil;
 import com.wqzhang.thingswapper.vu.AddThingVu;
@@ -159,6 +161,18 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
                             AddThingOperationXMLData.getInstall().getNotifycation());
 
                     AddThingOperationXMLData.getInstall().clearHistory();
+
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            AlarmDTO needNotifyAlarmModel = BusinessProcess.getInstance().listRecentNeedNotifyThings();
+                            if (needNotifyAlarmModel != null) {
+                                //设置Alerm
+                                AlarmTimer.setAlarmTimer(needNotifyAlarmModel);
+                            }
+                        }
+                    }.start();
+
                     Intent mianIntent = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
                     mianIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(mianIntent);

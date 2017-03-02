@@ -15,7 +15,7 @@ public interface NotificationOperationImpl {
 
     void updateFinshNotifyByThing(ToDoThing toDoThing);
 
-    void updateCalculationNextReminderDate(List<Long> ids);
+    ArrayList<Notification> listByIds(List<Long> ids);
 
     ArrayList<Notification> listNoRepeatNotification();
 
@@ -26,4 +26,8 @@ public interface NotificationOperationImpl {
     void updatePreNotifyDate(Long notifyId, Date date);
 
     void save(Notification notification);
+
+    void update(Notification notification);
+
+
 }
