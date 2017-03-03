@@ -89,6 +89,9 @@ public class ToDoThingsOperation implements ToDoThingsOperationImpl {
     @Override
     public void updateThingState(Long id, int state) {
         ToDoThing toDoThing = getThingById(id);
+        if (state == Common.STATUS_FINSH) {
+            toDoThing.setFinshDate(new Date());
+        }
         toDoThing.setStatus(state);
         toDoThingDao.update(toDoThing);
     }

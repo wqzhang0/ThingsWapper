@@ -68,6 +68,9 @@ public class MainVu implements Vu {
                 ft.hide(currentFragment).add(containerView.getId(), to).commit(); // 隐藏当前的fragment，add下一个到Activity中
             } else {
                 ft.hide(currentFragment).show(to).commit(); // 隐藏当前的fragment，显示下一个
+                if (to instanceof PoolFragment) {
+                    ((PoolFragment) to).resetData();
+                }
             }
 
             //设置跳转后 条目的提示语和图标

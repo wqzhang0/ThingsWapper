@@ -45,7 +45,6 @@ public class NotifyReceiver extends BroadcastReceiver {
 
             //判断应用是在前台还是后台
             boolean isBg = SystemUtil.isBackground(SystemUtil.APP_PACKAGE);
-            alarmDTO.getNotifyIds();
 
             if (isBg) {
                 DialogUtil.showNotifyNow(MainApplication.getDialogContext(), alarmDTO.getToDoThingsContent());
@@ -61,6 +60,8 @@ public class NotifyReceiver extends BroadcastReceiver {
                 //如果在前台 直接显示
                 DialogUtil.showNotifyNow(MainApplication.getDialogContext(), alarmDTO.getToDoThingsContent());
             }
+            //刷新重复提醒的时间
+            BusinessProcess.getInstance().updateCalculationNextReminderDate(alarmDTO.getNotifyIds());
             //通知之后  重新设置新的闹铃
             AlarmDTO needNotifyAlarmModel = BusinessProcess.getInstance().listRecentNeedNotifyThings();
             if (needNotifyAlarmModel != null) {

@@ -257,7 +257,7 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
 
                 //检验是否有上一次没操作完的数据  并展示
                 String notifyCounts = AddThingOperationXMLDataCache.getNotifyCounts();
-                if (!notifyCounts.equals("不重复")) {
+                if (!notifyCounts.equals(Common.REPEAT_TYPE_0)) {
                     notifyCountHolder.answerText.setText(notifyCounts);
 
                     if (AddThingOperationXMLData.getInstall().isRepeat()) {
@@ -273,7 +273,7 @@ public class AddToDoThingRecyclerAdapter extends RecyclerView.Adapter {
 
 
                 //点击 展示 重复提醒设置 视图
-                notifyCountHolder.answerText.setOnClickListener(new View.OnClickListener() {
+                notifyCountHolder.childLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.SHOW_COUNT));

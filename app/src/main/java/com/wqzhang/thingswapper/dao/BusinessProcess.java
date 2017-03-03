@@ -1,6 +1,5 @@
 package com.wqzhang.thingswapper.dao;
 
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.wqzhang.thingswapper.dao.dbOperation.ConnectionTNOperation;
@@ -15,7 +14,6 @@ import com.wqzhang.thingswapper.dao.greendao.User;
 import com.wqzhang.thingswapper.model.AlarmDTO;
 import com.wqzhang.thingswapper.model.ChartDataDTO;
 import com.wqzhang.thingswapper.model.ShowThingsDTO;
-import com.wqzhang.thingswapper.util.AlarmTimer;
 import com.wqzhang.thingswapper.util.Common;
 import com.wqzhang.thingswapper.util.DateUtil;
 import com.wqzhang.thingswapper.util.NotifyParseUtil;
@@ -178,54 +176,92 @@ public class BusinessProcess implements BusinessProcessImpl {
     @Override
     public void updateCalculationNextReminderDate(List<Long> ids) {
         ArrayList<Notification> notificationArrayList = notificationOperation.listByIds(ids);
-        Date nowData = new Date();
+        Date nowTime = new Date();
         for (Notification tmpNotification : notificationArrayList) {
             String repeatType = tmpNotification.getRepeatType();
-            if (!repeatType.equals("不重复")) {
-                Date nextReminderDate = tmpNotification.getNextRemindDate();
-                if (tmpNotification.getRepeatType().equals("工作日")) {
+            if (!repeatType.equals(Common.REPEAT_TYPE_0)) {
+                Date reminderTime = tmpNotification.getReminderDate();
+                if (tmpNotification.getRepeatType().equals(Common.REPEAT_TYPE_1)) {
+                    Date nextReminderTime = DateUtil.produceDete(reminderTime);
                     //查看今天是周几.如果是工作日
                     //如果设定的时间HHMMSS还未到.不处理
                     //如果设定的时间HHMMSS已经超过 则设置nextReminderTime 为下个工作日
-                    if (DateUtil.getWeek(nowData) < 6) {
-                        if (DateUtil.reachCurrentTime(nextReminderDate)) {
-                            if (DateUtil.getWeek(nowData) == 5) {
+                    if (DateUtil.getWeek(nowTime) < 6) {
+                        if (!DateUtil.reachCurrentTime(nextReminderTime)) {
+                            if (DateUtil.getWeek(nextReminderTime) == 5) {
                                 //如果今天是周五,加三天
-                                DateUtil.addDate(nextReminderDate, 3);
+                                nextReminderTime = DateUtil.addDate(nextReminderTime, 3);
                             } else {
-                                DateUtil.addDate(nextReminderDate, 1);
+                                nextReminderTime = DateUtil.addDate(nextReminderTime, 1);
                             }
-                            tmpNotification.setNextRemindDate(nextReminderDate);
                         }
+                    } else if (DateUtil.getWeek(nowTime) == 6) {
+                        nextReminderTime = DateUtil.addDate(nextReminderTime, 2);
+                    } else if (DateUtil.getWeek(nowTime) == 7) {
+                        nextReminderTime = DateUtil.addDate(nextReminderTime, 1);
                     }
-                } else if (repeatType.equals("每天")) {
+                    tmpNotification.setNextRemindDate(nextReminderTime);
+                } else if (repeatType.equals(Common.REPEAT_TYPE_2)) {
+                    Date nextReminderTime = DateUtil.produceDete(reminderTime);
                     //如果设定的时间HHMMSS还未到.不处理
                     //如果设定的时间HHMMSS已经超过 则设置nextReminderTime 为明天
-                    if (DateUtil.reachCurrentTime(nextReminderDate)) {
-                        DateUtil.addDate(nextReminderDate, 1);
+                    if (!DateUtil.reachCurrentTime(nextReminderTime)) {
+                        nextReminderTime = DateUtil.addDate(nextReminderTime, 1);
                     }
-                } else if (repeatType.equals("每周")) {
-                    //如果存在上一次提醒时间,则用上一次时间,否则用创建那天的时间
-                    //检查几天星期几是否和之前的星期对比那天相同
-                    //如果设定的时间HHMMSS还未到.不处理
-                    //如果设定的时间HHMMSS已经超过 则设置nextReminderTime 下周时间
-                    if (DateUtil.getWeek(nowData) == DateUtil.getWeek(nextReminderDate)) {
-                        if (DateUtil.leDateTime(nowData, nextReminderDate)) {
-                            DateUtil.addDate(nextReminderDate, 7);
+                    tmpNotification.setNextRemindDate(nextReminderTime);
+                } else if (repeatType.equals(Common.REPEAT_TYPE_3)) {
+                    //找出提醒时间是周几
+                    //从几天起后退一周设置为下次提醒时间
+                    Date nextReminderTime = null;
+                    int weekKey = DateUtil.getWeek(reminderTime);
+                    int todayWeekKey = DateUtil.getWeek(nowTime);
+                    if (todayWeekKey == weekKey) {
+                        if (DateUtil.leDateTime(nowTime, DateUtil.produceDete(reminderTime))) {
+                            nextReminderTime = DateUtil.addDate(DateUtil.produceDete(reminderTime), 7);
+                        } else {
+                            nextReminderTime = DateUtil.produceDete(reminderTime);
+                        }
+                    } else if (todayWeekKey > weekKey) {
+                        nextReminderTime = DateUtil.addDate(DateUtil.produceDete(reminderTime), 7 - todayWeekKey + weekKey);
+                    } else if (todayWeekKey < weekKey) {
+                        nextReminderTime = DateUtil.addDate(DateUtil.produceDete(reminderTime), weekKey - todayWeekKey);
+                    }
+                    tmpNotification.setNextRemindDate(nextReminderTime);
+                } else if (repeatType.equals(Common.REPEAT_TYPE_4)) {
+                    //如果存在上一次提醒时间,则用上一次时间
+                    //如果超过"nextReminderDate" 则天数+14
+                    //否则,不变
+                    if (DateUtil.reachCurrentTime(tmpNotification.getNextRemindDate())) {
+                        Date nextReminderTime = DateUtil.addDate(tmpNotification.getNextRemindDate(), 14);
+                        tmpNotification.setNextRemindDate(nextReminderTime);
+                    }
+                } else if (repeatType.equals(Common.REPEAT_TYPE_5)) {
+                    //如果是周末
+                    //今天是否是周末,
+                    // 时间是否超过,
+                    //未超过,下次提醒时间是今天
+                    //超过,提醒时间为下个周末
+                    Date nextReminderTime = DateUtil.produceDete(reminderTime);
+                    if (DateUtil.getWeek(nextReminderTime) == 1) {
+                        nextReminderTime = DateUtil.addDate(nextReminderTime, 5);
+                    } else if (DateUtil.getWeek(nextReminderTime) == 2) {
+                        nextReminderTime = DateUtil.addDate(nextReminderTime, 4);
+                    } else if (DateUtil.getWeek(nextReminderTime) == 3) {
+                        nextReminderTime = DateUtil.addDate(nextReminderTime, 3);
+                    } else if (DateUtil.getWeek(nextReminderTime) == 4) {
+                        nextReminderTime = DateUtil.addDate(nextReminderTime, 2);
+                    } else if (DateUtil.getWeek(nextReminderTime) == 5) {
+                        nextReminderTime = DateUtil.addDate(nextReminderTime, 1);
+                    } else if (DateUtil.getWeek(nextReminderTime) == 6) {
+                        if (!DateUtil.reachCurrentTime(nextReminderTime)) {
+                            nextReminderTime = DateUtil.addDate(nextReminderTime, 1);
+                        }
+                    } else if (DateUtil.getWeek(nextReminderTime) == 7) {
+                        if (!DateUtil.reachCurrentTime(nextReminderTime)) {
+                            nextReminderTime = DateUtil.addDate(nextReminderTime, 6);
                         }
                     }
-                } else if (repeatType.equals("每两周")) {
-                    //如果存在上一次提醒时间,则用上一次时间,否则用创建那天的时间
-                    //检查几天星期几是否和创建那天相同
-                    //如果设定的时间HHMMSS还未到.不处理
-                    //如果设定的时间HHMMSS已经超过 则设置nextReminderTime 下周时间
-                    if (DateUtil.getWeek(nowData) == DateUtil.getWeek(nextReminderDate)) {
-                        if (DateUtil.leDateTime(nowData, nextReminderDate)) {
-                            DateUtil.addDate(nextReminderDate, 14);
-                        }
-                    }
-                } else if (repeatType.equals("仅周末")) {
-                    //如果是周末,
+                    tmpNotification.setNextRemindDate(nextReminderTime);
                 }
             }
             notificationOperation.update(tmpNotification);
@@ -324,63 +360,85 @@ public class BusinessProcess implements BusinessProcessImpl {
 
                 connection_t_n.setToDoThing(toDoThing);
                 String repeatType = notification.getRepeatType();
-                if (!repeatType.equals("不重复")) {
+                if (!repeatType.equals(Common.REPEAT_TYPE_0)) {
                     Date nowDate = new Date();
-                    Date reminderDate = notification.getReminderDate();
+                    Date reminderTime = notification.getReminderDate();
 
-                    if (repeatType.equals("工作日")) {
-                        Date nextMinderDate = DateUtil.produceDete(reminderDate);
+                    if (repeatType.equals(Common.REPEAT_TYPE_1)) {
+                        Date nextReminderTime = DateUtil.produceDete(reminderTime);
                         //查看今天是周几.如果是工作日
                         //如果设定的时间HHMMSS还未到.不处理
                         //如果设定的时间HHMMSS已经超过 则设置nextReminderTime 为下个工作日
                         if (DateUtil.getWeek(nowDate) < 6) {
-                            if (DateUtil.reachCurrentTime(reminderDate)) {
-                                if (DateUtil.getWeek(nextMinderDate) == 5) {
+                            if (!DateUtil.reachCurrentTime(nextReminderTime)) {
+                                if (DateUtil.getWeek(nextReminderTime) == 5) {
                                     //如果今天是周五,加三天
-                                    DateUtil.addDate(nextMinderDate, 3);
+                                    nextReminderTime = DateUtil.addDate(nextReminderTime, 3);
                                 } else {
-                                    DateUtil.addDate(nextMinderDate, 1);
+                                    nextReminderTime = DateUtil.addDate(nextReminderTime, 1);
                                 }
                             }
                         } else if (DateUtil.getWeek(nowDate) == 6) {
-                            DateUtil.addDate(nextMinderDate, 2);
+                            nextReminderTime = DateUtil.addDate(nextReminderTime, 2);
                         } else if (DateUtil.getWeek(nowDate) == 7) {
-                            DateUtil.addDate(nextMinderDate, 1);
+                            nextReminderTime = DateUtil.addDate(nextReminderTime, 1);
                         }
-                        notification.setNextRemindDate(nextMinderDate);
-                    } else if (repeatType.equals("每天")) {
-                        Date nextMinderDate = DateUtil.produceDete(reminderDate);
-
+                        notification.setNextRemindDate(nextReminderTime);
+                    } else if (repeatType.equals(Common.REPEAT_TYPE_2)) {
+                        Date nextReminderTime = DateUtil.produceDete(reminderTime);
                         //如果设定的时间HHMMSS还未到.不处理
                         //如果设定的时间HHMMSS已经超过 则设置nextReminderTime 为明天
-                        if (DateUtil.reachCurrentTime(reminderDate)) {
-                            DateUtil.addDate(nextMinderDate, 1);
+                        if (!DateUtil.reachCurrentTime(nextReminderTime)) {
+                            nextReminderTime = DateUtil.addDate(nextReminderTime, 1);
                         }
-                        notification.setNextRemindDate(nextMinderDate);
-                    } else if (repeatType.equals("每周")) {
-                        //如果存在上一次提醒时间,则用上一次时间,否则用创建那天的时间
-                        //检查几天星期几是否和之前的星期对比那天相同
-                        //如果设定的时间HHMMSS还未到.不处理
-                        //如果设定的时间HHMMSS已经超过 则设置nextReminderTime 下周时间
-                        if (DateUtil.getWeek(nowDate) == DateUtil.getWeek(reminderDate)) {
-                            if (DateUtil.leDateTime(nowDate, reminderDate)) {
-                                DateUtil.addDate(reminderDate, 7);
+                        notification.setNextRemindDate(nextReminderTime);
+                    } else if (repeatType.equals(Common.REPEAT_TYPE_3)) {
+                        //找出提醒时间是周几
+                        //从几天起后退一周设置为下次提醒时间
+                        Date nextReminderTime = null;
+                        int weekKey = DateUtil.getWeek(reminderTime);
+                        int todayWeekKey = DateUtil.getWeek(nowDate);
+                        if (todayWeekKey == weekKey) {
+                            if (DateUtil.leDateTime(nowDate, DateUtil.produceDete(reminderTime))) {
+                                nextReminderTime = DateUtil.addDate(DateUtil.produceDete(reminderTime), 7);
+                            } else {
+                                nextReminderTime = DateUtil.produceDete(reminderTime);
                             }
-                            notification.setNextRemindDate(reminderDate);
+                        } else if (todayWeekKey > weekKey) {
+                            nextReminderTime = DateUtil.addDate(DateUtil.produceDete(reminderTime), 7 - todayWeekKey + weekKey);
+                        } else if (todayWeekKey < weekKey) {
+                            nextReminderTime = DateUtil.addDate(DateUtil.produceDete(reminderTime), weekKey - todayWeekKey);
                         }
-                    } else if (repeatType.equals("每两周")) {
-                        //如果存在上一次提醒时间,则用上一次时间,否则用创建那天的时间
-                        //检查几天星期几是否和创建那天相同
-                        //如果设定的时间HHMMSS还未到.不处理
-                        //如果设定的时间HHMMSS已经超过 则设置nextReminderTime 下周时间
-                        if (DateUtil.getWeek(nowDate) == DateUtil.getWeek(reminderDate)) {
-                            if (DateUtil.leDateTime(nowDate, reminderDate)) {
-                                DateUtil.addDate(reminderDate, 14);
-                            }
-                            notification.setNextRemindDate(reminderDate);
-                        }
-                    } else if (repeatType.equals("仅周末")) {
+                        notification.setNextRemindDate(nextReminderTime);
+                    } else if (repeatType.equals(Common.REPEAT_TYPE_4)) {
+                        notification.setNextRemindDate(reminderTime);
+                    } else if (repeatType.equals(Common.REPEAT_TYPE_5)) {
                         //如果是周末
+                        //今天是否是周末,
+                        // 时间是否超过,
+                        //未超过,下次提醒时间是今天
+                        //超过,提醒时间为下个周末
+                        Date nextReminderTime = DateUtil.produceDete(reminderTime);
+                        if (DateUtil.getWeek(nextReminderTime) == 1) {
+                            nextReminderTime = DateUtil.addDate(nextReminderTime, 5);
+                        } else if (DateUtil.getWeek(nextReminderTime) == 2) {
+                            nextReminderTime = DateUtil.addDate(nextReminderTime, 4);
+                        } else if (DateUtil.getWeek(nextReminderTime) == 3) {
+                            nextReminderTime = DateUtil.addDate(nextReminderTime, 3);
+                        } else if (DateUtil.getWeek(nextReminderTime) == 4) {
+                            nextReminderTime = DateUtil.addDate(nextReminderTime, 2);
+                        } else if (DateUtil.getWeek(nextReminderTime) == 5) {
+                            nextReminderTime = DateUtil.addDate(nextReminderTime, 1);
+                        } else if (DateUtil.getWeek(nextReminderTime) == 6) {
+                            if (!DateUtil.reachCurrentTime(nextReminderTime)) {
+                                nextReminderTime = DateUtil.addDate(nextReminderTime, 1);
+                            }
+                        } else if (DateUtil.getWeek(nextReminderTime) == 7) {
+                            if (!DateUtil.reachCurrentTime(nextReminderTime)) {
+                                nextReminderTime = DateUtil.addDate(nextReminderTime, 6);
+                            }
+                        }
+                        notification.setNextRemindDate(nextReminderTime);
                     }
                 }
                 notificationOperation.save(notification);

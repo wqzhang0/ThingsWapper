@@ -37,4 +37,15 @@ public class PoolFragment extends BasePartenerFragment<PoolVu> {
         vu.setWeekFinshThings(BusinessProcess.getInstance().countRecentWeekFinshThings());
         super.onBind();
     }
+
+    @Override
+    protected void afterOnResume() {
+        super.afterOnResume();
+    }
+
+    public void resetData(){
+        vu.setToDayResultData(BusinessProcess.getInstance().countTodayThings());
+        vu.setWeekNewThings(BusinessProcess.getInstance().countRecentWeekNewThings());
+        vu.setWeekFinshThings(BusinessProcess.getInstance().countRecentWeekFinshThings());
+    }
 }

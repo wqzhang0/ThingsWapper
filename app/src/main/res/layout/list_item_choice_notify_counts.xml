@@ -42,8 +42,9 @@
         <TextView
             android:id="@+id/answer_text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="36dp"
             android:gravity="center"
-            android:text="不重复" />
+            android:text="不重复"
+            android:textSize="14sp" />
     </LinearLayout>
 </LinearLayout>

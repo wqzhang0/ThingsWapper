@@ -63,6 +63,7 @@ public class MainActivity extends BasePartenerAppCompatActivity<MainVu> implemen
                 break;
             case R.id.pool:
                 vu.switchContent(poolFragment, fragmentManager);
+
                 break;
             case R.id.setting:
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)

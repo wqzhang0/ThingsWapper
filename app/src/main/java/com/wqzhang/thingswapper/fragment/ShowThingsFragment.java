@@ -141,8 +141,8 @@ public class ShowThingsFragment extends BasePartenerFragment<ShowThingsVu> {
 //        }
         vu.getRecyclerView().addOnScrollListener(onScrollListener);
 
-        TopLayoutOnScrolledListener topLayoutOnScrolledListener = new TopLayoutOnScrolledListener(vu.getTopLinearLayout());
-        BottomLayoutOnScrolledListener bottomLayoutOnScrolledListener = new BottomLayoutOnScrolledListener(vu.getBottomLinearLayout());
+        TopLayoutOnScrolledListener topLayoutOnScrolledListener = new TopLayoutOnScrolledListener(getActivity(), vu.getTopLinearLayout());
+        BottomLayoutOnScrolledListener bottomLayoutOnScrolledListener = new BottomLayoutOnScrolledListener(getActivity(), vu.getBottomLinearLayout());
 
         vu.getRecyclerView().addOnScrolledListener(topLayoutOnScrolledListener);
         vu.getRecyclerView().addOnScrolledListener(bottomLayoutOnScrolledListener);

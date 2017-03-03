@@ -25,7 +25,6 @@ public class PoolVu implements Vu {
     public void init(LayoutInflater inflater, ViewGroup container) {
         view = inflater.inflate(R.layout.pool_show_main_layout, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.charts_recyclerview);
-
     }
 
     @Override

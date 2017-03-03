@@ -3,12 +3,13 @@
     <!-- 背景颜色 -->
     <item>
         <bitmap android:src="@drawable/home_bg" />
+        <!--<bitmap android:src="@color/colorPrimary" />-->
     </item>
 
-    <item>
-        <!-- 图片 -->
-        <bitmap
-            android:gravity="center"
-            android:src="@drawable/thingswapper_text" />
-    </item>
+    <!--<item>-->
+        <!--&lt;!&ndash; 图片 &ndash;&gt;-->
+        <!--<bitmap-->
+            <!--android:gravity="center"-->
+            <!--android:src="@drawable/thingswapper_text" />-->
+    <!--</item>-->
 </layer-list>

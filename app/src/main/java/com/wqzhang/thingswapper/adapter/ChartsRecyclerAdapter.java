@@ -3,6 +3,7 @@ package com.wqzhang.thingswapper.adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
+import android.support.annotation.ColorRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -222,6 +223,11 @@ public class ChartsRecyclerAdapter extends RecyclerView.Adapter {
             PieDataSet dataSet = new PieDataSet(entries, "Today Result Charts");
 
             ArrayList<Integer> colors = new ArrayList<Integer>();
+
+            colors.add(context.getResources().getColor(R.color.colorPrimary));
+            colors.add(context.getResources().getColor(R.color.colorMainBg));
+
+
             for (int c : ColorTemplate.COLORFUL_COLORS)
                 colors.add(c);
             for (int c : ColorTemplate.JOYFUL_COLORS)
@@ -310,13 +316,12 @@ public class ChartsRecyclerAdapter extends RecyclerView.Adapter {
         private void setDatsSetStyle(LineDataSet lineDataSet, int style) {
             if (style == 1) {
                 lineDataSet.setColor(Color.WHITE);
-                lineDataSet.setCircleColor(Color.GREEN);
-
-                lineDataSet.setFillColor(Color.parseColor("#1afa29"));
+                lineDataSet.setCircleColor(context.getResources().getColor(R.color.colorGreenBlue));
+                lineDataSet.setFillColor(context.getResources().getColor(R.color.colorShowReminderBg));
             } else if (style == 2) {
-                lineDataSet.setColor(Color.parseColor("#1296db"));
-                lineDataSet.setCircleColor(Color.BLUE);
-                lineDataSet.setFillColor(Color.parseColor("#f4ea2a"));
+                lineDataSet.setColor(Color.WHITE);
+                lineDataSet.setCircleColor(context.getResources().getColor(R.color.colorGreenBlue));
+                lineDataSet.setFillColor(context.getResources().getColor(R.color.colorPrimary));
             }
             lineDataSet.enableDashedLine(10f, 5f, 0f);
             lineDataSet.enableDashedHighlightLine(10f, 5f, 0f);
@@ -386,7 +391,7 @@ public class ChartsRecyclerAdapter extends RecyclerView.Adapter {
             });
 
             lineChart.getDescription().setEnabled(false);
-            // set data
+            // rotate data
             lineChart.setData(data);
             lineChart.animateY(600);
         }
