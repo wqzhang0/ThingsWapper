@@ -1,5 +1,8 @@
 package com.wqzhang.thingswapper.fragment;
 
+import android.view.View;
+
+import com.wqzhang.thingswapper.util.NetManager;
 import com.wqzhang.thingswapper.vu.PersonSetVu;
 
 /**
@@ -22,5 +25,12 @@ public class PersonSetFragment extends BasePartenerFragment<PersonSetVu> {
     @Override
     protected void onBind() {
         super.onBind();
+        vu.getRecyclerView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NetManager netManager = new NetManager();
+                netManager.test();
+            }
+        });
     }
 }

@@ -11,7 +11,7 @@ import java.util.List;
  * Created by wqzhang on 17-3-2.
  */
 
-public interface NotificationOperationImpl {
+public interface NotificationOperation {
 
     void updateFinshNotifyByThing(ToDoThing toDoThing);
 
@@ -29,5 +29,7 @@ public interface NotificationOperationImpl {
 
     void update(Notification notification);
 
+    void setInvalide(Long notifyId);
 
+    Notification getNotification(Long notifyId);
 }

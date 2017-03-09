@@ -60,9 +60,9 @@ public class DialogUtil {
         builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                List<Long> _ids = BusinessProcess.getInstance().listExpiredThings().getNotifyIds();
-                for (Long _tmpIds : _ids) {
-                    BusinessProcess.getInstance().updatePreNotifyDate(_tmpIds, new Date());
+                List<Long> tmpIds = BusinessProcess.getInstance().listExpiredThings().getNotifyIds();
+                for (Long id : tmpIds) {
+                    BusinessProcess.getInstance().updatePreNotifyDate(id, new Date());
                 }
             }
         });

@@ -3,7 +3,7 @@ package com.wqzhang.thingswapper.dao;
 import android.util.Log;
 
 import com.wqzhang.thingswapper.dao.dbOperation.ConnectionTNOperation;
-import com.wqzhang.thingswapper.dao.dbOperation.NotificationOperation;
+import com.wqzhang.thingswapper.dao.dbOperation.NotificationOperationImpl;
 import com.wqzhang.thingswapper.dao.dbOperation.ToDoThingsOperation;
 import com.wqzhang.thingswapper.dao.dbOperation.UserOperation;
 import com.wqzhang.thingswapper.dao.greendao.Connection_T_N;
@@ -31,7 +31,7 @@ public class BusinessProcess implements BusinessProcessImpl {
     static DaoSession daoSession;
     static ToDoThingsOperation toDoThingsOperation;
     static UserOperation userOperation;
-    static NotificationOperation notificationOperation;
+    static NotificationOperationImpl notificationOperationImpl;
     static ConnectionTNOperation connectionTNOperation;
 
     public static BusinessProcess getInstance() {
@@ -47,7 +47,7 @@ public class BusinessProcess implements BusinessProcessImpl {
             daoSession = mDaoSession;
             toDoThingsOperation = new ToDoThingsOperation(mDaoSession);
             userOperation = new UserOperation(mDaoSession);
-            notificationOperation = new NotificationOperation(mDaoSession);
+            notificationOperationImpl = new NotificationOperationImpl(mDaoSession);
             connectionTNOperation = new ConnectionTNOperation(mDaoSession);
         }
     }
@@ -151,7 +151,8 @@ public class BusinessProcess implements BusinessProcessImpl {
 
     @Override
     public void removeToDoTingById(Long id) {
-        toDoThingsOperation.removeToDoTingById(id);
+        toDoThingsOperation.updateThingState(id, Common.STATUS_DELETE);
+        notificationOperationImpl.setInvalide(id);
     }
 
     @Override
@@ -168,14 +169,14 @@ public class BusinessProcess implements BusinessProcessImpl {
     public void updateThingState(Long id, int state) {
         ToDoThing toDoThing = toDoThingsOperation.getThingById(id);
         if (state == Common.STATUS_FINSH) {
-            notificationOperation.updateFinshNotifyByThing(toDoThing);
+            notificationOperationImpl.updateFinshNotifyByThing(toDoThing);
         }
         toDoThingsOperation.updateThingState(id, state);
     }
 
     @Override
     public void updateCalculationNextReminderDate(List<Long> ids) {
-        ArrayList<Notification> notificationArrayList = notificationOperation.listByIds(ids);
+        ArrayList<Notification> notificationArrayList = notificationOperationImpl.listByIds(ids);
         Date nowTime = new Date();
         for (Notification tmpNotification : notificationArrayList) {
             String repeatType = tmpNotification.getRepeatType();
@@ -264,7 +265,7 @@ public class BusinessProcess implements BusinessProcessImpl {
                     tmpNotification.setNextRemindDate(nextReminderTime);
                 }
             }
-            notificationOperation.update(tmpNotification);
+            notificationOperationImpl.update(tmpNotification);
         }
     }
 
@@ -276,8 +277,8 @@ public class BusinessProcess implements BusinessProcessImpl {
         // 提醒时间是否大于当前时间
 
         AlarmDTO alarmDTO = null;
-        ArrayList<Notification> noRepeatNotificationArrayList = notificationOperation.listNoRepeatNotification();
-        ArrayList<Notification> repeatNotificationArrayList = notificationOperation.listRepeatNotification();
+        ArrayList<Notification> noRepeatNotificationArrayList = notificationOperationImpl.listNoRepeatNotification();
+        ArrayList<Notification> repeatNotificationArrayList = notificationOperationImpl.listRepeatNotification();
 
         if (noRepeatNotificationArrayList.size() == 0 && repeatNotificationArrayList.size() == 0) {
             return alarmDTO;
@@ -308,7 +309,7 @@ public class BusinessProcess implements BusinessProcessImpl {
         // 上次是否有提醒时间,
         // 提醒时间是否大于当前时间         //比较上一次提醒的时间,
         AlarmDTO alarmModel = null;
-        ArrayList<Notification> notificationArrayList = notificationOperation.listExpiredNotification();
+        ArrayList<Notification> notificationArrayList = notificationOperationImpl.listExpiredNotification();
         ArrayList<Long> notificationIds = new ArrayList<>();
         ArrayList<ToDoThing> toDoThings = new ArrayList<>();
         if (notificationArrayList.size() == 0) {
@@ -330,7 +331,7 @@ public class BusinessProcess implements BusinessProcessImpl {
 
     @Override
     public void updatePreNotifyDate(Long notifyId, Date date) {
-        notificationOperation.updatePreNotifyDate(notifyId, date);
+        notificationOperationImpl.updatePreNotifyDate(notifyId, date);
     }
 
     @Override
@@ -441,7 +442,7 @@ public class BusinessProcess implements BusinessProcessImpl {
                         notification.setNextRemindDate(nextReminderTime);
                     }
                 }
-                notificationOperation.save(notification);
+                notificationOperationImpl.save(notification);
                 connection_t_n.setNotification(notification);
                 connection_t_nArrayList.add(connection_t_n);
             }

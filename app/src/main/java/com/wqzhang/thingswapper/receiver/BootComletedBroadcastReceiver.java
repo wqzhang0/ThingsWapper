@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.wqzhang.thingswapper.MainApplication;
 import com.wqzhang.thingswapper.dao.BusinessProcess;
 import com.wqzhang.thingswapper.model.AlarmDTO;
 import com.wqzhang.thingswapper.util.AlarmTimer;
@@ -22,15 +23,8 @@ public class BootComletedBroadcastReceiver extends BroadcastReceiver {
         if (expiredAlarmModel != null) {
             //存在提醒时间已过,但还未提醒的事件
             //用Notification 提示
-
-        }
-        AlarmDTO needNotifyAlarmModel = BusinessProcess.getInstance().listRecentNeedNotifyThings();
-        if (needNotifyAlarmModel != null) {
-            //存在需要提醒的事项
-            //设置Alerm
-            AlarmTimer.setAlarmTimer(needNotifyAlarmModel);
         }
 
-
+        MainApplication.startScanService();
     }
 }

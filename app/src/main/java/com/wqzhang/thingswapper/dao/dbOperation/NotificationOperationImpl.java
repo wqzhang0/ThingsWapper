@@ -5,7 +5,6 @@ import com.wqzhang.thingswapper.dao.greendao.DaoSession;
 import com.wqzhang.thingswapper.dao.greendao.Notification;
 import com.wqzhang.thingswapper.dao.greendao.NotificationDao;
 import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
-import com.wqzhang.thingswapper.dao.dbOperation.impl.NotificationOperationImpl;
 import com.wqzhang.thingswapper.util.DateUtil;
 
 import org.greenrobot.greendao.query.QueryBuilder;
@@ -18,13 +17,13 @@ import java.util.List;
  * Created by wqzhang on 17-3-2.
  */
 
-public class NotificationOperation implements NotificationOperationImpl {
+public class NotificationOperationImpl implements com.wqzhang.thingswapper.dao.dbOperation.impl.NotificationOperation {
     static NotificationDao notificationDao;
 
-    private NotificationOperation() {
+    private NotificationOperationImpl() {
     }
 
-    public NotificationOperation(DaoSession mDaoSession) {
+    public NotificationOperationImpl(DaoSession mDaoSession) {
         notificationDao = mDaoSession.getNotificationDao();
     }
 
@@ -103,14 +102,12 @@ public class NotificationOperation implements NotificationOperationImpl {
 
     @Override
     public void updatePreNotifyDate(Long notifyId, Date date) {
-        QueryBuilder<Notification> notificationQueryBuilder = notificationDao.queryBuilder();
-        notificationQueryBuilder.where(NotificationDao.Properties.Id.eq(notifyId));
-        ArrayList<Notification> notifications = (ArrayList<Notification>) notificationQueryBuilder.build().list();
-        if (notifications.size() > 0) {
-            notifications.get(0).setPreNotifyDate(date);
-            notifications.get(0).setAlearyNotify(true);
+        Notification notification = getNotification(notifyId);
+        if (notification != null) {
+            notification.setPreNotifyDate(date);
+            notification.setAlearyNotify(true);
+            notificationDao.update(notification);
         }
-        notificationDao.update(notifications.get(0));
     }
 
     @Override
@@ -121,6 +118,26 @@ public class NotificationOperation implements NotificationOperationImpl {
     @Override
     public void update(Notification notification) {
         notificationDao.update(notification);
+    }
+
+    @Override
+    public void setInvalide(Long notifyId) {
+        Notification notification = getNotification(notifyId);
+        if (notification != null) {
+            notification.setInvalide(true);
+            notificationDao.update(notification);
+        }
+    }
+
+    @Override
+    public Notification getNotification(Long notifyId) {
+        QueryBuilder<Notification> notificationQueryBuilder = notificationDao.queryBuilder();
+        notificationQueryBuilder.where(NotificationDao.Properties.Id.eq(notifyId));
+        ArrayList<Notification> notifications = (ArrayList<Notification>) notificationQueryBuilder.build().list();
+        if (notifications.size() == 1) {
+            return notifications.get(0);
+        }
+        return null;
     }
 
 }

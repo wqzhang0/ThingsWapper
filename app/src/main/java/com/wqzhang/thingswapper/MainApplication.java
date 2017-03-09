@@ -2,6 +2,7 @@ package com.wqzhang.thingswapper;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 
 import com.wqzhang.thingswapper.dao.AddThingOperationXMLData;
 import com.wqzhang.thingswapper.dao.AddThingOperationXMLDataCache;
@@ -9,9 +10,6 @@ import com.wqzhang.thingswapper.dao.BusinessProcess;
 import com.wqzhang.thingswapper.dao.SharedPreferencesControl;
 import com.wqzhang.thingswapper.dao.greendao.DaoMaster;
 import com.wqzhang.thingswapper.dao.greendao.DaoSession;
-import com.wqzhang.thingswapper.model.AlarmDTO;
-import com.wqzhang.thingswapper.util.AlarmTimer;
-
 
 import org.greenrobot.greendao.database.Database;
 
@@ -54,18 +52,7 @@ public class MainApplication extends Application {
 
 
         //应用开启,设置新的闹铃
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                AlarmDTO needNotifyAlarmModel = BusinessProcess.getInstance().listRecentNeedNotifyThings();
-                if (needNotifyAlarmModel != null) {
-                    //存在需要提醒的事项
-                    //设置Alerm
-                    AlarmTimer.setAlarmTimer(needNotifyAlarmModel);
-                }
-            }
-        }).start();
-
+        MainApplication.startScanService();
     }
 
     public static DaoSession getDaoSession() {
@@ -83,5 +70,11 @@ public class MainApplication extends Application {
 
     public static void setDialogContext(Context dialogContext) {
         MainApplication.dialogContext = dialogContext;
+    }
+
+    public static void startScanService() {
+        Intent scanIntent = new Intent("com.wqzhang.thingswapper.service.ScanService");
+        scanIntent.setPackage("com.wqzhang.thingswapper");
+        mContext.startService(scanIntent);
     }
 }

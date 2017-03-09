@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.wqzhang.thingswapper.R;
 
@@ -14,13 +15,14 @@ import com.wqzhang.thingswapper.R;
 public class PersonSetVu implements Vu {
     private final String TAG = "PersonSetVu";
     View view;
-    RecyclerView recyclerView;
+    RelativeLayout recyclerView;
 
 
     @Override
     public void init(LayoutInflater inflater, ViewGroup container) {
         view = inflater.inflate(R.layout.persion_setting_layout, container, false);
 
+        recyclerView = (RelativeLayout) view.findViewById(R.id.user_info_tittle);
     }
 
     @Override
@@ -28,5 +30,7 @@ public class PersonSetVu implements Vu {
         return view;
     }
 
-
+    public RelativeLayout getRecyclerView() {
+        return recyclerView;
+    }
 }

@@ -162,16 +162,10 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
 
                     AddThingOperationXMLData.getInstall().clearHistory();
 
-                    new Thread() {
-                        @Override
-                        public void run() {
-                            AlarmDTO needNotifyAlarmModel = BusinessProcess.getInstance().listRecentNeedNotifyThings();
-                            if (needNotifyAlarmModel != null) {
-                                //设置Alerm
-                                AlarmTimer.setAlarmTimer(needNotifyAlarmModel);
-                            }
-                        }
-                    }.start();
+
+                    Intent intent1 = new Intent("com.wqzhang.thingswapper.service.ScanService");
+                    intent1.setPackage("com.wqzhang.thingswapper");
+                    startService(intent1);
 
                     Intent mianIntent = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
                     mianIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -191,10 +185,7 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
                 bus.post(new DataCacheChange(DataCacheChange.TYPE_NOTIFLY_DATE_CANCEL));
                 break;
             case R.id.time_choose_submit:
-
                 Date date = vu.getNotifyDate();
-
-
                 boolean alreadyExists = false;
                 ArrayList<Date> dateArrayList = AddThingOperationXMLDataCache.getDates();
                 for (Date _tmpDate : dateArrayList) {
@@ -209,13 +200,14 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
                     bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE, new Date(), false));
                     //将xml里存储的 是否提醒字段(IS_REMINDER) 值更改为false
                     bus.post(new DataCacheChange(DataCacheChange.TYPE_NOTIFLY_DATE_CANCEL));
-
                 } else {
                     //将xml里存储的 是否提醒字段(IS_REMINDER) 值更改为true
                     bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_IS_REMINDER, true));
                     bus.post(new SaveChooseOperationEvent(SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_DATE, date, true));
                 }
                 bus.post(new ShowMoreSetEvent(ShowMoreSetEvent.HIDE));
+
+
                 break;
             default:
                 break;
