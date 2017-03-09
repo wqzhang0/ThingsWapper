@@ -33,4 +33,10 @@ public class Common {
     public static final String REPEAT_TYPE_4 = "每两周";
     public static final String REPEAT_TYPE_5 = "仅周末";
 
+
+//    public static final String SERVICE_HOST = "http://172.20.10.2:8080/things/";
+    public static final String SERVICE_HOST = "http://112.74.95.27:8080/maven-test/";
+
+
+
 }

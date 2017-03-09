@@ -26,8 +26,6 @@ public class MainActivity extends BasePartenerAppCompatActivity<MainVu> implemen
     @Override
     protected void onBind() {
         super.onBind();
-
-
         showThingsFragment = ShowThingsFragment.newInstance();
         poolFragment = PoolFragment.newInstance();
         personSetFragment = PersonSetFragment.newInstance();

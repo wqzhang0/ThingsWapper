@@ -1,8 +1,11 @@
 package com.wqzhang.thingswapper.fragment;
 
+import android.content.Intent;
 import android.view.View;
 
-import com.wqzhang.thingswapper.util.NetManager;
+import com.wqzhang.thingswapper.activity.RegisterUserActivity;
+import com.wqzhang.thingswapper.util.net.okhttp.OkHttpNetManager;
+import com.wqzhang.thingswapper.util.net.retrofit.RetrofitUtil;
 import com.wqzhang.thingswapper.vu.PersonSetVu;
 
 /**
@@ -28,8 +31,12 @@ public class PersonSetFragment extends BasePartenerFragment<PersonSetVu> {
         vu.getRecyclerView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NetManager netManager = new NetManager();
-                netManager.test();
+//                OkHttpNetManager netManager = new OkHttpNetManager();
+//                netManager.test();
+//                RetrofitUtil.test();
+                Intent intent = new Intent();
+                intent.setAction("com.wqzhang.thingswapper.activity.RegisterUserActivity");
+                startActivity(intent);
             }
         });
     }

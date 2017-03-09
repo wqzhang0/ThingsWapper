@@ -68,8 +68,12 @@ dependencies {
     //引入okHttp 和其  依赖
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
     compile 'com.squareup.okio:okio:1.5.0'
-    compile 'com.squareup.retrofit2:retrofit:2.2.0'
 
+    //引入retrofit
+    compile 'com.squareup.retrofit2:retrofit:2.2.0'
     //引入cookie机制
     compile 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
+    compile files('libs/gson-2.8.0.jar')
+    //
+    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
 }

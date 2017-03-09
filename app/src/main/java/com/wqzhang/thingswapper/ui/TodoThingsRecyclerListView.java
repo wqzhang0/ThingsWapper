@@ -186,7 +186,9 @@ public class TodoThingsRecyclerListView extends android.support.v7.widget.Recycl
                 if ((scrolledState == PULL_DOWN || scrolledState == PULL_DOWN_COMPLETE || scrolledState == PULL_DOUBLE)) {
                     if (scrollValue <= 0) {
                         //如果向上滑动  则取消此次可下拉拖动的效果
-                        OnScrolledReset();
+//                        if(scrolledState == PULL_DOWN ){
+                            OnScrolledReset();
+//                        }
                         bus.post(new PullFreshScrollingEvent(0, 0));
                         if (scrolledState != PULL_DOUBLE) {
                             scrolledState = NOT_ALLOW_PULL;

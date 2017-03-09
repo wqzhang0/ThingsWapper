@@ -319,9 +319,9 @@ public class ChartsRecyclerAdapter extends RecyclerView.Adapter {
                 lineDataSet.setCircleColor(context.getResources().getColor(R.color.colorGreenBlue));
                 lineDataSet.setFillColor(context.getResources().getColor(R.color.colorShowReminderBg));
             } else if (style == 2) {
-                lineDataSet.setColor(Color.WHITE);
+                lineDataSet.setColor(context.getResources().getColor(R.color.colorShowReminderBg));
                 lineDataSet.setCircleColor(context.getResources().getColor(R.color.colorGreenBlue));
-                lineDataSet.setFillColor(context.getResources().getColor(R.color.colorPrimary));
+                lineDataSet.setFillColor(context.getResources().getColor(R.color.colorOrange));
             }
             lineDataSet.enableDashedLine(10f, 5f, 0f);
             lineDataSet.enableDashedHighlightLine(10f, 5f, 0f);
