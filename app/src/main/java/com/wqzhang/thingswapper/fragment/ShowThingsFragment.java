@@ -6,13 +6,11 @@ import android.view.View;
 
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.adapter.ToDoThingsRecyclerAdapter;
-import com.wqzhang.thingswapper.dao.BusinessProcess;
-import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
+import com.wqzhang.thingswapper.dao.BusinessProcessImpl;
 import com.wqzhang.thingswapper.event.PullFreshScrollingEvent;
 import com.wqzhang.thingswapper.listener.BottomLayoutOnScrolledListener;
 import com.wqzhang.thingswapper.listener.TopLayoutOnScrolledListener;
 import com.wqzhang.thingswapper.model.ShowThingsDTO;
-import com.wqzhang.thingswapper.ui.CustomerItemDecoration;
 import com.wqzhang.thingswapper.ui.TodoThingsRecyclerListView;
 import com.wqzhang.thingswapper.vu.ShowThingsVu;
 
@@ -124,7 +122,7 @@ public class ShowThingsFragment extends BasePartenerFragment<ShowThingsVu> {
         ToDoThingsRecyclerAdapter toDoThingsRecyclerAdapter = new ToDoThingsRecyclerAdapter(getActivity());
 
         bus.register(this);
-        ArrayList<ShowThingsDTO> showThingsDTOs = BusinessProcess.getInstance().listNotDoneThingsOrderByCreateTimeDescWithReminderTime();
+        ArrayList<ShowThingsDTO> showThingsDTOs = BusinessProcessImpl.getInstance().listNotDoneThingsOrderByCreateTimeDescWithReminderTime();
         toDoThingsRecyclerAdapter.setData(showThingsDTOs);
         vu.getRecyclerView().setTag(R.id.showThingType, 1);
         vu.getRecyclerView().setAdapter(toDoThingsRecyclerAdapter);
@@ -167,7 +165,7 @@ public class ShowThingsFragment extends BasePartenerFragment<ShowThingsVu> {
     @Override
     protected void afterOnResume() {
         super.afterOnResume();
-        ArrayList<ShowThingsDTO> showThingsDTOs = BusinessProcess.getInstance().listNotDoneThingsOrderByCreateTimeDescWithReminderTime();
+        ArrayList<ShowThingsDTO> showThingsDTOs = BusinessProcessImpl.getInstance().listNotDoneThingsOrderByCreateTimeDescWithReminderTime();
         ToDoThingsRecyclerAdapter adapter = (ToDoThingsRecyclerAdapter) vu.getRecyclerView().getAdapter();
         adapter.setData(showThingsDTOs);
     }

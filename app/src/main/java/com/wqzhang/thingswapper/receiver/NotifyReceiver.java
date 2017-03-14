@@ -13,9 +13,8 @@ import android.util.Log;
 import com.wqzhang.thingswapper.MainApplication;
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.activity.MainActivity;
-import com.wqzhang.thingswapper.dao.BusinessProcess;
+import com.wqzhang.thingswapper.dao.BusinessProcessImpl;
 import com.wqzhang.thingswapper.model.AlarmDTO;
-import com.wqzhang.thingswapper.util.AlarmTimer;
 import com.wqzhang.thingswapper.util.Common;
 import com.wqzhang.thingswapper.util.DialogUtil;
 import com.wqzhang.thingswapper.util.NotifyParseUtil;
@@ -61,7 +60,7 @@ public class NotifyReceiver extends BroadcastReceiver {
                 DialogUtil.showNotifyNow(MainApplication.getDialogContext(), alarmDTO.getToDoThingsContent());
             }
             //刷新重复提醒的时间
-            BusinessProcess.getInstance().updateCalculationNextReminderDate(alarmDTO.getNotifyIds());
+            BusinessProcessImpl.getInstance().updateCalculationNextReminderDate(alarmDTO.getNotifyIds());
             //通知之后  重新设置新的闹铃
             MainApplication.startScanService();
         }

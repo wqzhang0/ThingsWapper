@@ -6,7 +6,7 @@ import android.content.Intent;
 
 import com.wqzhang.thingswapper.dao.AddThingOperationXMLData;
 import com.wqzhang.thingswapper.dao.AddThingOperationXMLDataCache;
-import com.wqzhang.thingswapper.dao.BusinessProcess;
+import com.wqzhang.thingswapper.dao.BusinessProcessImpl;
 import com.wqzhang.thingswapper.dao.SharedPreferencesControl;
 import com.wqzhang.thingswapper.dao.greendao.DaoMaster;
 import com.wqzhang.thingswapper.dao.greendao.DaoSession;
@@ -32,13 +32,13 @@ public class MainApplication extends Application {
         Database db = helper.getWritableDb();
         daoSession = new DaoMaster(db).newSession();
 
-        BusinessProcess.init(daoSession);
+        BusinessProcessImpl.init(daoSession);
         SharedPreferencesControl.init(mContext);
 
         AddThingOperationXMLData.getInstall().init();
 
 
-        BusinessProcess.getInstance().getOrAddUserInfo();
+        BusinessProcessImpl.getInstance().insertDefaultUser();
         //初始化未保存事项 的历史数据 作为缓存
         AddThingOperationXMLDataCache.readHistory();
 

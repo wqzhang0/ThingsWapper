@@ -151,11 +151,13 @@ public class ChartsRecyclerAdapter extends RecyclerView.Adapter {
     public void setWeekNewThings(ArrayList<ChartDataDTO> weekNewThings) {
         this.weekNewThings = weekNewThings;
         notifyItemChanged(TYPE_WEEK_NEW_LINECHART);
+        notifyItemChanged(TYPE_WEEK_RESULTS);
     }
 
     public void setWeekFinshThings(ArrayList<ChartDataDTO> weekFinshThings) {
         this.weekFinshThings = weekFinshThings;
         notifyItemChanged(TYPE_WEEK_FINSH_LINECHART);
+        notifyItemChanged(TYPE_WEEK_RESULTS);
     }
 
 

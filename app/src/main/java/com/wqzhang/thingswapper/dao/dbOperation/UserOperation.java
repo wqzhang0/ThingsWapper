@@ -43,6 +43,8 @@ public class UserOperation implements UserOperationImpl {
         user.setSynchronize(false);
         user.setName("default");
         user.setDefaultLoginAccount(true);
+        user.setSynchronize(false);
+        user.setVersion(-1);
         insertUser(user);
     }
 

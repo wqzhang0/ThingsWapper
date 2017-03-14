@@ -13,8 +13,12 @@ public class SharedPreferencesControl {
     private static Context mContext;
     private static SharedPreferencesControl sharedPreferencesControl;
 
-    private static SharedPreferences sharedPreferences;
-    private static SharedPreferences.Editor editor;
+    //用户临时操作数据保存
+    private static SharedPreferences userDataCacheSP;
+    private static SharedPreferences.Editor userDataCacheEditor;
+    //用户登录账号信息保存 暂时使用数据库保存
+    private static SharedPreferences userInfoSP;
+    private static SharedPreferences.Editor userInfoEditor;
 
     public static SharedPreferencesControl getInstanll() throws CustomerException {
 
@@ -28,17 +32,26 @@ public class SharedPreferencesControl {
     public static void init(Context context) {
         mContext = context;
         sharedPreferencesControl = new SharedPreferencesControl();
-        sharedPreferences = mContext.getSharedPreferences("unAddPref", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
+        userDataCacheSP = mContext.getSharedPreferences("userDataCachePref", Context.MODE_PRIVATE);
+        userInfoSP = mContext.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        userDataCacheEditor = userDataCacheSP.edit();
+        userInfoEditor = userInfoSP.edit();
     }
 
 
-    public SharedPreferences.Editor getEditor() {
-        return editor;
+    public SharedPreferences.Editor getUserDataCacheEditor() {
+        return userDataCacheEditor;
     }
 
-    public SharedPreferences getSharedPreferences() {
-        return sharedPreferences;
+    public SharedPreferences getUserDataCacheSP() {
+        return userDataCacheSP;
     }
 
+    public static SharedPreferences getUserInfoSP() {
+        return userInfoSP;
+    }
+
+    public static SharedPreferences.Editor getUserInfoEditor() {
+        return userInfoEditor;
+    }
 }

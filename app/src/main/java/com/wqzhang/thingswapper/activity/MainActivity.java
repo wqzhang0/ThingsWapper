@@ -3,12 +3,11 @@ package com.wqzhang.thingswapper.activity;
 import android.app.Fragment;
 import android.app.NotificationManager;
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 
 import com.wqzhang.thingswapper.MainApplication;
 import com.wqzhang.thingswapper.R;
-import com.wqzhang.thingswapper.dao.BusinessProcess;
+import com.wqzhang.thingswapper.dao.BusinessProcessImpl;
 import com.wqzhang.thingswapper.fragment.PersonSetFragment;
 import com.wqzhang.thingswapper.fragment.PoolFragment;
 import com.wqzhang.thingswapper.fragment.ShowThingsFragment;
@@ -41,7 +40,7 @@ public class MainActivity extends BasePartenerAppCompatActivity<MainVu> implemen
     @Override
     protected void onAfterResume() {
         super.onAfterResume();
-        AlarmDTO alarmModel = BusinessProcess.getInstance().listExpiredThings();
+        AlarmDTO alarmModel = BusinessProcessImpl.getInstance().listExpiredThings();
         if (alarmModel != null && alarmModel.getToDoThingsContent().size() > 0) {
             DialogUtil.showHistoryThings(this, alarmModel.getToDoThingsContent());
         }

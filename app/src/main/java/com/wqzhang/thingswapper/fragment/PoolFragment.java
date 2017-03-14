@@ -3,7 +3,7 @@ package com.wqzhang.thingswapper.fragment;
 import android.support.v7.widget.LinearLayoutManager;
 
 import com.wqzhang.thingswapper.adapter.ChartsRecyclerAdapter;
-import com.wqzhang.thingswapper.dao.BusinessProcess;
+import com.wqzhang.thingswapper.dao.BusinessProcessImpl;
 import com.wqzhang.thingswapper.vu.PoolVu;
 
 /**
@@ -32,9 +32,9 @@ public class PoolFragment extends BasePartenerFragment<PoolVu> {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         vu.getRecyclerView().setLayoutManager(layoutManager);
         vu.getRecyclerView().setAdapter(chartsRecyclerAdapter);
-        vu.setToDayResultData(BusinessProcess.getInstance().countTodayThings());
-        vu.setWeekNewThings(BusinessProcess.getInstance().countRecentWeekNewThings());
-        vu.setWeekFinshThings(BusinessProcess.getInstance().countRecentWeekFinshThings());
+        vu.setToDayResultData(BusinessProcessImpl.getInstance().countTodayThings());
+        vu.setWeekNewThings(BusinessProcessImpl.getInstance().countRecentWeekNewThings());
+        vu.setWeekFinshThings(BusinessProcessImpl.getInstance().countRecentWeekFinshThings());
         super.onBind();
     }
 
@@ -44,8 +44,8 @@ public class PoolFragment extends BasePartenerFragment<PoolVu> {
     }
 
     public void resetData(){
-        vu.setToDayResultData(BusinessProcess.getInstance().countTodayThings());
-        vu.setWeekNewThings(BusinessProcess.getInstance().countRecentWeekNewThings());
-        vu.setWeekFinshThings(BusinessProcess.getInstance().countRecentWeekFinshThings());
+        vu.setToDayResultData(BusinessProcessImpl.getInstance().countTodayThings());
+        vu.setWeekNewThings(BusinessProcessImpl.getInstance().countRecentWeekNewThings());
+        vu.setWeekFinshThings(BusinessProcessImpl.getInstance().countRecentWeekFinshThings());
     }
 }

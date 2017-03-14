@@ -1,9 +1,7 @@
 package com.wqzhang.thingswapper.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +10,7 @@ import android.widget.TextView;
 
 import com.wqzhang.thingswapper.MainApplication;
 import com.wqzhang.thingswapper.R;
-import com.wqzhang.thingswapper.dao.BusinessProcess;
+import com.wqzhang.thingswapper.dao.BusinessProcessImpl;
 import com.wqzhang.thingswapper.dao.greendao.ToDoThing;
 import com.wqzhang.thingswapper.model.ShowThingsDTO;
 import com.wqzhang.thingswapper.util.Common;
@@ -98,7 +96,7 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
                 @Override
                 public void onClick(View v) {
                     Long toDoThingId = (Long) textView.getTag(R.id.toDoThingId);
-                    BusinessProcess.getInstance().updateThingState(toDoThingId, Common.STATUS_FINSH);
+                    BusinessProcessImpl.getInstance().updateThingState(toDoThingId, Common.STATUS_FINSH);
                     removeItem(toDoThingId);
                     slideContentView.shrink();
 
@@ -109,7 +107,7 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
                 @Override
                 public void onClick(View view) {
                     Long toDoThingId = (Long) textView.getTag(R.id.toDoThingId);
-                    BusinessProcess.getInstance().removeToDoTingById(toDoThingId);
+                    BusinessProcessImpl.getInstance().removeToDoTingById(toDoThingId);
                     removeItem(toDoThingId);
                     slideContentView.shrink();
 
@@ -128,7 +126,7 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
                 @Override
                 public void onClick(View v) {
                     Long toDoThingId = (Long) textView.getTag(R.id.toDoThingId);
-                    BusinessProcess.getInstance().updateThingState(toDoThingId, Common.STATUS_FINSH);
+                    BusinessProcessImpl.getInstance().updateThingState(toDoThingId, Common.STATUS_FINSH);
                     removeItem(toDoThingId);
                     slideContentView.shrink();
 
@@ -140,7 +138,7 @@ public class ToDoThingsRecyclerAdapter extends RecyclerView.Adapter {
                 @Override
                 public void onClick(View view) {
                     Long toDoThingId = (Long) textView.getTag(R.id.toDoThingId);
-                    BusinessProcess.getInstance().updateThingState(toDoThingId, Common.STATUS_FINSH);
+                    BusinessProcessImpl.getInstance().updateThingState(toDoThingId, Common.STATUS_FINSH);
                     removeItem(toDoThingId);
                     slideContentView.shrink();
                     MainApplication.startScanService();

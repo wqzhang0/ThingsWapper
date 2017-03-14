@@ -5,7 +5,7 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 
 import com.wqzhang.thingswapper.MainApplication;
-import com.wqzhang.thingswapper.dao.BusinessProcess;
+import com.wqzhang.thingswapper.dao.BusinessProcessImpl;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,9 +60,9 @@ public class DialogUtil {
         builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                List<Long> tmpIds = BusinessProcess.getInstance().listExpiredThings().getNotifyIds();
+                List<Long> tmpIds = BusinessProcessImpl.getInstance().listExpiredThings().getNotifyIds();
                 for (Long id : tmpIds) {
-                    BusinessProcess.getInstance().updatePreNotifyDate(id, new Date());
+                    BusinessProcessImpl.getInstance().updatePreNotifyDate(id, new Date());
                 }
             }
         });

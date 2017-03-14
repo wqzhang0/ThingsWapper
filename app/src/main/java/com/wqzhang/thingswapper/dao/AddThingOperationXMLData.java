@@ -54,27 +54,27 @@ public class AddThingOperationXMLData {
     public void save(SaveChooseOperationEvent saveChooseOperationEvent) {
         switch (saveChooseOperationEvent.getType()) {
             case SaveChooseOperationEvent.TYPE_SAVE_CONTEXT:
-                sharedPreferencesControl.getEditor().putString("NOTIFY_CONTENT", saveChooseOperationEvent.getContent()).commit();
+                sharedPreferencesControl.getUserDataCacheEditor().putString("NOTIFY_CONTENT", saveChooseOperationEvent.getContent()).commit();
                 AddThingOperationXMLDataCache.setContent(saveChooseOperationEvent.getContent());
                 break;
             case SaveChooseOperationEvent.TYPE_SAVE_NOTIFY_TYPE:
-                int notifyType = sharedPreferencesControl.getSharedPreferences().getInt("NOTIFY_TYPE", 0);
+                int notifyType = sharedPreferencesControl.getUserDataCacheSP().getInt("NOTIFY_TYPE", 0);
                 int tmpType = saveChooseOperationEvent.getNotifyType();
 
                 if ((notifyType & Math.abs(tmpType)) > 0) {
                     if (tmpType < 0) {
-                        sharedPreferencesControl.getEditor().putInt("NOTIFY_TYPE", (notifyType + tmpType)).commit();
+                        sharedPreferencesControl.getUserDataCacheEditor().putInt("NOTIFY_TYPE", (notifyType + tmpType)).commit();
                         AddThingOperationXMLDataCache.setNotifyType(notifyType + tmpType);
                     }
                 } else {
-                    sharedPreferencesControl.getEditor().putInt("NOTIFY_TYPE", (notifyType + tmpType)).commit();
+                    sharedPreferencesControl.getUserDataCacheEditor().putInt("NOTIFY_TYPE", (notifyType + tmpType)).commit();
                     AddThingOperationXMLDataCache.setNotifyType(notifyType + tmpType);
                 }
 
                 break;
             case SaveChooseOperationEvent.TYPE_SAVE_NOTYFLY_COUNTS:
                 if (!saveChooseOperationEvent.getDetermine()) return;
-                sharedPreferencesControl.getEditor().putString("NOTIFY_COUNTS", saveChooseOperationEvent.getNotifityCounts()).commit();
+                sharedPreferencesControl.getUserDataCacheEditor().putString("NOTIFY_COUNTS", saveChooseOperationEvent.getNotifityCounts()).commit();
                 AddThingOperationXMLDataCache.setNotifyCounts(saveChooseOperationEvent.getNotifityCounts());
                 //发送 改变视图的消息
                 bus.post(new DataCacheChange(DataCacheChange.TYPE_NOTYFLY_COUNTS_CHANGE, saveChooseOperationEvent.getNotifityCounts()));
@@ -91,7 +91,7 @@ public class AddThingOperationXMLData {
                         sb.append("&&" + dates.get(i).toString());
                     }
                 }
-                sharedPreferencesControl.getEditor().putString("NOTIFY_DATES", sb.toString()).commit();
+                sharedPreferencesControl.getUserDataCacheEditor().putString("NOTIFY_DATES", sb.toString()).commit();
                 AddThingOperationXMLDataCache.setDates(dates);
                 bus.post(new DataCacheChange(DataCacheChange.TYPE_NOTYFLY_DATE_CHANGE, true));
                 break;
@@ -109,7 +109,7 @@ public class AddThingOperationXMLData {
                                 sb.append("&&" + dates.get(j).toString());
                             }
                         }
-                        sharedPreferencesControl.getEditor().putString("NOTIFY_DATES", sb.toString()).commit();
+                        sharedPreferencesControl.getUserDataCacheEditor().putString("NOTIFY_DATES", sb.toString()).commit();
                         AddThingOperationXMLDataCache.setDates(dates);
                         bus.post(new DataCacheChange(DataCacheChange.TYPE_REMOVE_NOTIFY_DATE_CHANGE, true));
                         return;
@@ -120,11 +120,11 @@ public class AddThingOperationXMLData {
 
 
             case SaveChooseOperationEvent.TYPE_IS_REPEAT:
-                sharedPreferencesControl.getEditor().putBoolean("IS_REPEAT", saveChooseOperationEvent.getDetermine()).commit();
+                sharedPreferencesControl.getUserDataCacheEditor().putBoolean("IS_REPEAT", saveChooseOperationEvent.getDetermine()).commit();
                 AddThingOperationXMLDataCache.setRepeat(saveChooseOperationEvent.getDetermine());
                 break;
             case SaveChooseOperationEvent.TYPE_IS_REMINDER:
-                sharedPreferencesControl.getEditor().putBoolean("IS_REMINDER", saveChooseOperationEvent.getDetermine()).commit();
+                sharedPreferencesControl.getUserDataCacheEditor().putBoolean("IS_REMINDER", saveChooseOperationEvent.getDetermine()).commit();
                 AddThingOperationXMLDataCache.setReminder(saveChooseOperationEvent.getDetermine());
                 break;
             default:
@@ -140,7 +140,7 @@ public class AddThingOperationXMLData {
      * @return
      */
     public boolean isRepeat() {
-        return sharedPreferencesControl.getSharedPreferences().getBoolean("IS_REPEAT", false);
+        return sharedPreferencesControl.getUserDataCacheSP().getBoolean("IS_REPEAT", false);
     }
 
     /**
@@ -149,14 +149,14 @@ public class AddThingOperationXMLData {
      * @return
      */
     public boolean isReminder() {
-        return sharedPreferencesControl.getSharedPreferences().getBoolean("IS_REMINDER", false);
+        return sharedPreferencesControl.getUserDataCacheSP().getBoolean("IS_REMINDER", false);
     }
 
     /**
      * 清除数据
      */
     public void clearHistory() {
-        sharedPreferencesControl.getEditor().clear().commit();
+        sharedPreferencesControl.getUserDataCacheEditor().clear().commit();
         AddThingOperationXMLDataCache.readHistory();
     }
 
@@ -233,17 +233,17 @@ public class AddThingOperationXMLData {
     }
 
     public String readContent() {
-        return sharedPreferencesControl.getSharedPreferences().getString("NOTIFY_CONTENT", "");
+        return sharedPreferencesControl.getUserDataCacheSP().getString("NOTIFY_CONTENT", "");
     }
 
     public int readNotifyType() {
-        int notifyType = sharedPreferencesControl.getSharedPreferences().getInt("NOTIFY_TYPE", 0);
+        int notifyType = sharedPreferencesControl.getUserDataCacheSP().getInt("NOTIFY_TYPE", 0);
         return notifyType;
     }
 
     public ArrayList<Date> readNotifyTime() {
         ArrayList<Date> dates = new ArrayList<>();
-        String characterDates = sharedPreferencesControl.getSharedPreferences().getString("NOTIFY_DATES", "");
+        String characterDates = sharedPreferencesControl.getUserDataCacheSP().getString("NOTIFY_DATES", "");
         if (characterDates.equals("")) {
             return dates;
         }
@@ -256,7 +256,7 @@ public class AddThingOperationXMLData {
     }
 
     public String readNotifyCounts() {
-        return sharedPreferencesControl.getSharedPreferences().getString("NOTIFY_COUNTS", "不重复");
+        return sharedPreferencesControl.getUserDataCacheSP().getString("NOTIFY_COUNTS", "不重复");
     }
 
 }

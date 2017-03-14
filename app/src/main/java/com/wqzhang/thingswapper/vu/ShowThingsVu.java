@@ -9,7 +9,7 @@ import android.widget.Scroller;
 
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.adapter.ToDoThingsRecyclerAdapter;
-import com.wqzhang.thingswapper.dao.BusinessProcess;
+import com.wqzhang.thingswapper.dao.BusinessProcessImpl;
 import com.wqzhang.thingswapper.event.PullFreshScrollingEvent;
 import com.wqzhang.thingswapper.ui.SlidePullLinearLayout;
 import com.wqzhang.thingswapper.ui.TodoThingsRecyclerListView;
@@ -68,11 +68,11 @@ public class ShowThingsVu implements Vu {
                 int type = (int) recyclerView.getTag(R.id.showThingType);
                 if (type == 0) {
                     //当前显示的是已完成界面,需要切换至未完成界面
-                    ((ToDoThingsRecyclerAdapter) recyclerView.getAdapter()).setData(BusinessProcess.getInstance().listNotDoneThingsOrderByCreateTimeDescWithReminderTime());
+                    ((ToDoThingsRecyclerAdapter) recyclerView.getAdapter()).setData(BusinessProcessImpl.getInstance().listNotDoneThingsOrderByCreateTimeDescWithReminderTime());
                     recyclerView.setTag(R.id.showThingType, 1);
                 } else {
                     //已完成
-                    ((ToDoThingsRecyclerAdapter) recyclerView.getAdapter()).setData(BusinessProcess.getInstance().listFinshThingsOrderByFinshTimeDescWithReminderTime());
+                    ((ToDoThingsRecyclerAdapter) recyclerView.getAdapter()).setData(BusinessProcessImpl.getInstance().listFinshThingsOrderByFinshTimeDescWithReminderTime());
                     recyclerView.setTag(R.id.showThingType, 0);
                 }
                 recyclerView.getAdapter().notifyDataSetChanged();

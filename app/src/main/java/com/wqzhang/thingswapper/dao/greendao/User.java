@@ -26,6 +26,7 @@ public class User {
     private java.util.Date createDate;
     private Boolean synchronize;
     private Boolean defaultLoginAccount;
+    private Integer version;
 
     /** Used to resolve relations */
     @Generated
@@ -52,7 +53,7 @@ public class User {
     }
 
     @Generated
-    public User(Long id, String name, String account, String password, String email, java.util.Date createDate, Boolean synchronize, Boolean defaultLoginAccount) {
+    public User(Long id, String name, String account, String password, String email, java.util.Date createDate, Boolean synchronize, Boolean defaultLoginAccount, Integer version) {
         this.id = id;
         this.name = name;
         this.account = account;
@@ -61,6 +62,7 @@ public class User {
         this.createDate = createDate;
         this.synchronize = synchronize;
         this.defaultLoginAccount = defaultLoginAccount;
+        this.version = version;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -132,6 +134,14 @@ public class User {
 
     public void setDefaultLoginAccount(Boolean defaultLoginAccount) {
         this.defaultLoginAccount = defaultLoginAccount;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */

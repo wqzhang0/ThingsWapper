@@ -30,6 +30,7 @@ public class UserDao extends AbstractDao<User, Long> {
         public final static Property CreateDate = new Property(5, java.util.Date.class, "createDate", false, "CREATE_DATE");
         public final static Property Synchronize = new Property(6, Boolean.class, "synchronize", false, "SYNCHRONIZE");
         public final static Property DefaultLoginAccount = new Property(7, Boolean.class, "defaultLoginAccount", false, "DEFAULT_LOGIN_ACCOUNT");
+        public final static Property Version = new Property(8, Integer.class, "version", false, "VERSION");
     }
 
     private DaoSession daoSession;
@@ -55,7 +56,8 @@ public class UserDao extends AbstractDao<User, Long> {
                 "\"EMAIL\" TEXT," + // 4: email
                 "\"CREATE_DATE\" INTEGER," + // 5: createDate
                 "\"SYNCHRONIZE\" INTEGER," + // 6: synchronize
-                "\"DEFAULT_LOGIN_ACCOUNT\" INTEGER);"); // 7: defaultLoginAccount
+                "\"DEFAULT_LOGIN_ACCOUNT\" INTEGER," + // 7: defaultLoginAccount
+                "\"VERSION\" INTEGER);"); // 8: version
     }
 
     /** Drops the underlying database table. */
@@ -107,6 +109,11 @@ public class UserDao extends AbstractDao<User, Long> {
         if (defaultLoginAccount != null) {
             stmt.bindLong(8, defaultLoginAccount ? 1L: 0L);
         }
+ 
+        Integer version = entity.getVersion();
+        if (version != null) {
+            stmt.bindLong(9, version);
+        }
     }
 
     @Override
@@ -152,6 +159,11 @@ public class UserDao extends AbstractDao<User, Long> {
         if (defaultLoginAccount != null) {
             stmt.bindLong(8, defaultLoginAccount ? 1L: 0L);
         }
+ 
+        Integer version = entity.getVersion();
+        if (version != null) {
+            stmt.bindLong(9, version);
+        }
     }
 
     @Override
@@ -175,7 +187,8 @@ public class UserDao extends AbstractDao<User, Long> {
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // email
             cursor.isNull(offset + 5) ? null : new java.util.Date(cursor.getLong(offset + 5)), // createDate
             cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0, // synchronize
-            cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0 // defaultLoginAccount
+            cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0, // defaultLoginAccount
+            cursor.isNull(offset + 8) ? null : cursor.getInt(offset + 8) // version
         );
         return entity;
     }
@@ -190,6 +203,7 @@ public class UserDao extends AbstractDao<User, Long> {
         entity.setCreateDate(cursor.isNull(offset + 5) ? null : new java.util.Date(cursor.getLong(offset + 5)));
         entity.setSynchronize(cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0);
         entity.setDefaultLoginAccount(cursor.isNull(offset + 7) ? null : cursor.getShort(offset + 7) != 0);
+        entity.setVersion(cursor.isNull(offset + 8) ? null : cursor.getInt(offset + 8));
      }
     
     @Override

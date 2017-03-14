@@ -16,15 +16,13 @@ import android.widget.Toast;
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.dao.AddThingOperationXMLData;
 import com.wqzhang.thingswapper.dao.AddThingOperationXMLDataCache;
-import com.wqzhang.thingswapper.dao.BusinessProcess;
+import com.wqzhang.thingswapper.dao.BusinessProcessImpl;
 import com.wqzhang.thingswapper.dao.SharedPreferencesControl;
 import com.wqzhang.thingswapper.event.ChangeAddThingSubmitStateEvent;
 import com.wqzhang.thingswapper.event.DataCacheChange;
 import com.wqzhang.thingswapper.event.SaveChooseOperationEvent;
 import com.wqzhang.thingswapper.event.ShowMoreSetEvent;
 import com.wqzhang.thingswapper.exception.CustomerException;
-import com.wqzhang.thingswapper.model.AlarmDTO;
-import com.wqzhang.thingswapper.util.AlarmTimer;
 import com.wqzhang.thingswapper.util.Common;
 import com.wqzhang.thingswapper.util.DateUtil;
 import com.wqzhang.thingswapper.vu.AddThingVu;
@@ -157,7 +155,7 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
                 } else if (AddThingOperationXMLDataCache.getNotifyType() == Common.REMINDER_TYPE_NONE && AddThingOperationXMLData.getInstall().isReminder() && AddThingOperationXMLDataCache.getDates().size() > 0) {
                     Toast.makeText(this, "请选择提醒类型", Toast.LENGTH_SHORT).show();
                 } else {
-                    BusinessProcess.getInstance().saveThing(AddThingOperationXMLData.getInstall().getToDothing(),
+                    BusinessProcessImpl.getInstance().saveThing(AddThingOperationXMLData.getInstall().getToDothing(),
                             AddThingOperationXMLData.getInstall().getNotifycation());
 
                     AddThingOperationXMLData.getInstall().clearHistory();

@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.view.View;
 
 import com.wqzhang.thingswapper.R;
-import com.wqzhang.thingswapper.dao.BusinessProcess;
+import com.wqzhang.thingswapper.dao.BusinessProcessImpl;
 import com.wqzhang.thingswapper.dao.greendao.User;
 import com.wqzhang.thingswapper.vu.WelcomeVu;
 
@@ -22,7 +22,7 @@ public class WelcomeActivity extends BasePartenerActivity<WelcomeVu> implements 
     @Override
     protected void onBind() {
         super.onBind();
-        User user = BusinessProcess.getInstance().getOnlineUser();
+        User user = BusinessProcessImpl.getInstance().getOnlineUser();
 
 //        AlarmTimer.setAlarmTimer(getApplicationContext(), AlarmManager.ELAPSED_REALTIME, BusinessProcess.getInstance().listRecentNeedNotifyThings());
 

@@ -73,7 +73,6 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.2.0'
     //引入cookie机制
     compile 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
-    compile files('libs/gson-2.8.0.jar')
     //
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
 }
