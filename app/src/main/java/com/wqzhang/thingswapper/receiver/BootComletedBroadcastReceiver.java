@@ -18,7 +18,7 @@ public class BootComletedBroadcastReceiver extends BroadcastReceiver {
 //        Intent intent1 = new Intent("com.wqzhang.thingswapper.activity.MainActivity");
 //        intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //        context.startActivity(intent1);
-        AlarmDTO expiredAlarmModel = BusinessProcessImpl.getInstance().listExpiredThings();
+        AlarmDTO expiredAlarmModel = BusinessProcessImpl.getInstance().listOnlineUserExpiredThings();
         if (expiredAlarmModel != null) {
             //存在提醒时间已过,但还未提醒的事件
             //用Notification 提示

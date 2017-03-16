@@ -32,9 +32,9 @@ public class PoolFragment extends BasePartenerFragment<PoolVu> {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         vu.getRecyclerView().setLayoutManager(layoutManager);
         vu.getRecyclerView().setAdapter(chartsRecyclerAdapter);
-        vu.setToDayResultData(BusinessProcessImpl.getInstance().countTodayThings());
-        vu.setWeekNewThings(BusinessProcessImpl.getInstance().countRecentWeekNewThings());
-        vu.setWeekFinshThings(BusinessProcessImpl.getInstance().countRecentWeekFinshThings());
+        vu.setToDayResultData(BusinessProcessImpl.getInstance().countOnlineUserTodayThings());
+        vu.setWeekNewThings(BusinessProcessImpl.getInstance().countOnlineUserRecentWeekNewThings());
+        vu.setWeekFinshThings(BusinessProcessImpl.getInstance().countOnlineUserRecentWeekFinshThings());
         super.onBind();
     }
 
@@ -43,9 +43,14 @@ public class PoolFragment extends BasePartenerFragment<PoolVu> {
         super.afterOnResume();
     }
 
-    public void resetData(){
-        vu.setToDayResultData(BusinessProcessImpl.getInstance().countTodayThings());
-        vu.setWeekNewThings(BusinessProcessImpl.getInstance().countRecentWeekNewThings());
-        vu.setWeekFinshThings(BusinessProcessImpl.getInstance().countRecentWeekFinshThings());
+    public void resetData() {
+        vu.setToDayResultData(BusinessProcessImpl.getInstance().countOnlineUserTodayThings());
+        vu.setWeekNewThings(BusinessProcessImpl.getInstance().countOnlineUserRecentWeekNewThings());
+        vu.setWeekFinshThings(BusinessProcessImpl.getInstance().countOnlineUserRecentWeekFinshThings());
+    }
+
+    @Override
+    public void callBack(int type) {
+        
     }
 }

@@ -25,7 +25,7 @@ public class ScanService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("ScanService", "onStartCommand");
-        AlarmDTO needNotifyAlarmModel = BusinessProcessImpl.getInstance().listRecentNeedNotifyThings();
+        AlarmDTO needNotifyAlarmModel = BusinessProcessImpl.getInstance().listOnlineUserRecentNeedNotifyThings();
         if (needNotifyAlarmModel != null) {
             //设置Alerm
             AlarmTimer.setAlarmTimer(needNotifyAlarmModel);

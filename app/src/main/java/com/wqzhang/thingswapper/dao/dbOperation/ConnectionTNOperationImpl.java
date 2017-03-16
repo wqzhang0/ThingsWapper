@@ -1,6 +1,5 @@
 package com.wqzhang.thingswapper.dao.dbOperation;
 
-import com.wqzhang.thingswapper.dao.dbOperation.impl.ConnectionTNOperationImpl;
 import com.wqzhang.thingswapper.dao.greendao.Connection_T_N;
 import com.wqzhang.thingswapper.dao.greendao.Connection_T_NDao;
 import com.wqzhang.thingswapper.dao.greendao.DaoSession;
@@ -14,13 +13,13 @@ import java.util.ArrayList;
  * Created by wqzhang on 17-3-2.
  */
 
-public class ConnectionTNOperation implements ConnectionTNOperationImpl {
+public class ConnectionTNOperationImpl implements com.wqzhang.thingswapper.dao.dbOperation.impl.ConnectionTNOperation {
     static Connection_T_NDao connection_t_nDao;
 
-    private ConnectionTNOperation() {
+    private ConnectionTNOperationImpl() {
     }
 
-    public ConnectionTNOperation(DaoSession mDaoSession) {
+    public ConnectionTNOperationImpl(DaoSession mDaoSession) {
         connection_t_nDao = mDaoSession.getConnection_T_NDao();
     }
 

@@ -273,4 +273,9 @@ public class AddToDoThingActivity extends BasePartenerAppCompatActivity<AddThing
         super.beforeDestroy();
         bus.unregister(this);
     }
+
+    @Override
+    View getRootView() {
+        return null;
+    }
 }

@@ -8,15 +8,17 @@ import android.view.View;
 import com.wqzhang.thingswapper.MainApplication;
 import com.wqzhang.thingswapper.R;
 import com.wqzhang.thingswapper.dao.BusinessProcessImpl;
+import com.wqzhang.thingswapper.fragment.BasePartenerFragment;
 import com.wqzhang.thingswapper.fragment.PersonSetFragment;
 import com.wqzhang.thingswapper.fragment.PoolFragment;
 import com.wqzhang.thingswapper.fragment.ShowThingsFragment;
+import com.wqzhang.thingswapper.listener.AcitivityLinkCallBackListener;
 import com.wqzhang.thingswapper.model.AlarmDTO;
 import com.wqzhang.thingswapper.util.DialogUtil;
 import com.wqzhang.thingswapper.vu.MainVu;
 
 
-public class MainActivity extends BasePartenerAppCompatActivity<MainVu> implements View.OnClickListener {
+public class MainActivity extends BasePartenerAppCompatActivity<MainVu> implements View.OnClickListener, AcitivityLinkCallBackListener {
 
     private String TAG = "MainActivity";
 
@@ -28,6 +30,7 @@ public class MainActivity extends BasePartenerAppCompatActivity<MainVu> implemen
         showThingsFragment = ShowThingsFragment.newInstance();
         poolFragment = PoolFragment.newInstance();
         personSetFragment = PersonSetFragment.newInstance();
+        ((BasePartenerFragment) personSetFragment).setCallBack(this);
 
         vu.getNavigationCharts().setOnClickListener(this);
         vu.getNavigationSetting().setOnClickListener(this);
@@ -38,9 +41,14 @@ public class MainActivity extends BasePartenerAppCompatActivity<MainVu> implemen
     }
 
     @Override
+    View getRootView() {
+        return findViewById(R.id.root_view);
+    }
+
+    @Override
     protected void onAfterResume() {
         super.onAfterResume();
-        AlarmDTO alarmModel = BusinessProcessImpl.getInstance().listExpiredThings();
+        AlarmDTO alarmModel = BusinessProcessImpl.getInstance().listOnlineUserExpiredThings();
         if (alarmModel != null && alarmModel.getToDoThingsContent().size() > 0) {
             DialogUtil.showHistoryThings(this, alarmModel.getToDoThingsContent());
         }
@@ -66,7 +74,7 @@ public class MainActivity extends BasePartenerAppCompatActivity<MainVu> implemen
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
                 vu.switchContent(personSetFragment, fragmentManager);
-//                AlarmModel needNotifyAlarmModel = BusinessProcess.getInstance().listRecentNeedNotifyThings();
+//                AlarmModel needNotifyAlarmModel = BusinessProcess.getInstance().listOnlineUserRecentNeedNotifyThings();
 //
 //
 //                if (needNotifyAlarmModel != null) {
@@ -119,4 +127,12 @@ public class MainActivity extends BasePartenerAppCompatActivity<MainVu> implemen
     }
 
 
+    @Override
+    public void callBack(int type) {
+        if (type == 1) {
+            showBaffle("正在进行同步操作");
+        } else if (type == 2) {
+            hideBaffle();
+        }
+    }
 }

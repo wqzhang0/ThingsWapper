@@ -25,6 +25,7 @@ public class ToDoThing {
     private java.util.Date finshDate;
     private Integer status;
     private Boolean synchronize;
+    private Long serviceId;
     private Long userId;
 
     /** Used to resolve relations */
@@ -58,7 +59,7 @@ public class ToDoThing {
     }
 
     @Generated
-    public ToDoThing(Long id, String reminderContext, Integer reminderType, java.util.Date createDate, java.util.Date finshDate, Integer status, Boolean synchronize, Long userId) {
+    public ToDoThing(Long id, String reminderContext, Integer reminderType, java.util.Date createDate, java.util.Date finshDate, Integer status, Boolean synchronize, Long serviceId, Long userId) {
         this.id = id;
         this.reminderContext = reminderContext;
         this.reminderType = reminderType;
@@ -66,6 +67,7 @@ public class ToDoThing {
         this.finshDate = finshDate;
         this.status = status;
         this.synchronize = synchronize;
+        this.serviceId = serviceId;
         this.userId = userId;
     }
 
@@ -130,6 +132,14 @@ public class ToDoThing {
 
     public void setSynchronize(Boolean synchronize) {
         this.synchronize = synchronize;
+    }
+
+    public Long getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(Long serviceId) {
+        this.serviceId = serviceId;
     }
 
     public Long getUserId() {

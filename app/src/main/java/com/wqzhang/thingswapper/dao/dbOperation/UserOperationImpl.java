@@ -1,9 +1,9 @@
 package com.wqzhang.thingswapper.dao.dbOperation;
 
+import com.wqzhang.thingswapper.dao.SharedPreferencesControl;
 import com.wqzhang.thingswapper.dao.greendao.DaoSession;
 import com.wqzhang.thingswapper.dao.greendao.User;
 import com.wqzhang.thingswapper.dao.greendao.UserDao;
-import com.wqzhang.thingswapper.dao.dbOperation.impl.UserOperationImpl;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
@@ -14,13 +14,13 @@ import java.util.Date;
  * Created by wqzhang on 17-3-2.
  */
 
-public class UserOperation implements UserOperationImpl {
+public class UserOperationImpl implements com.wqzhang.thingswapper.dao.dbOperation.impl.UserOperation {
     static UserDao userDao;
 
-    private UserOperation() {
+    private UserOperationImpl() {
     }
 
-    public UserOperation(DaoSession mDaoSession) {
+    public UserOperationImpl(DaoSession mDaoSession) {
         userDao = mDaoSession.getUserDao();
     }
 
@@ -41,11 +41,13 @@ public class UserOperation implements UserOperationImpl {
         User user = new User();
         user.setCreateDate(new Date());
         user.setSynchronize(false);
-        user.setName("default");
+        user.setName("默认用户");
+        user.setEmail("暂无");
         user.setDefaultLoginAccount(true);
         user.setSynchronize(false);
         user.setVersion(-1);
         insertUser(user);
+        SharedPreferencesControl.getUserInfoEditor().putBoolean("USER_CHANGE", true).commit();
     }
 
     @Override
@@ -53,6 +55,30 @@ public class UserOperation implements UserOperationImpl {
         QueryBuilder<User> userQueryBuilder = userDao.queryBuilder();
         userQueryBuilder.where(UserDao.Properties.DefaultLoginAccount.eq(true));
         ArrayList<User> userArrayList = (ArrayList<User>) userQueryBuilder.list();
-        return userArrayList.get(0);
+        if (userArrayList.size() == 1) {
+            return userArrayList.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public void updateUser(User user) {
+        userDao.update(user);
+    }
+
+    @Override
+    public User getUserById(Long id) {
+        QueryBuilder<User> userQueryBuilder = userDao.queryBuilder();
+        userQueryBuilder.where(UserDao.Properties.Id.eq(id));
+        ArrayList<User> userArrayList = (ArrayList<User>) userQueryBuilder.list();
+        if (userArrayList.size() == 1) {
+            return userArrayList.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public User getUserByUser(User user) {
+        return getUserById(user.getId());
     }
 }

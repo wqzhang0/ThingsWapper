@@ -122,19 +122,15 @@ public class ShowThingsFragment extends BasePartenerFragment<ShowThingsVu> {
         ToDoThingsRecyclerAdapter toDoThingsRecyclerAdapter = new ToDoThingsRecyclerAdapter(getActivity());
 
         bus.register(this);
-        ArrayList<ShowThingsDTO> showThingsDTOs = BusinessProcessImpl.getInstance().listNotDoneThingsOrderByCreateTimeDescWithReminderTime();
+        ArrayList<ShowThingsDTO> showThingsDTOs = BusinessProcessImpl.getInstance().listOnlineUserNotDoneThingsOrderByCreateTimeDescWithReminderTime();
         toDoThingsRecyclerAdapter.setData(showThingsDTOs);
         vu.getRecyclerView().setTag(R.id.showThingType, 1);
         vu.getRecyclerView().setAdapter(toDoThingsRecyclerAdapter);
-//        vu.getRecyclerView().addItemDecoration(new CustomerItemDecoration());
 
         //默认可以上拉
-        TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOWN);
-        int lastPosition = ((LinearLayoutManager) vu.getRecyclerView().getLayoutManager()).findLastVisibleItemPosition();
-        if (lastPosition == vu.getRecyclerView().getAdapter().getItemCount() - 1) {
-            TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOUBLE);
-        }
-//        if (!ViewCompat.canScrollVertically(vu.getRecyclerView(), 1)) {
+//        TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOWN);
+//        int lastPosition = ((LinearLayoutManager) vu.getLinearLayout().getLayoutManager()).findLastVisibleItemPosition();
+//        if (lastPosition == vu.getLinearLayout().getAdapter().getItemCount() - 1) {
 //            TodoThingsRecyclerListView.setScrolledState(TodoThingsRecyclerListView.PULL_DOUBLE);
 //        }
         vu.getRecyclerView().addOnScrollListener(onScrollListener);
@@ -165,9 +161,17 @@ public class ShowThingsFragment extends BasePartenerFragment<ShowThingsVu> {
     @Override
     protected void afterOnResume() {
         super.afterOnResume();
-        ArrayList<ShowThingsDTO> showThingsDTOs = BusinessProcessImpl.getInstance().listNotDoneThingsOrderByCreateTimeDescWithReminderTime();
+        ArrayList<ShowThingsDTO> showThingsDTOs = BusinessProcessImpl.getInstance().listOnlineUserNotDoneThingsOrderByCreateTimeDescWithReminderTime();
         ToDoThingsRecyclerAdapter adapter = (ToDoThingsRecyclerAdapter) vu.getRecyclerView().getAdapter();
         adapter.setData(showThingsDTOs);
+    }
+
+    public void refreshData() {
+        if (vu != null) {
+            ArrayList<ShowThingsDTO> showThingsDTOs = BusinessProcessImpl.getInstance().listOnlineUserNotDoneThingsOrderByCreateTimeDescWithReminderTime();
+            ToDoThingsRecyclerAdapter adapter = (ToDoThingsRecyclerAdapter) vu.getRecyclerView().getAdapter();
+            adapter.setData(showThingsDTOs);
+        }
     }
 
     @Override
@@ -186,6 +190,11 @@ public class ShowThingsFragment extends BasePartenerFragment<ShowThingsVu> {
         super.beforOnDestory();
         bus.unregister(this);
         vu.getRecyclerView().removeOnScrollListener(onScrollListener);
+
+    }
+
+    @Override
+    public void callBack(int type) {
 
     }
 }

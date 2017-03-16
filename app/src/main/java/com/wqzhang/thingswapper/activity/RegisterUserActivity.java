@@ -33,6 +33,11 @@ public class RegisterUserActivity extends BasePartenerAppCompatActivity<Register
     }
 
     @Override
+    View getRootView() {
+        return findViewById(R.id.root_view);
+    }
+
+    @Override
     public void onClick(final View view) {
         switch (view.getId()) {
             case R.id.add_cancel:
@@ -46,7 +51,6 @@ public class RegisterUserActivity extends BasePartenerAppCompatActivity<Register
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                 }
                 vu.setBaffleViewGone();
-
 
 
                 String name = vu.getName();

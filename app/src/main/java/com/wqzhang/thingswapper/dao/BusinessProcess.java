@@ -7,6 +7,8 @@ import com.wqzhang.thingswapper.dao.greendao.User;
 import com.wqzhang.thingswapper.model.AlarmDTO;
 import com.wqzhang.thingswapper.model.ChartDataDTO;
 import com.wqzhang.thingswapper.model.ShowThingsDTO;
+import com.wqzhang.thingswapper.util.net.model.PullDataDTO;
+import com.wqzhang.thingswapper.util.net.model.ResultFormat;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,11 +20,68 @@ import java.util.List;
 
 public interface BusinessProcess {
     /**
+     * 判断用户是否进行过切换账号的操作,
+     * 如果切换账号.则返回true
+     * 否则返回false
+     *
+     * @return
+     */
+    boolean needRefreshDisplayData();
+
+    /**
+     * 添加用户
+     *
+     * @param user
+     */
+    void insertOrUpdateUserInfo(User user);
+
+    /**
      * 如果没有用户则添加一个默认用户
      * 如果有用户 则忽略操作
      */
     void insertDefaultUser();
 
+    /**
+     * 获得默认账户信息
+     *
+     * @return
+     */
+    User getDefaultUser();
+
+    /**
+     * 检测登录的账户是否是默认账号
+     *
+     * @return
+     */
+    boolean checkOnlineIsDefaultAccount();
+
+    /**
+     * 获取默认登录的用户
+     *
+     * @return
+     */
+    User getOnlineUser();
+
+    /**
+     * 更新登录用户,将此次登录的用户设置为'登录用户'
+     * 将上次登录用户设置为'未登录'
+     *
+     * @param user
+     */
+    void updateUserLoginState(User user);
+
+    /**
+     * 默认账号下面有内容,是否要关联到在线用户账户下
+     * 用于用户登录时提醒.
+     *
+     * @return
+     */
+    boolean checkHaveDataLinkToOnlineAccount();
+
+    /**
+     * 移动默认账户下面的所有数据到在线账户上去
+     */
+    boolean moveDataToOnlineAccount();
 
     /**
      * 根据用户查找所有的事项
@@ -39,7 +98,7 @@ public interface BusinessProcess {
      * @param userId 用户id
      * @return
      */
-    ArrayList<ToDoThing> listAllThingsByUserId(int userId);
+    ArrayList<ToDoThing> listAllThingsByUserId(Long userId);
 
 
     /**
@@ -86,7 +145,7 @@ public interface BusinessProcess {
      *
      * @return
      */
-    ArrayList<ToDoThing> listFinshThingsOrderByFinshTimeDesc();
+    ArrayList<ToDoThing> listOnlineUserFinshThingsOrderByFinshTimeDesc();
 
 
     /**
@@ -94,27 +153,21 @@ public interface BusinessProcess {
      *
      * @return
      */
-    ArrayList<ToDoThing> listNotDoneThingsOrderByCreateTimeDesc();
+    ArrayList<ToDoThing> listOnlineUserNotDoneThingsOrderByCreateTimeDesc();
 
     /**
      * 查找还未做的事情,附带展示需要的各种信息
      *
      * @return
      */
-    ArrayList<ShowThingsDTO> listNotDoneThingsOrderByCreateTimeDescWithReminderTime();
+    ArrayList<ShowThingsDTO> listOnlineUserNotDoneThingsOrderByCreateTimeDescWithReminderTime();
 
     /**
      * 查找已经完成的事情 附带展示需要的各种信息
-     * @return
-     */
-    ArrayList<ShowThingsDTO> listFinshThingsOrderByFinshTimeDescWithReminderTime();
-
-    /**
-     * 获取默认登录的用户
      *
      * @return
      */
-    User getOnlineUser();
+    ArrayList<ShowThingsDTO> listOnlineUserFinshThingsOrderByFinshTimeDescWithReminderTime();
 
 
     /**
@@ -139,7 +192,7 @@ public interface BusinessProcess {
      *
      * @return
      */
-    AlarmDTO listRecentNeedNotifyThings();
+    AlarmDTO listOnlineUserRecentNeedNotifyThings();
 
 
     /**
@@ -147,7 +200,7 @@ public interface BusinessProcess {
      *
      * @return
      */
-    AlarmDTO listExpiredThings();
+    AlarmDTO listOnlineUserExpiredThings();
 
     /**
      * 更新Notification  中 上一次提醒的时间
@@ -158,19 +211,21 @@ public interface BusinessProcess {
     void updatePreNotifyDate(Long id, Date date);
 
     //获取最近七日内增加的事件数量 date-counts
-    ArrayList<ChartDataDTO> countRecentWeekNewThings();
+    ArrayList<ChartDataDTO> countOnlineUserRecentWeekNewThings();
 
     /**
      * 获取最近七日完成的事件  date-counts
      */
-    ArrayList<ChartDataDTO> countRecentWeekFinshThings();
+    ArrayList<ChartDataDTO> countOnlineUserRecentWeekFinshThings();
 
     /**
      * 获得今天添加的事项 和 已完成的事情
      *
      * @return
      */
-    ArrayList<ChartDataDTO> countTodayThings();
+    ArrayList<ChartDataDTO> countOnlineUserTodayThings();
 
+
+    ArrayList<ResultFormat<PullDataDTO>> listOnlineNeedSyncData();
 
 }

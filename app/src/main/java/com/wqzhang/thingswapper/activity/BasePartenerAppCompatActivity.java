@@ -7,12 +7,21 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
+import android.support.v7.widget.LinearLayoutCompat;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.wqzhang.thingswapper.MainApplication;
 import com.wqzhang.thingswapper.R;
@@ -43,7 +52,6 @@ public abstract class BasePartenerAppCompatActivity<V extends Vu> extends AppCom
             setContentView(vu.getView());
             onBind();
             MainApplication.setDialogContext(this);
-
 
 
         } catch (InstantiationException e) {
@@ -80,7 +88,7 @@ public abstract class BasePartenerAppCompatActivity<V extends Vu> extends AppCom
         onAfterResume();
     }
 
-    protected void onAfterResume(){
+    protected void onAfterResume() {
 
     }
 
@@ -155,9 +163,51 @@ public abstract class BasePartenerAppCompatActivity<V extends Vu> extends AppCom
                     }
                 });
         AlertDialog alertDialog = dialogBuilder.create();
-//        alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
         alertDialog.show();
     }
+
+    View view = null;
+
+    public void showBaffle(final String tittle) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                view = getLayoutInflater().inflate(R.layout.baffle, null);
+                ((TextView) view.findViewById(R.id.baffle_tittle)).setText(tittle);
+                View rootView = getRootView();
+                int type = 1;
+                LinearLayoutCompat.LayoutParams param = new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                if (rootView instanceof LinearLayout) {
+                    ((LinearLayout) rootView).addView(view, type, param);
+//            ((LinearLayout) rootView).bringChildToFront(view);
+                } else if (rootView instanceof RelativeLayout) {
+                    ((RelativeLayout) rootView).addView(view, type, param);
+                } else if (rootView instanceof FrameLayout) {
+                    ((FrameLayout) rootView).addView(view, type, param);
+                }
+            }
+        });
+    }
+
+    public void hideBaffle() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (view != null) {
+                    View rootView = getRootView();
+                    if (rootView instanceof LinearLayout) {
+                        ((LinearLayout) rootView).removeView(view);
+                    } else if (rootView instanceof RelativeLayout) {
+                        ((RelativeLayout) rootView).removeView(view);
+                    } else if (rootView instanceof FrameLayout) {
+                        ((FrameLayout) rootView).removeView(view);
+                    }
+                }
+            }
+        });
+    }
+
+    abstract View getRootView();
 
 }

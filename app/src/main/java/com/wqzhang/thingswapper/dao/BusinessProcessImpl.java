@@ -2,10 +2,10 @@ package com.wqzhang.thingswapper.dao;
 
 import android.util.Log;
 
-import com.wqzhang.thingswapper.dao.dbOperation.ConnectionTNOperation;
+import com.wqzhang.thingswapper.dao.dbOperation.ConnectionTNOperationImpl;
 import com.wqzhang.thingswapper.dao.dbOperation.NotificationOperationImpl;
-import com.wqzhang.thingswapper.dao.dbOperation.ToDoThingsOperation;
-import com.wqzhang.thingswapper.dao.dbOperation.UserOperation;
+import com.wqzhang.thingswapper.dao.dbOperation.ToDoThingsOperationImpl;
+import com.wqzhang.thingswapper.dao.dbOperation.UserOperationImpl;
 import com.wqzhang.thingswapper.dao.greendao.Connection_T_N;
 import com.wqzhang.thingswapper.dao.greendao.DaoSession;
 import com.wqzhang.thingswapper.dao.greendao.Notification;
@@ -17,6 +17,8 @@ import com.wqzhang.thingswapper.model.ShowThingsDTO;
 import com.wqzhang.thingswapper.util.Common;
 import com.wqzhang.thingswapper.util.DateUtil;
 import com.wqzhang.thingswapper.util.NotifyParseUtil;
+import com.wqzhang.thingswapper.util.net.model.PullDataDTO;
+import com.wqzhang.thingswapper.util.net.model.ResultFormat;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,10 +31,10 @@ import java.util.List;
 public class BusinessProcessImpl implements BusinessProcess {
     static BusinessProcessImpl businessProcess;
     static DaoSession daoSession;
-    static ToDoThingsOperation toDoThingsOperation;
-    static UserOperation userOperation;
-    static NotificationOperationImpl notificationOperationImpl;
-    static ConnectionTNOperation connectionTNOperation;
+    static ToDoThingsOperationImpl toDoThingsOperation;
+    static UserOperationImpl userOperation;
+    static NotificationOperationImpl notificationOperation;
+    static ConnectionTNOperationImpl connectionTNOperation;
 
     public static BusinessProcessImpl getInstance() {
         return businessProcess;
@@ -45,13 +47,27 @@ public class BusinessProcessImpl implements BusinessProcess {
         if (businessProcess == null) {
             businessProcess = new BusinessProcessImpl();
             daoSession = mDaoSession;
-            toDoThingsOperation = new ToDoThingsOperation(mDaoSession);
-            userOperation = new UserOperation(mDaoSession);
-            notificationOperationImpl = new NotificationOperationImpl(mDaoSession);
-            connectionTNOperation = new ConnectionTNOperation(mDaoSession);
+            toDoThingsOperation = new ToDoThingsOperationImpl(mDaoSession);
+            userOperation = new UserOperationImpl(mDaoSession);
+            notificationOperation = new NotificationOperationImpl(mDaoSession);
+            connectionTNOperation = new ConnectionTNOperationImpl(mDaoSession);
         }
     }
 
+    @Override
+    public boolean needRefreshDisplayData() {
+        return SharedPreferencesControl.getUserInfoSP().getBoolean("USER_CHANGE", false);
+    }
+
+    @Override
+    public void insertOrUpdateUserInfo(User user) {
+        User userDb = userOperation.getUserByUser(user);
+        if (userDb == null) {
+            userOperation.insertUser(user);
+        } else {
+            userOperation.updateUser(user);
+        }
+    }
 
     @Override
     public void insertDefaultUser() {
@@ -63,18 +79,37 @@ public class BusinessProcessImpl implements BusinessProcess {
     }
 
     @Override
-    public ArrayList<ToDoThing> listFinshThingsOrderByFinshTimeDesc() {
-        return toDoThingsOperation.listFinshThingsOrderByFinshTimeDesc();
+    public User getDefaultUser() {
+        ArrayList<User> users = userOperation.listUser();
+        for (User user : users) {
+            if (user.getId() == 1) {
+                return user;
+            }
+        }
+        return null;
     }
 
     @Override
-    public ArrayList<ToDoThing> listNotDoneThingsOrderByCreateTimeDesc() {
-        return toDoThingsOperation.listNotDoneThingsOrderByCreateTimeDesc();
+    public boolean checkOnlineIsDefaultAccount() {
+        return getDefaultUser().getId() == getOnlineUser().getId();
     }
 
     @Override
-    public ArrayList<ShowThingsDTO> listNotDoneThingsOrderByCreateTimeDescWithReminderTime() {
-        ArrayList<ToDoThing> toDoThings = toDoThingsOperation.listNotDoneThingsOrderByCreateTimeDesc();
+    public ArrayList<ToDoThing> listOnlineUserFinshThingsOrderByFinshTimeDesc() {
+        Long onlineUserId = getOnlineUser().getId();
+        return toDoThingsOperation.listFinshThingsOrderByFinshTimeDescByUserId(onlineUserId);
+    }
+
+    @Override
+    public ArrayList<ToDoThing> listOnlineUserNotDoneThingsOrderByCreateTimeDesc() {
+        Long onlineUserId = getOnlineUser().getId();
+        return toDoThingsOperation.listNotDoneThingsOrderByCreateTimeDescByUserId(onlineUserId);
+    }
+
+    @Override
+    public ArrayList<ShowThingsDTO> listOnlineUserNotDoneThingsOrderByCreateTimeDescWithReminderTime() {
+        Long onlineUserId = getOnlineUser().getId();
+        ArrayList<ToDoThing> toDoThings = toDoThingsOperation.listUserNotDoneThingsOrderByCreateTimeDesc(onlineUserId);
 
         ArrayList<ShowThingsDTO> showThingsDTOs = new ArrayList<>();
 
@@ -117,8 +152,9 @@ public class BusinessProcessImpl implements BusinessProcess {
     }
 
     @Override
-    public ArrayList<ShowThingsDTO> listFinshThingsOrderByFinshTimeDescWithReminderTime() {
-        ArrayList<ToDoThing> toDoThings = toDoThingsOperation.listFinshThingsOrderByFinshTimeDesc();
+    public ArrayList<ShowThingsDTO> listOnlineUserFinshThingsOrderByFinshTimeDescWithReminderTime() {
+        Long onlineUserId = getOnlineUser().getId();
+        ArrayList<ToDoThing> toDoThings = toDoThingsOperation.listUserFinshThingsOrderByFinshTimeDesc(onlineUserId);
 
         ArrayList<ShowThingsDTO> showThingsDTOs = new ArrayList<>();
         for (ToDoThing toDoThing : toDoThings) {
@@ -129,7 +165,42 @@ public class BusinessProcessImpl implements BusinessProcess {
 
     @Override
     public User getOnlineUser() {
-        return userOperation.getOnlineUser();
+        //如果没有默认登录账户 则设置默认账户为登录账户
+        User user = userOperation.getOnlineUser();
+        if (user == null) {
+            user = getDefaultUser();
+            user.setDefaultLoginAccount(true);
+            userOperation.updateUser(user);
+            SharedPreferencesControl.getUserInfoEditor().putBoolean("USER_CHANGE", true).commit();
+            user = userOperation.getOnlineUser();
+        }
+        return user;
+    }
+
+    @Override
+    public void updateUserLoginState(User user) {
+        User preLoginUser = getOnlineUser();
+        preLoginUser.setDefaultLoginAccount(false);
+        user.setDefaultLoginAccount(true);
+        userOperation.updateUser(preLoginUser);
+        userOperation.updateUser(user);
+        SharedPreferencesControl.getUserInfoEditor().putBoolean("USER_CHANGE", true).commit();
+    }
+
+    @Override
+    public boolean checkHaveDataLinkToOnlineAccount() {
+        List<ToDoThing> toDoThings = toDoThingsOperation.listAllThingsByUser(getDefaultUser());
+        return toDoThings.size() > 0 ? true : false;
+    }
+
+    @Override
+    public boolean moveDataToOnlineAccount() {
+        ArrayList<ToDoThing> toDoThings = toDoThingsOperation.listAllThingsByUser(getDefaultUser());
+        for (ToDoThing toDoThing : toDoThings) {
+            toDoThing.setUser(getOnlineUser());
+            toDoThingsOperation.updateThings(toDoThing);
+        }
+        return true;
     }
 
     @Override
@@ -138,7 +209,7 @@ public class BusinessProcessImpl implements BusinessProcess {
     }
 
     @Override
-    public ArrayList<ToDoThing> listAllThingsByUserId(int userId) {
+    public ArrayList<ToDoThing> listAllThingsByUserId(Long userId) {
         return toDoThingsOperation.listAllThingsByUserId(userId);
     }
 
@@ -150,7 +221,7 @@ public class BusinessProcessImpl implements BusinessProcess {
     @Override
     public void removeToDoTingById(Long id) {
         toDoThingsOperation.updateThingState(id, Common.STATUS_DELETE);
-        notificationOperationImpl.setInvalide(id);
+        notificationOperation.setInvalide(id);
     }
 
     @Override
@@ -167,14 +238,14 @@ public class BusinessProcessImpl implements BusinessProcess {
     public void updateThingState(Long id, int state) {
         ToDoThing toDoThing = toDoThingsOperation.getThingById(id);
         if (state == Common.STATUS_FINSH) {
-            notificationOperationImpl.updateFinshNotifyByThing(toDoThing);
+            notificationOperation.updateFinshNotifyByThing(toDoThing);
         }
         toDoThingsOperation.updateThingState(id, state);
     }
 
     @Override
     public void updateCalculationNextReminderDate(List<Long> ids) {
-        ArrayList<Notification> notificationArrayList = notificationOperationImpl.listByIds(ids);
+        ArrayList<Notification> notificationArrayList = notificationOperation.listByIds(ids);
         Date nowTime = new Date();
         for (Notification tmpNotification : notificationArrayList) {
             String repeatType = tmpNotification.getRepeatType();
@@ -263,59 +334,62 @@ public class BusinessProcessImpl implements BusinessProcess {
                     tmpNotification.setNextRemindDate(nextReminderTime);
                 }
             }
-            notificationOperationImpl.update(tmpNotification);
+            notificationOperation.update(tmpNotification);
         }
     }
 
     @Override
-    public AlarmDTO listRecentNeedNotifyThings() {
+    public AlarmDTO listOnlineUserRecentNeedNotifyThings() {
         //找到需要提醒的事项,判断依据,
         // 是否提醒(根据 提醒类型判断)
         // 上次是否有提醒时间,
         // 提醒时间是否大于当前时间
 
+        Long userId = getOnlineUser().getId();
+
         AlarmDTO alarmDTO = null;
-        ArrayList<Notification> noRepeatNotificationArrayList = notificationOperationImpl.listNoRepeatNotification();
-        ArrayList<Notification> repeatNotificationArrayList = notificationOperationImpl.listRepeatNotification();
+        ArrayList<Notification> noRepeatNotificationArrayList = notificationOperation.listNoRepeatNotification();
+        ArrayList<Notification> repeatNotificationArrayList = notificationOperation.listRepeatNotification();
 
         if (noRepeatNotificationArrayList.size() == 0 && repeatNotificationArrayList.size() == 0) {
             return alarmDTO;
         } else if (noRepeatNotificationArrayList.size() > 0 && repeatNotificationArrayList.size() == 0) {
-            return NotifyParseUtil.getRecentNoRepeatNotifys(noRepeatNotificationArrayList);
+            return NotifyParseUtil.getRecentNoRepeatNotifys(noRepeatNotificationArrayList, userId);
         } else if (noRepeatNotificationArrayList.size() == 0 && repeatNotificationArrayList.size() > 0) {
-            return NotifyParseUtil.getRecentRepeatNotifys(repeatNotificationArrayList);
+            return NotifyParseUtil.getRecentRepeatNotifys(repeatNotificationArrayList, userId);
         } else if (noRepeatNotificationArrayList.size() > 0 && repeatNotificationArrayList.size() > 0) {
             //如果不重复的提醒时间 大于 重复提醒的  下一次提醒时间
             if (noRepeatNotificationArrayList.get(0).getReminderDate().getTime() > repeatNotificationArrayList.get(0).getNextRemindDate().getTime()) {
                 //返回 不重复提醒时间
-                return NotifyParseUtil.getRecentNoRepeatNotifys(noRepeatNotificationArrayList);
+                return NotifyParseUtil.getRecentNoRepeatNotifys(noRepeatNotificationArrayList, userId);
             } else if (noRepeatNotificationArrayList.get(0).getReminderDate().getTime() == repeatNotificationArrayList.get(0).getNextRemindDate().getTime()) {
                 //如果两者需要提醒的时间相等
-                return NotifyParseUtil.getRecentNotifys(noRepeatNotificationArrayList, repeatNotificationArrayList);
+                return NotifyParseUtil.getRecentNotifys(noRepeatNotificationArrayList, repeatNotificationArrayList, userId);
             } else if (noRepeatNotificationArrayList.get(0).getReminderDate().getTime() < repeatNotificationArrayList.get(0).getNextRemindDate().getTime()) {
                 //返回重复提醒的时间
-                return NotifyParseUtil.getRecentRepeatNotifys(repeatNotificationArrayList);
+                return NotifyParseUtil.getRecentRepeatNotifys(repeatNotificationArrayList, userId);
             }
         }
         return alarmDTO;
     }
 
     @Override
-    public AlarmDTO listExpiredThings() {
+    public AlarmDTO listOnlineUserExpiredThings() {
+        Long userId = getOnlineUser().getId();
         //找到需要提醒的事项,判断依据,
         // 是否提醒(根据 提醒类型判断)
         // 上次是否有提醒时间,
         // 提醒时间是否大于当前时间         //比较上一次提醒的时间,
         AlarmDTO alarmModel = null;
-        ArrayList<Notification> notificationArrayList = notificationOperationImpl.listExpiredNotification();
+        ArrayList<Notification> notificationArrayList = notificationOperation.listExpiredNotification();
         ArrayList<Long> notificationIds = new ArrayList<>();
         ArrayList<ToDoThing> toDoThings = new ArrayList<>();
         if (notificationArrayList.size() == 0) {
             return alarmModel;
         } else if (notificationArrayList.size() > 0) {
             for (int i = 0; i < notificationArrayList.size(); i++) {
-                ToDoThing _tmpToDoThings = notificationArrayList.get(i).getToDoThingIds().get(0).getToDoThing();
-                if (_tmpToDoThings.getStatus() == Common.STATUS_TO_BE_DONE) {
+                ToDoThing tmpToDoThing = notificationArrayList.get(i).getToDoThingIds().get(0).getToDoThing();
+                if (tmpToDoThing.getUserId() == userId && tmpToDoThing.getStatus() == Common.STATUS_TO_BE_DONE) {
                     toDoThings.add(notificationArrayList.get(i).getToDoThingIds().get(0).getToDoThing());
                     notificationIds.add(notificationArrayList.get(i).getId());
                 }
@@ -329,22 +403,32 @@ public class BusinessProcessImpl implements BusinessProcess {
 
     @Override
     public void updatePreNotifyDate(Long notifyId, Date date) {
-        notificationOperationImpl.updatePreNotifyDate(notifyId, date);
+        notificationOperation.updatePreNotifyDate(notifyId, date);
     }
 
     @Override
-    public ArrayList<ChartDataDTO> countRecentWeekNewThings() {
-        return toDoThingsOperation.countRecentWeekNewThings();
+    public ArrayList<ChartDataDTO> countOnlineUserRecentWeekNewThings() {
+        Long onlineUserId = getOnlineUser().getId();
+        return toDoThingsOperation.countRecentWeekNewThings(onlineUserId);
     }
 
     @Override
-    public ArrayList<ChartDataDTO> countRecentWeekFinshThings() {
-        return toDoThingsOperation.countRecentWeekFinshThings();
+    public ArrayList<ChartDataDTO> countOnlineUserRecentWeekFinshThings() {
+        Long onlineUserId = getOnlineUser().getId();
+        return toDoThingsOperation.countRecentWeekFinshThings(onlineUserId);
     }
 
     @Override
-    public ArrayList<ChartDataDTO> countTodayThings() {
-        return toDoThingsOperation.countTodayThings();
+    public ArrayList<ChartDataDTO> countOnlineUserTodayThings() {
+        Long onlineUserId = getOnlineUser().getId();
+        return toDoThingsOperation.countTodayThings(onlineUserId);
+    }
+
+    @Override
+    public ArrayList<ResultFormat<PullDataDTO>> listOnlineNeedSyncData() {
+        ArrayList<ResultFormat<PullDataDTO>> resultFormats = null;
+
+        return null;
     }
 
     @Override
@@ -440,7 +524,7 @@ public class BusinessProcessImpl implements BusinessProcess {
                         notification.setNextRemindDate(nextReminderTime);
                     }
                 }
-                notificationOperationImpl.save(notification);
+                notificationOperation.save(notification);
                 connection_t_n.setNotification(notification);
                 connection_t_nArrayList.add(connection_t_n);
             }

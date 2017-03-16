@@ -60,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="-10dp"
-            android:src="@drawable/pull_up_ico" />
+            android:src="@drawable/icon_pull_up" />
 
         <TextView
             android:id="@+id/bottomTextView"

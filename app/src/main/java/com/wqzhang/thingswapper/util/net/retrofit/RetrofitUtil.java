@@ -29,18 +29,7 @@ public class RetrofitUtil {
         Retrofit retrofit = createRetrofit();
         IUserBiz userBiz = retrofit.create(IUserBiz.class);
 
-        Call<String> call = userBiz.login(new UserDTO());
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Log.d(TAG, "onResponse" + response.body());
-            }
 
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Log.d(TAG, "onFailure");
-            }
-        });
 
     }
 

@@ -31,6 +31,7 @@ public class Notification {
     private Boolean alearyNotify;
     private Boolean invalide;
     private java.util.Date nextRemindDate;
+    private Long serviceId;
 
     /** Used to resolve relations */
     @Generated
@@ -57,7 +58,7 @@ public class Notification {
     }
 
     @Generated
-    public Notification(Long id, Integer notifyType, java.util.Date reminderDate, String repeatType, Integer remindFrequency, Integer remindFrequencyInterval, Integer remindCount, java.util.Date endDate, Boolean synchronize, java.util.Date preNotifyDate, Boolean alearyNotify, Boolean invalide, java.util.Date nextRemindDate) {
+    public Notification(Long id, Integer notifyType, java.util.Date reminderDate, String repeatType, Integer remindFrequency, Integer remindFrequencyInterval, Integer remindCount, java.util.Date endDate, Boolean synchronize, java.util.Date preNotifyDate, Boolean alearyNotify, Boolean invalide, java.util.Date nextRemindDate, Long serviceId) {
         this.id = id;
         this.notifyType = notifyType;
         this.reminderDate = reminderDate;
@@ -71,6 +72,7 @@ public class Notification {
         this.alearyNotify = alearyNotify;
         this.invalide = invalide;
         this.nextRemindDate = nextRemindDate;
+        this.serviceId = serviceId;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -182,6 +184,14 @@ public class Notification {
 
     public void setNextRemindDate(java.util.Date nextRemindDate) {
         this.nextRemindDate = nextRemindDate;
+    }
+
+    public Long getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(Long serviceId) {
+        this.serviceId = serviceId;
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */

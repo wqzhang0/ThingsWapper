@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.wqzhang.thingswapper.R;
+import com.wqzhang.thingswapper.dao.BusinessProcessImpl;
 import com.wqzhang.thingswapper.fragment.PersonSetFragment;
 import com.wqzhang.thingswapper.fragment.PoolFragment;
 import com.wqzhang.thingswapper.fragment.ShowThingsFragment;
@@ -56,7 +57,7 @@ public class MainVu implements Vu {
         fm.beginTransaction().replace(getContainerId(), initFragment).commit();
         currentFragment = initFragment;
         setToolbarTittle("事项清单");
-        navigationShowThingsImage.setBackgroundResource(R.drawable.navigation_list_selected_icon);
+        navigationShowThingsImage.setBackgroundResource(R.drawable.icon_navigation_list_selected);
     }
 
     public void switchContent(Fragment to, FragmentManager fm) {
@@ -76,24 +77,30 @@ public class MainVu implements Vu {
             //设置跳转后 条目的提示语和图标
             if (to instanceof ShowThingsFragment) {
                 setToolbarTittle("事项清单");
-                navigationShowThingsImage.setBackgroundResource(R.drawable.navigation_list_selected_icon);
+                navigationShowThingsImage.setBackgroundResource(R.drawable.icon_navigation_list_selected);
                 fab.setVisibility(View.VISIBLE);
+                if (BusinessProcessImpl.getInstance().needRefreshDisplayData()) {
+                    ((ShowThingsFragment) to).refreshData();
+                }
             } else if (to instanceof PoolFragment) {
                 setToolbarTittle("汇总");
-                navigationChartImage.setBackgroundResource(R.drawable.navigation_chart_selected_icon);
+                navigationChartImage.setBackgroundResource(R.drawable.icon_navigation_chart_selected);
             } else if (to instanceof PersonSetFragment) {
                 setToolbarTittle("个性化设置");
-                navigationSettingImage.setBackgroundResource(R.drawable.navigation_set_selected_icon);
+                navigationSettingImage.setBackgroundResource(R.drawable.icon_navigation_set_selected);
+                if (BusinessProcessImpl.getInstance().needRefreshDisplayData()) {
+                    ((PersonSetFragment) to).refreshData();
+                }
             }
 
             //修改之前 所在 条目 的图标
             if (currentFragment instanceof ShowThingsFragment) {
-                navigationShowThingsImage.setBackgroundResource(R.drawable.navigation_list_icon);
+                navigationShowThingsImage.setBackgroundResource(R.drawable.icon_navigation_list);
                 fab.setVisibility(View.INVISIBLE);
             } else if (currentFragment instanceof PoolFragment) {
-                navigationChartImage.setBackgroundResource(R.drawable.navigation_chart_icon);
+                navigationChartImage.setBackgroundResource(R.drawable.icon_navigation_chart);
             } else if (currentFragment instanceof PersonSetFragment) {
-                navigationSettingImage.setBackgroundResource(R.drawable.navigation_set_icon);
+                navigationSettingImage.setBackgroundResource(R.drawable.icon_navigation_set);
             }
             currentFragment = to;
         }

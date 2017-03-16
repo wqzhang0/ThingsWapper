@@ -3,6 +3,7 @@ package com.wqzhang.thingswapper.util;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 
 import com.wqzhang.thingswapper.MainApplication;
 import com.wqzhang.thingswapper.dao.BusinessProcessImpl;
@@ -60,10 +61,31 @@ public class DialogUtil {
         builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                List<Long> tmpIds = BusinessProcessImpl.getInstance().listExpiredThings().getNotifyIds();
+                List<Long> tmpIds = BusinessProcessImpl.getInstance().listOnlineUserExpiredThings().getNotifyIds();
                 for (Long id : tmpIds) {
                     BusinessProcessImpl.getInstance().updatePreNotifyDate(id, new Date());
                 }
+            }
+        });
+        builder.show();
+    }
+
+    public static void showAskLink(Context context,  String  sequences) {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder =  new AlertDialog.Builder(context);
+        builder.setTitle("注意");
+
+        builder.setMessage(sequences);
+        builder.setPositiveButton("跳过", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Log.d("AGA","选择了跳过");
+            }
+        });
+        builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Log.d("AGA","选择了确定");
             }
         });
         builder.show();

@@ -35,6 +35,7 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
         public final static Property AlearyNotify = new Property(10, Boolean.class, "alearyNotify", false, "ALEARY_NOTIFY");
         public final static Property Invalide = new Property(11, Boolean.class, "invalide", false, "INVALIDE");
         public final static Property NextRemindDate = new Property(12, java.util.Date.class, "nextRemindDate", false, "NEXT_REMIND_DATE");
+        public final static Property ServiceId = new Property(13, Long.class, "serviceId", false, "SERVICE_ID");
     }
 
     private DaoSession daoSession;
@@ -65,7 +66,8 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
                 "\"PRE_NOTIFY_DATE\" INTEGER," + // 9: preNotifyDate
                 "\"ALEARY_NOTIFY\" INTEGER," + // 10: alearyNotify
                 "\"INVALIDE\" INTEGER," + // 11: invalide
-                "\"NEXT_REMIND_DATE\" INTEGER);"); // 12: nextRemindDate
+                "\"NEXT_REMIND_DATE\" INTEGER," + // 12: nextRemindDate
+                "\"SERVICE_ID\" INTEGER);"); // 13: serviceId
     }
 
     /** Drops the underlying database table. */
@@ -142,6 +144,11 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
         if (nextRemindDate != null) {
             stmt.bindLong(13, nextRemindDate.getTime());
         }
+ 
+        Long serviceId = entity.getServiceId();
+        if (serviceId != null) {
+            stmt.bindLong(14, serviceId);
+        }
     }
 
     @Override
@@ -212,6 +219,11 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
         if (nextRemindDate != null) {
             stmt.bindLong(13, nextRemindDate.getTime());
         }
+ 
+        Long serviceId = entity.getServiceId();
+        if (serviceId != null) {
+            stmt.bindLong(14, serviceId);
+        }
     }
 
     @Override
@@ -240,7 +252,8 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
             cursor.isNull(offset + 9) ? null : new java.util.Date(cursor.getLong(offset + 9)), // preNotifyDate
             cursor.isNull(offset + 10) ? null : cursor.getShort(offset + 10) != 0, // alearyNotify
             cursor.isNull(offset + 11) ? null : cursor.getShort(offset + 11) != 0, // invalide
-            cursor.isNull(offset + 12) ? null : new java.util.Date(cursor.getLong(offset + 12)) // nextRemindDate
+            cursor.isNull(offset + 12) ? null : new java.util.Date(cursor.getLong(offset + 12)), // nextRemindDate
+            cursor.isNull(offset + 13) ? null : cursor.getLong(offset + 13) // serviceId
         );
         return entity;
     }
@@ -260,6 +273,7 @@ public class NotificationDao extends AbstractDao<Notification, Long> {
         entity.setAlearyNotify(cursor.isNull(offset + 10) ? null : cursor.getShort(offset + 10) != 0);
         entity.setInvalide(cursor.isNull(offset + 11) ? null : cursor.getShort(offset + 11) != 0);
         entity.setNextRemindDate(cursor.isNull(offset + 12) ? null : new java.util.Date(cursor.getLong(offset + 12)));
+        entity.setServiceId(cursor.isNull(offset + 13) ? null : cursor.getLong(offset + 13));
      }
     
     @Override

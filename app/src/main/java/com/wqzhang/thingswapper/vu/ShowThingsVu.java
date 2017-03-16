@@ -68,18 +68,18 @@ public class ShowThingsVu implements Vu {
                 int type = (int) recyclerView.getTag(R.id.showThingType);
                 if (type == 0) {
                     //当前显示的是已完成界面,需要切换至未完成界面
-                    ((ToDoThingsRecyclerAdapter) recyclerView.getAdapter()).setData(BusinessProcessImpl.getInstance().listNotDoneThingsOrderByCreateTimeDescWithReminderTime());
+                    ((ToDoThingsRecyclerAdapter) recyclerView.getAdapter()).setData(BusinessProcessImpl.getInstance().listOnlineUserNotDoneThingsOrderByCreateTimeDescWithReminderTime());
                     recyclerView.setTag(R.id.showThingType, 1);
                 } else {
                     //已完成
-                    ((ToDoThingsRecyclerAdapter) recyclerView.getAdapter()).setData(BusinessProcessImpl.getInstance().listFinshThingsOrderByFinshTimeDescWithReminderTime());
+                    ((ToDoThingsRecyclerAdapter) recyclerView.getAdapter()).setData(BusinessProcessImpl.getInstance().listOnlineUserFinshThingsOrderByFinshTimeDescWithReminderTime());
                     recyclerView.setTag(R.id.showThingType, 0);
                 }
                 recyclerView.getAdapter().notifyDataSetChanged();
                 //定位到第一条, 防止滑动过快 导致切换后继续滑动
                 recyclerView.smoothScrollToPosition(0);
 
-//                recyclerView.scrollToPosition(0);
+//                linearLayout.scrollToPosition(0);
                 break;
             default:
                 break;

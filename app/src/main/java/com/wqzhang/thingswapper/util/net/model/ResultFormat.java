@@ -12,6 +12,8 @@ public class ResultFormat<T> {
 
     private String errorMsg;
 
+    private int errorCode;
+
     private T t;
 
     public String getOperation() {
@@ -44,5 +46,13 @@ public class ResultFormat<T> {
 
     public void setT(T t) {
         this.t = t;
+    }
+
+    public int getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(int errorCode) {
+        this.errorCode = errorCode;
     }
 }

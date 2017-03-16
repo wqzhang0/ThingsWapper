@@ -34,7 +34,8 @@ public class ToDoThingDao extends AbstractDao<ToDoThing, Long> {
         public final static Property FinshDate = new Property(4, java.util.Date.class, "finshDate", false, "FINSH_DATE");
         public final static Property Status = new Property(5, Integer.class, "status", false, "STATUS");
         public final static Property Synchronize = new Property(6, Boolean.class, "synchronize", false, "SYNCHRONIZE");
-        public final static Property UserId = new Property(7, Long.class, "userId", false, "USER_ID");
+        public final static Property ServiceId = new Property(7, Long.class, "serviceId", false, "SERVICE_ID");
+        public final static Property UserId = new Property(8, Long.class, "userId", false, "USER_ID");
     }
 
     private DaoSession daoSession;
@@ -61,7 +62,8 @@ public class ToDoThingDao extends AbstractDao<ToDoThing, Long> {
                 "\"FINSH_DATE\" INTEGER," + // 4: finshDate
                 "\"STATUS\" INTEGER," + // 5: status
                 "\"SYNCHRONIZE\" INTEGER," + // 6: synchronize
-                "\"USER_ID\" INTEGER);"); // 7: userId
+                "\"SERVICE_ID\" INTEGER," + // 7: serviceId
+                "\"USER_ID\" INTEGER);"); // 8: userId
     }
 
     /** Drops the underlying database table. */
@@ -109,9 +111,14 @@ public class ToDoThingDao extends AbstractDao<ToDoThing, Long> {
             stmt.bindLong(7, synchronize ? 1L: 0L);
         }
  
+        Long serviceId = entity.getServiceId();
+        if (serviceId != null) {
+            stmt.bindLong(8, serviceId);
+        }
+ 
         Long userId = entity.getUserId();
         if (userId != null) {
-            stmt.bindLong(8, userId);
+            stmt.bindLong(9, userId);
         }
     }
 
@@ -154,9 +161,14 @@ public class ToDoThingDao extends AbstractDao<ToDoThing, Long> {
             stmt.bindLong(7, synchronize ? 1L: 0L);
         }
  
+        Long serviceId = entity.getServiceId();
+        if (serviceId != null) {
+            stmt.bindLong(8, serviceId);
+        }
+ 
         Long userId = entity.getUserId();
         if (userId != null) {
-            stmt.bindLong(8, userId);
+            stmt.bindLong(9, userId);
         }
     }
 
@@ -181,7 +193,8 @@ public class ToDoThingDao extends AbstractDao<ToDoThing, Long> {
             cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)), // finshDate
             cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5), // status
             cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0, // synchronize
-            cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7) // userId
+            cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7), // serviceId
+            cursor.isNull(offset + 8) ? null : cursor.getLong(offset + 8) // userId
         );
         return entity;
     }
@@ -195,7 +208,8 @@ public class ToDoThingDao extends AbstractDao<ToDoThing, Long> {
         entity.setFinshDate(cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)));
         entity.setStatus(cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5));
         entity.setSynchronize(cursor.isNull(offset + 6) ? null : cursor.getShort(offset + 6) != 0);
-        entity.setUserId(cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7));
+        entity.setServiceId(cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7));
+        entity.setUserId(cursor.isNull(offset + 8) ? null : cursor.getLong(offset + 8));
      }
     
     @Override

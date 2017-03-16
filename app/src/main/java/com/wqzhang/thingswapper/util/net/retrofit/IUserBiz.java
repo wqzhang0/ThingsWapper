@@ -13,11 +13,12 @@ import retrofit2.http.POST;
  */
 
 public interface IUserBiz {
+    String prefix = "User/";
 
-    @POST("Jsonlogin.do")
-    Call<String> login(@Body UserDTO userDTO);
+    @POST(prefix + "JsonLogin.do")
+    Call<ResultFormat<UserDTO>> login(@Body UserDTO userDTO);
 
 
-    @POST("JsonRegister.do")
+    @POST(prefix + "JsonRegister.do")
     Call<ResultFormat<UserDTO>> register(@Body UserDTO userDTO);
 }

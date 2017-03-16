@@ -35,7 +35,7 @@
                 android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/show_alarm_icon" />
+                android:background="@drawable/icon_show_alarm" />
 
             <TextView
                 android:id="@+id/notify_time"

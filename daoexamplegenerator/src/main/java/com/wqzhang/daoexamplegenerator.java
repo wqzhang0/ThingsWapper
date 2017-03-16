@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class daoexamplegenerator {
     public static void main(String[] args) throws Exception {
-        Schema schema = new Schema(14, "com.wqzhang.thingswapper.dao.greendao");
+        Schema schema = new Schema(15, "com.wqzhang.thingswapper.dao.greendao");
         schema.enableKeepSectionsByDefault();
         initDatabase(schema);
         new DaoGenerator().generateAll(schema, "/home/wqzhang/GraduationProjectCode/ThingsWapper/app/src/main/java");
@@ -39,6 +39,7 @@ public class daoexamplegenerator {
         toDoThing.addDateProperty("finshDate");
         toDoThing.addIntProperty("status");
         toDoThing.addBooleanProperty("synchronize");
+        toDoThing.addLongProperty("serviceId");
 
         Entity notification = schema.addEntity("Notification");
 
@@ -55,6 +56,8 @@ public class daoexamplegenerator {
         notification.addBooleanProperty("alearyNotify");
         notification.addBooleanProperty("invalide");
         notification.addDateProperty("nextRemindDate");
+        notification.addLongProperty("serviceId");
+
 
         Entity connection_T_N = schema.addEntity("Connection_T_N");
         connection_T_N.addIdProperty();

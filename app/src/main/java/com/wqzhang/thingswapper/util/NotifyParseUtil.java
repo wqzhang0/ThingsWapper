@@ -158,7 +158,7 @@ public class NotifyParseUtil {
      * @param noRepeatNotificationArrayList
      * @return
      */
-    public static AlarmDTO getRecentNoRepeatNotifys(ArrayList<Notification> noRepeatNotificationArrayList) {
+    public static AlarmDTO getRecentNoRepeatNotifys(ArrayList<Notification> noRepeatNotificationArrayList, Long userId) {
         ArrayList<Long> notificationIds = new ArrayList<>();
         ArrayList<ToDoThing> toDoThings = new ArrayList<>();
         AlarmDTO alarmModel = null;
@@ -166,10 +166,12 @@ public class NotifyParseUtil {
         Notification firstNotification = noRepeatNotificationArrayList.get(0);
         for (Notification notifycation : noRepeatNotificationArrayList) {
             //查找出与排序第一条相同的提醒时间
+            //并且事项处于未被提醒状态
             if (notifycation.getReminderDate().equals(firstNotification.getReminderDate())) {
-                //并且事项处于未被提醒状态
-                toDoThings.add(notifycation.getToDoThingIds().get(0).getToDoThing());
-                notificationIds.add(notifycation.getId());
+                if (notifycation.getToDoThingIds().get(0).getToDoThing().getUserId() == userId) {
+                    toDoThings.add(notifycation.getToDoThingIds().get(0).getToDoThing());
+                    notificationIds.add(notifycation.getId());
+                }
             }
         }
         Integer reminderType = NotifyParseUtil.getNotifyType(toDoThings);
@@ -183,7 +185,7 @@ public class NotifyParseUtil {
      * @param repeatNotificationArrayList
      * @return
      */
-    public static AlarmDTO getRecentRepeatNotifys(ArrayList<Notification> repeatNotificationArrayList) {
+    public static AlarmDTO getRecentRepeatNotifys(ArrayList<Notification> repeatNotificationArrayList, Long userId) {
         ArrayList<Long> notificationIds = new ArrayList<>();
         ArrayList<ToDoThing> toDoThings = new ArrayList<>();
         AlarmDTO alarmModel = null;
@@ -192,9 +194,11 @@ public class NotifyParseUtil {
         for (Notification notifycation : repeatNotificationArrayList) {
             //查找出与排序第一条相同的提醒时间
             if (notifycation.getNextRemindDate().equals(firstNotification.getNextRemindDate())) {
-                //并且事项处于未被提醒状态
-                toDoThings.add(notifycation.getToDoThingIds().get(0).getToDoThing());
-                notificationIds.add(notifycation.getId());
+                if (notifycation.getToDoThingIds().get(0).getToDoThing().getUserId() == userId) {
+                    //并且事项处于未被提醒状态
+                    toDoThings.add(notifycation.getToDoThingIds().get(0).getToDoThing());
+                    notificationIds.add(notifycation.getId());
+                }
             }
         }
         Integer reminderType = NotifyParseUtil.getNotifyType(toDoThings);
@@ -209,7 +213,7 @@ public class NotifyParseUtil {
      * @param repeatNotificationArrayList
      * @return
      */
-    public static AlarmDTO getRecentNotifys(ArrayList<Notification> noRepeatNotificationArrayList, ArrayList<Notification> repeatNotificationArrayList) {
+    public static AlarmDTO getRecentNotifys(ArrayList<Notification> noRepeatNotificationArrayList, ArrayList<Notification> repeatNotificationArrayList, Long userId) {
         ArrayList<Long> notificationIds = new ArrayList<>();
         ArrayList<ToDoThing> toDoThings = new ArrayList<>();
         AlarmDTO alarmModel = null;
@@ -218,19 +222,22 @@ public class NotifyParseUtil {
             for (Notification notifycation : noRepeatNotificationArrayList) {
                 //查找出与排序第一条相同的提醒时间
                 if (notifycation.getReminderDate().equals(firstNotification.getReminderDate())) {
-                    toDoThings.add(notifycation.getToDoThingIds().get(0).getToDoThing());
-                    notificationIds.add(notifycation.getId());
+                    if (notifycation.getToDoThingIds().get(0).getToDoThing().getUserId() == userId) {
+                        toDoThings.add(notifycation.getToDoThingIds().get(0).getToDoThing());
+                        notificationIds.add(notifycation.getId());
+                    }
                 }
             }
             for (Notification notifycation : repeatNotificationArrayList) {
                 //查找出与排序第一条相同的提醒时间
                 if (notifycation.getNextRemindDate().equals(firstNotification.getNextRemindDate())) {
-                    //并且事项处于未被提醒状态
-                    toDoThings.add(notifycation.getToDoThingIds().get(0).getToDoThing());
-                    notificationIds.add(notifycation.getId());
+                    if (notifycation.getToDoThingIds().get(0).getToDoThing().getUserId() == userId) {
+                        //并且事项处于未被提醒状态
+                        toDoThings.add(notifycation.getToDoThingIds().get(0).getToDoThing());
+                        notificationIds.add(notifycation.getId());
+                    }
                 }
             }
-
             Integer reminderType = NotifyParseUtil.getNotifyType(toDoThings);
             alarmModel = new AlarmDTO(toDoThings, noRepeatNotificationArrayList.get(0).getReminderDate(), reminderType, notificationIds);
 

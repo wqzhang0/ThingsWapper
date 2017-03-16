@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * Created by wqzhang on 17-3-2.
  */
 
-public interface ConnectionTNOperationImpl {
+public interface ConnectionTNOperation {
     void saveAll(ArrayList<Connection_T_N> arrayList);
 
     ArrayList<Notification> listNotifications(long thingId);

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_view"
     android:layout_width="match_parent"
+
     android:layout_height="match_parent"
     android:orientation="vertical">
 
@@ -115,7 +117,7 @@
                 android:id="@+id/navigation_showthings_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/navigation_list_icon" />
+                android:background="@drawable/icon_navigation_list" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -137,7 +139,7 @@
                 android:id="@+id/navigation_chart_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/navigation_chart_icon" />
+                android:background="@drawable/icon_navigation_chart" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -159,7 +161,7 @@
                 android:id="@+id/navigation_setting_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/navigation_set_icon" />
+                android:background="@drawable/icon_navigation_set" />
 
             <TextView
                 android:layout_width="wrap_content"

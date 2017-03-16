@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.wqzhang.thingswapper.listener.AcitivityLinkCallBackListener;
 import com.wqzhang.thingswapper.vu.Vu;
 
 import org.greenrobot.eventbus.EventBus;
@@ -15,10 +16,11 @@ import org.greenrobot.eventbus.EventBus;
  * Created by wqzhang on 17-1-5.
  */
 
-public abstract class BasePartenerFragment<V extends Vu> extends Fragment {
+public abstract class BasePartenerFragment<V extends Vu> extends Fragment implements AcitivityLinkCallBackListener {
 
     protected V vu;
     protected EventBus bus;
+    protected AcitivityLinkCallBackListener acitivityLinkCallBackListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,7 @@ public abstract class BasePartenerFragment<V extends Vu> extends Fragment {
 
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
@@ -72,9 +75,10 @@ public abstract class BasePartenerFragment<V extends Vu> extends Fragment {
         afterOnStart();
     }
 
-    protected void afterOnStart(){
+    protected void afterOnStart() {
 
     }
+
     protected void afterOnResume() {
     }
 
@@ -86,5 +90,9 @@ public abstract class BasePartenerFragment<V extends Vu> extends Fragment {
     }
 
     protected void beforOnDestory() {
+    }
+
+    public void setCallBack(AcitivityLinkCallBackListener acitivityLinkCallBackListener) {
+        this.acitivityLinkCallBackListener = acitivityLinkCallBackListener;
     }
 }
